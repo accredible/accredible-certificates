@@ -24,13 +24,9 @@ Currently the plugin is only compatible with Academy Theme.
 
 == Frequently Asked Questions ==
 
-= A question that someone might have =
+= How do I get an API key?
 
-An answer to that question.
-
-= What about foo bar? =
-
-Answer to foo bar dilemma.
+Visit https://accredible.com to obtain a free API key.
 
 == Changelog ==
 
