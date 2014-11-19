@@ -87,10 +87,8 @@ if(!class_exists('Accredible_Certificate'))
 		 */
 		public static function issue_certificates_automatically() {
 
-			//require WP config to enable db interaction
-			require_once(plugin_dir_path( __FILE__ ) . '../../../wp-config.php'); global $wpdb;
+			global $wpdb;
 
-			// do something every hour
 			error_log("Issuing certificates");
 			$query="
 				SELECT * FROM ".$wpdb->comments." 
