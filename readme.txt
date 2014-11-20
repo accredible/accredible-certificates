@@ -22,6 +22,20 @@ Currently the plugin is only compatible with Academy Theme.
 2. Install the plugin
 3. Activate the plugin through the 'Plugins' menu in WordPress
 
+== How to use ==
+
+Note: By default your Accredible account is in Sandbox mode and any certificates you create will need to be manually published via the Accredible API Dashboard before being emailed to students.
+
+Manually creating certificates:
+1. Go to the 'Certificates' page in the Wordpress admin menu
+2. On the list of your courses and students, select which students you would like to issue certificates to
+3. Click 'Create Certificates'
+
+Automatically creating certificates:
+1. Go to the plugin settings and check 'Automatically Issue Certificate upon Course Completition'
+2. When a user completed a course they will be automatically issued a certificate
+
+
 == Frequently Asked Questions ==
 
 = How do I get an API key?
