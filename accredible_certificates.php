@@ -76,7 +76,7 @@ if(!class_exists('Accredible_Certificate'))
 		// Add the settings link to the plugins page
 		function plugin_settings_link($links)
 		{
-			$settings_link = '<a href="options-general.php?page=accredible_certificates">Settings</a>';
+			$settings_link = '<a href="options-general.php?page=accredible-certificates">Settings</a>';
 			array_unshift($links, $settings_link);
 			return $links;
 		}
@@ -191,7 +191,7 @@ if(!class_exists('Accredible_Certificate'))
 		}
 
 		function register_certificates_admin_menu_page(){
-		    add_menu_page( 'Certificates', 'Certificates', 'edit_post', 'accredible_certificates/certificates-admin.php', '', '', 40 );
+		    add_menu_page( 'Certificates', 'Certificates', 'edit_post', 'accredible-certificates/certificates-admin.php', '', 'dashicons-tablet', 40 );
 		}
 
 		public static function wpse10500_action() {
