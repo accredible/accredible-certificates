@@ -3,7 +3,7 @@
 Plugin Name: Accredible Certificates
 Plugin URI: https://github.com/accredible/wp_plugin
 Description: Issue Accredible course certificates for Academy Theme.
-Version: 0.1
+Version: 0.1.1
 Author: Accredible
 Author URI: https://www.accredible.com
 License: GPL2
@@ -212,7 +212,7 @@ if(!class_exists('Accredible_Certificate'))
 		        	//print_r($result);
 		        }
 			}
-			
+
 			wp_redirect(admin_url('admin.php?page=accredible-certificates/certificates-admin.php'));
 		}
 
