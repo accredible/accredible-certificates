@@ -140,7 +140,7 @@ if(!class_exists('Accredible_Certificate'))
 		 */
 		public static function create_certificate($recipient_name, $recipient_email, $course_name, $course_id, $course_description)
 		{
-			$curl = curl_init('https://staging.accredible.com/v1/credentials');
+			$curl = curl_init('https://api.accredible.com/v1/credentials');
 			$data = array(  
 			    "credential" => array( 
 			        "recipient" => array( 
@@ -175,6 +175,7 @@ if(!class_exists('Accredible_Certificate'))
 			$result = json_decode( curl_exec($curl) );
 			curl_close($curl);
 			$result_string = print_r($result, true);
+			//print_r($result);
 		}
 
 		/*
@@ -182,7 +183,7 @@ if(!class_exists('Accredible_Certificate'))
 		 */
 		public static function certificates($course_id)
 		{
-			$curl = curl_init('https://staging.accredible.com/v1/credentials?achievement_id=' . $course_id . '&full_view=true');
+			$curl = curl_init('https://api.accredible.com/v1/credentials?achievement_id=' . $course_id . '&full_view=true');
 			curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
 			curl_setopt( $curl, CURLOPT_HTTPHEADER, array( 'Authorization: Token token="' . get_option('api_key') . '"' ) );
 			$result = json_decode( curl_exec($curl) );
@@ -203,15 +204,16 @@ if(!class_exists('Accredible_Certificate'))
 			$issue_certificate = $_POST['issue_certificate'];
 
 			foreach( $recipient_name as $key => $name ) {
-		        echo $name;
-		        echo $recipient_email[$key];
-		        echo $course_name[$key];
+		        // echo $name;
+		        // echo $recipient_email[$key];
+		        // echo $course_name[$key];
 		        if(isset($issue_certificate[$key])){
-		        	self::create_certificate($name, $recipient_email[$key], $course_name[$key], $course_id[$key], $course_description[$key]);
+		        	$result = self::create_certificate($name, $recipient_email[$key], $course_name[$key], $course_id[$key], $course_description[$key]);
+		        	//print_r($result);
 		        }
 			}
-
-			wp_redirect(admin_url('admin.php?page=accredible_certificates/certificates-admin.php'));
+			
+			wp_redirect(admin_url('admin.php?page=accredible-certificates/certificates-admin.php'));
 		}
 
 
