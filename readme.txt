@@ -46,5 +46,8 @@ Visit https://accredible.com to obtain a free API key.
 
 == Changelog ==
 
-= 0.1 =
+= 0.1.1 =
+Bug fixes.
+
+= 0.1.0 =
 First version.
