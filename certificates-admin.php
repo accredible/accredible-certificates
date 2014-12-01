@@ -51,7 +51,6 @@
 
 			    	echo "<h1>" . get_the_title($course_id) . "</h1>";
 
-
 			    	if(empty($course['users'])){
 			    		echo "<p>This course doesn't have any students.</p>";
 			    	} else {
@@ -61,11 +60,13 @@
 					    	echo "<tr>";
 					    		echo "<th>Student Name</th>";
 					    		echo "<th>Student Email</th>";
+					    		echo "<th>Course Progress</th>";
 					    		echo "<th>Issue certificate?</th>";
 					    	echo "</tr>";
 					    	echo "</thead>";
 
 					    	foreach ($course['users'] as $user_id) {
+
 					    		$user = get_user_by("id", $user_id);
 						    	echo "<tr>";
 						    		echo "<td>";
@@ -77,6 +78,14 @@
 						    		echo "</td>";
 						    		echo "<td>";
 						    			echo $user->user_email;    				
+						    		echo "</td>";
+						    		echo "<td>";
+						    			$completed = ThemexCore::getUserRelations($user_id, $course_id, 'certificate');
+						    			if(empty($completed)){
+						    				echo "Incomplete";
+						    			} else {
+						    				echo "Complete";
+						    			}
 						    		echo "</td>";
 						    		echo "<td>";
 						    			
@@ -122,7 +131,6 @@
 
 			    echo '<br><br><input type="submit" value="Create Certificates" class="button button-primary" />';
 				echo '</form>';
-
 			}
 
 		    
