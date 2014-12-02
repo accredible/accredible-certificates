@@ -42,6 +42,12 @@ Note: By default your Accredible account is in Sandbox mode and any certificates
 
 Visit https://accredible.com to obtain a free API key.
 
+## Screenshots
+
+![1. This is a dynamic, digital certificate](screenshot-1.png)
+![2. This is the admin interface](screenshot-2.png)
+![3. You can automatically issue a certificate when a student completes a course](screenshot-3.png)
+
 ## Changelog
 
 #### 0.1.2

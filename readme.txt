@@ -44,6 +44,12 @@ Automatically creating certificates:
 
 Visit https://accredible.com to obtain a free API key.
 
+== Screenshots ==
+
+1. This is a dynamic, digital certificate
+2. This is the admin interface
+3. You can automatically issue a certificate when a student completes a course
+
 == Changelog ==
 
 = 0.1.2 =
