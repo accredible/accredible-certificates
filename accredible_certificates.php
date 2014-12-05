@@ -3,7 +3,7 @@
 Plugin Name: Accredible Certificates
 Plugin URI: https://github.com/accredible/wp_plugin
 Description: Issue Accredible course certificates for Academy Theme.
-Version: 0.1.2
+Version: 0.1.3
 Author: Accredible
 Author URI: https://www.accredible.com
 License: GPL2
@@ -124,7 +124,7 @@ if(!class_exists('Accredible_Certificate'))
 				}
 
 				if($issue){
-					Accredible_Certificate::create_certificate($recipient_name, $user->user_email, get_the_title($completion->comment_post_ID), $completion->comment_post_ID, get_the_excerpt());				
+					Accredible_Certificate::create_certificate($recipient_name, $user->user_email, get_the_title($completion->comment_post_ID), $completion->comment_post_ID, get_the_excerpt(), get_permalink($completion->comment_post_ID));				
 				}    
 				
 				wp_reset_postdata( $post );
@@ -138,7 +138,7 @@ if(!class_exists('Accredible_Certificate'))
 		/*
 		 * Create Accredible certificate
 		 */
-		public static function create_certificate($recipient_name, $recipient_email, $course_name, $course_id, $course_description)
+		public static function create_certificate($recipient_name, $recipient_email, $course_name, $course_id, $course_description, $course_link)
 		{
 			$curl = curl_init('https://api.accredible.com/v1/credentials');
 			$data = array(  
@@ -149,6 +149,7 @@ if(!class_exists('Accredible_Certificate'))
 			        ),
 			        "name" => $course_name,
 			        "description" => $course_description,
+			        "course_link" => $course_link,
 			        "achievement_id" => $course_id//,
 			        // "evidence_items" => array(  
 			        //     array(
@@ -201,6 +202,7 @@ if(!class_exists('Accredible_Certificate'))
 			$course_name = $_POST['course_name'];
 			$course_id = $_POST['course_id'];
 			$course_description = $_POST['course_description'];
+			$course_link = $_POST['course_link'];
 			$issue_certificate = $_POST['issue_certificate'];
 
 			foreach( $recipient_name as $key => $name ) {
@@ -208,7 +210,7 @@ if(!class_exists('Accredible_Certificate'))
 		        // echo $recipient_email[$key];
 		        // echo $course_name[$key];
 		        if(isset($issue_certificate[$key])){
-		        	$result = self::create_certificate($name, $recipient_email[$key], $course_name[$key], $course_id[$key], $course_description[$key]);
+		        	$result = self::create_certificate($name, $recipient_email[$key], $course_name[$key], $course_id[$key], $course_description[$key], $course_link[$key]);
 		        	//print_r($result);
 		        }
 			}

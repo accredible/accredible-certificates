@@ -104,6 +104,7 @@
 						    				echo '<input type="hidden" name="recipient_name[]" value="' . $user->display_name . '" />';
 							    			echo '<input type="hidden" name="recipient_email[]" value="' . $user->user_email . '" />';
 							    			echo '<input type="hidden" name="course_name[]" value="' . get_the_title($course_id) . '" />';
+							    			echo '<input type="hidden" name="course_link[]" value="' . get_permalink($course_id) . '" />';
 							    			echo '<input type="hidden" name="course_id[]" value="' . $course_id . '" />';
 							    			global $post;
 										    $post = get_post($course_id);
