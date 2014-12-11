@@ -218,6 +218,13 @@ if(!class_exists('Accredible_Certificate'))
 			wp_redirect(admin_url('admin.php?page=accredible-certificates/certificates-admin.php'));
 		}
 
+		public static function get_courses($user){
+			$themexCourse = new ThemexCourse($user);
+
+			$courses = ThemexCourse::getCourses($user);
+			return $courses;
+		}
+
 
 	} // END class accredible_certificates
 } // END if(!class_exists('accredible_certificates'))

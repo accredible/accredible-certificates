@@ -17,11 +17,14 @@
 			$themexCourse = new ThemexCourse();
 
 			//could be this
-			$user = wp_get_current_user();
+			
 		    //$courses = ThemexCourse::getCourses(wp_get_current_user());
-		    $courses = ThemexCourse::getCourses($user);
+		    //$courses = ThemexCourse::getCourses($user);
 
 		    $accredible_certificates = new Accredible_Certificate();
+
+		    $user = wp_get_current_user();
+		    $courses = @Accredible_Certificate::get_courses($user);
 		    
 			//If there isn't any courses then tell the user
 			if(empty($courses)){
