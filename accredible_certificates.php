@@ -197,6 +197,7 @@ if(!class_exists('Accredible_Certificate'))
 		}
 
 		public static function wpse10500_action() {
+
 			$recipient_name = $_POST['recipient_name'];
 			$recipient_email = $_POST['recipient_email'];
 			$course_name = $_POST['course_name'];
@@ -205,15 +206,19 @@ if(!class_exists('Accredible_Certificate'))
 			$course_link = $_POST['course_link'];
 			$issue_certificate = $_POST['issue_certificate'];
 
-			foreach( $recipient_name as $key => $name ) {
-		        // echo $name;
-		        // echo $recipient_email[$key];
-		        // echo $course_name[$key];
-		        if(isset($issue_certificate[$key])){
-		        	$result = self::create_certificate($name, $recipient_email[$key], $course_name[$key], $course_id[$key], $course_description[$key], $course_link[$key]);
-		        	//print_r($result);
+			if(is_array($recipient_name)){
+				foreach( $recipient_name as $key => $name ) {
+			        if(isset($issue_certificate[$key])){
+			        	$result = self::create_certificate($name, $recipient_email[$key], $course_name[$key], $course_id[$key], $course_description[$key], $course_link[$key]);
+			        }
+				}
+
+			} else {
+				//handle the case where PHP doesn't post as an Array
+				if(isset($issue_certificate)){
+		        	$result = self::create_certificate($name, $recipient_email, $course_name, $course_id, $course_description, $course_link);
 		        }
-			}
+			}			
 
 			wp_redirect(admin_url('admin.php?page=accredible-certificates/certificates-admin.php'));
 		}
