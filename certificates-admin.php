@@ -42,7 +42,7 @@
 			    	echo "<p>To automatically issue certificates upon course completition please amend your settings.</p>";
 			    }
 
-				echo '<form method="POST" action=' . admin_url( 'admin.php' ) . '>';
+				echo '<form method="POST" action="' . admin_url( 'admin.php' ) . '">';
 				echo '<input type="hidden" name="action" value="wpse10500" />';
 
 				//display each course info
