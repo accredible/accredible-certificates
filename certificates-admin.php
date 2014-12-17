@@ -1,3 +1,9 @@
+<script type="text/javascript">
+function disableCertificateSubmitButton() {
+    document.getElementById("create_certificates").disabled = 'true';
+}
+</script>
+
 <div class="wrap">
 <?php
 
@@ -104,15 +110,15 @@
 						    			}
 
 						    			if($no_cert){
-						    				echo '<input type="hidden" name="recipient_name[]" value="' . $user->display_name . '" />';
-							    			echo '<input type="hidden" name="recipient_email[]" value="' . $user->user_email . '" />';
-							    			echo '<input type="hidden" name="course_name[]" value="' . get_the_title($course_id) . '" />';
-							    			echo '<input type="hidden" name="course_link[]" value="' . get_permalink($course_id) . '" />';
-							    			echo '<input type="hidden" name="course_id[]" value="' . $course_id . '" />';
+						    				echo '<input type="hidden" name="recipient_name[]" value="' . esc_attr($user->display_name) . '" />';
+							    			echo '<input type="hidden" name="recipient_email[]" value="' . esc_attr($user->user_email) . '" />';
+							    			echo '<input type="hidden" name="course_name[]" value="' . esc_attr(get_the_title($course_id)) . '" />';
+							    			echo '<input type="hidden" name="course_link[]" value="' . esc_attr(get_permalink($course_id)) . '" />';
+							    			echo '<input type="hidden" name="course_id[]" value="' . esc_attr($course_id) . '" />';
 							    			global $post;
 										    $post = get_post($course_id);
 										    setup_postdata( $post, $more_link_text, $stripteaser );
-										    echo '<input type="hidden" name="course_description[]" value="' . get_the_excerpt() . '" />';
+										    echo '<input type="hidden" name="course_description[]" value="' . esc_attr(get_the_excerpt()) . '" />';
 										    wp_reset_postdata( $post );
 				    						echo '<input type="checkbox" name="issue_certificate[]">';
 						    			} else {
@@ -133,7 +139,7 @@
 
 			    }
 
-			    echo '<br><br><input type="submit" value="Create Certificates" class="button button-primary" />';
+			    echo '<br><br><input type="submit" value="Create Certificates" id="create_certificates" class="button button-primary" onclick="setTimeout(disableCertificateSubmitButton, 1);" />';
 				echo '</form>';
 			}
 
