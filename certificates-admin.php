@@ -105,35 +105,19 @@ function disableCertificateSubmitButton() {
 						}
 						echo "</td>";
 						echo "<td>";
+						    			
 						$no_cert = True;
-     
-                        if(is_array($all_certificates)){
+                         
+
+					    if(is_array($all_certificates)){
 						    foreach ($all_certificates as $key => $cert) {
 							    if($cert->recipient->email == $user->user_email){
 							    	$no_cert = False;
 							    	$cert_id = $cert->id;
 							    	$approve = $cert->approve;
-
 							    }
 							}
-						} 			
-						certificate_display($no_cert, $cert_id, $approve);
-                        echo "</td>";
-						echo "</tr>";
-					   
-				}
-
-				    	echo "</table>";
-			}
-
-	    }
-
-	    echo '<br><br><input type="submit" value="Create Certificates" id="create_certificates" class="button button-primary" onclick="setTimeout(disableCertificateSubmitButton, 1);" />';
-		echo '</form>';
-	}
-  }
-  
-  function certificate_display($no_cert, $cert_id, $approve) {
+						}
 
 						if($no_cert){
 						    echo '<input type="hidden" name="recipient_name[]" value="' . esc_attr($user->display_name) . '" />';
@@ -156,6 +140,18 @@ function disableCertificateSubmitButton() {
 						    				
 						}
 						    			
+						echo "</td>";
+						echo "</tr>";
+				}
+
+				    	echo "</table>";
+			}
+
+	    }
+
+	    echo '<br><br><input type="submit" value="Create Certificates" id="create_certificates" class="button button-primary" onclick="setTimeout(disableCertificateSubmitButton, 1);" />';
+		echo '</form>';
+	}
   }
 
 ?>   
