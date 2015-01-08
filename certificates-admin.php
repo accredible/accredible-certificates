@@ -106,18 +106,23 @@ function disableCertificateSubmitButton() {
 						echo "</td>";
 						echo "<td>";
 						    			
-						$no_cert = True;
-                         
+						$return_array = $accredible_certificates::find_certificate($all_certificates, $user);
 
-					    if(is_array($all_certificates)){
-						    foreach ($all_certificates as $key => $cert) {
-							    if($cert->recipient->email == $user->user_email){
-							    	$no_cert = False;
-							    	$cert_id = $cert->id;
-							    	$approve = $cert->approve;
-							    }
-							}
-						}
+						$no_cert = $return_array[0];
+						$cert_id = $return_array[1];
+						$approve = $return_array[2];
+						//$no_cert = True;
+                         
+          
+					    //if(is_array($all_certificates)){
+						  //  foreach ($all_certificates as $key => $cert) {
+							//    if($cert->recipient->email == $user->user_email){
+							  //  	$no_cert = False;
+							    //	$cert_id = $cert->id;
+							    //	$approve = $cert->approve;
+							    //}
+							//}
+						//}
 
 						if($no_cert){
 						    echo '<input type="hidden" name="recipient_name[]" value="' . esc_attr($user->display_name) . '" />';

@@ -51,6 +51,10 @@ if(!class_exists('Accredible_Certificate'))
  			add_action( 'wp_enqueue_scripts', array( $this, 'acc_load_plugin_css' ) );		
 
  			add_action( 'hourly_certificate_issuance', array( $this, 'issue_certificates_automatically') );
+
+ 			add_action('get_url', array($this, 'get_url'));
+
+ 			add_action('find_certificate', array($this, 'find_certificate'));
  			
 		} // END public function __construct
 
@@ -190,6 +194,7 @@ if(!class_exists('Accredible_Certificate'))
 			$result = json_decode( curl_exec($curl) );
 			curl_close($curl);
 			return $result;
+			//return "ffff";
 		}
 
 		function register_certificates_admin_menu_page(){
@@ -230,6 +235,43 @@ if(!class_exists('Accredible_Certificate'))
 			return $courses;
 		}
 
+		public static function hasCertificate($course_id, $user_id){
+         
+          $user = get_user_by("id", $user_id);
+          $all_certificates = Accredible_Certificate::certificates($course_id);
+          //$all_certificates = certificates($course_id);
+          $all_certificates = $all_certificates->credentials;
+          $cert_exit = False;
+          if(is_array($all_certificates)){
+			foreach ($all_certificates as $key => $cert) {
+			  if($cert->recipient->email == $user->user_email){
+			    $cert_exit = True;
+			    $cert_id = $cert->id;
+			    $approve = $cert->approve;
+			    if($approve){
+			      return $cert_id;
+			    }else{
+                  return $approve;
+			    }
+			  }
+		    }
+		  }
+	      return $cert_exit;
+		}
+        
+        public static function find_certificate($all_certificates, $user){
+           $no_cert = True;
+            if(is_array($all_certificates)){
+			foreach ($all_certificates as $key => $cert) {
+			  if($cert->recipient->email == $user->user_email){
+				$no_cert = False;
+				$cert_id = $cert->id;
+			    $approve = $cert->approve;
+			    }
+			  }
+			}
+			return array($no_cert, $cert_id, $approve);
+        }
 
 	} // END class accredible_certificates
 } // END if(!class_exists('accredible_certificates'))
