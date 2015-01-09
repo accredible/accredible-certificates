@@ -83,8 +83,10 @@ function disableCertificateSubmitButton() {
 					echo "</thead>";
 
 					foreach ($course['users'] as $user_id) {
-
+                      
 					    $user = get_user_by("id", $user_id);
+					    
+                        
 						echo "<tr>";
 						echo "<td>";
 						if($user->first_name && $user->last_name ){
@@ -97,6 +99,7 @@ function disableCertificateSubmitButton() {
 						echo $user->user_email;    				
 						echo "</td>";
 						echo "<td>";
+                        
 						$completed = ThemexCore::getUserRelations($user_id, $course_id, 'certificate');
 						if(empty($completed)){
 						    echo "Incomplete";
@@ -106,30 +109,35 @@ function disableCertificateSubmitButton() {
 						echo "</td>";
 						echo "<td>";
 						    			
-						$return_array = $accredible_certificates::find_certificate($all_certificates, $user);
+						//$return_array = $accredible_certificates::find_certificate($all_certificates, $user);
 
-						$no_cert = $return_array[0];
-						$cert_id = $return_array[1];
-						$approve = $return_array[2];
-						//$no_cert = True;
+						//$no_cert = $return_array[0];
+						//$cert_id = $return_array[1];
+						//$approve = $return_array[2];
+						$no_cert = True;
                          
           
-					    //if(is_array($all_certificates)){
-						  //  foreach ($all_certificates as $key => $cert) {
-							//    if($cert->recipient->email == $user->user_email){
-							  //  	$no_cert = False;
-							    //	$cert_id = $cert->id;
-							    //	$approve = $cert->approve;
-							    //}
-							//}
-						//}
-
+					    if(is_array($all_certificates)){
+						    foreach ($all_certificates as $key => $cert) {
+							    if($cert->recipient->email == $user->user_email){
+							    	$no_cert = False;
+							    	$cert_id = $cert->id;
+							    	$approve = $cert->approve;
+							    }
+							}
+						}
+                        
+						 
 						if($no_cert){
+							
+							$grade = ThemexCourse::getGrade($course_id, $user_id);
 						    echo '<input type="hidden" name="recipient_name[]" value="' . esc_attr($user->display_name) . '" />';
 					        echo '<input type="hidden" name="recipient_email[]" value="' . esc_attr($user->user_email) . '" />';
 						    echo '<input type="hidden" name="course_name[]" value="' . esc_attr(get_the_title($course_id)) . '" />';
 					        echo '<input type="hidden" name="course_link[]" value="' . esc_attr(get_permalink($course_id)) . '" />';
 					        echo '<input type="hidden" name="course_id[]" value="' . esc_attr($course_id) . '" />';
+                            echo '<input type="hidden" name="grade[]" value="' . esc_attr($grade) . '" />';
+					        
 					        global $post;
 						    $post = get_post($course_id);
 						    setup_postdata( $post, $more_link_text, $stripteaser );

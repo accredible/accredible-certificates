@@ -105,7 +105,9 @@ if(!class_exists('Accredible_Certificate'))
 
 				$course = ThemexCourse::getCourse($completion->comment_post_ID, true);
 
+
 				$user = get_user_by("id", $completion->user_id);
+				$grade = ThemexCourse::getGrade($completion->comment_post_ID, $completion->user_id);
 
 				if($user->first_name && $user->last_name ){
     				$recipient_name = $user->first_name . ' ' . $user->last_name;
@@ -126,9 +128,9 @@ if(!class_exists('Accredible_Certificate'))
 						$issue = false;
 					}
 				}
-
+               
 				if($issue){
-					Accredible_Certificate::create_certificate($recipient_name, $user->user_email, get_the_title($completion->comment_post_ID), $completion->comment_post_ID, get_the_excerpt(), get_permalink($completion->comment_post_ID));				
+					Accredible_Certificate::create_certificate($recipient_name, $user->user_email, get_the_title($completion->comment_post_ID), $completion->comment_post_ID, get_the_excerpt(), get_permalink($completion->comment_post_ID), $grade);				
 				}    
 				
 				wp_reset_postdata( $post );
@@ -142,10 +144,13 @@ if(!class_exists('Accredible_Certificate'))
 		/*
 		 * Create Accredible certificate
 		 */
-		public static function create_certificate($recipient_name, $recipient_email, $course_name, $course_id, $course_description, $course_link)
+		public static function create_certificate($recipient_name, $recipient_email, $course_name, $course_id, $course_description, $course_link, $grade)
 		{
 			$curl = curl_init('https://api.accredible.com/v1/credentials');
-			$data = array(  
+			
+		    if (empty($grade))
+		    {			
+				$data = array(  
 			    "credential" => array( 
 			        "recipient" => array( 
 			            "name" => $recipient_name,
@@ -157,8 +162,9 @@ if(!class_exists('Accredible_Certificate'))
 			        "achievement_id" => $course_id//,
 			        // "evidence_items" => array(  
 			        //     array(
-			        //         "description" => "Report card including all grades", 
-			        //         "url" => "http://www.awesomelearningexample.com/johndoe/reportcard"
+			        //         "description" => "Final grade of course",
+			        //         "category" => "grade",
+			        //         "sring_object" => $grade
 			        //     )
 			        // ),
 			        // "references" => array(  
@@ -173,6 +179,39 @@ if(!class_exists('Accredible_Certificate'))
 			        // )
 			    ) 
 			);
+            }
+            else{
+              $data = array(  
+			    "credential" => array( 
+			        "recipient" => array( 
+			            "name" => $recipient_name,
+			            "email" => $recipient_email
+			        ),
+			        "name" => $course_name,
+			        "description" => $course_description,
+			        "course_link" => $course_link,
+			        "grade" => $grade,
+			        "achievement_id" => $course_id,
+			        "evidence_items" => array(  
+			          array(
+			             "description" => "Final grade of course",
+			             "category" => "grade",
+			             "string_object" => $grade
+			             )
+			         )//,
+			        // "references" => array(  
+			        //     array(
+			        //         "description" => "John worked hard on this course and provided exemplary understanding of the core concepts", 
+			        //         "referee" => array( 
+			        //             "name" => "Jane Doe",
+			        //             "email" => "person2@example.com"
+			        //         ), 
+			        //         "relationship" => "managed"
+			        //     )
+			        // )
+			    ) 
+			);
+            }
 			curl_setopt($curl, CURLOPT_POST, 1);
 			curl_setopt($curl, CURLOPT_POSTFIELDS, http_build_query($data));
 			curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
@@ -210,18 +249,19 @@ if(!class_exists('Accredible_Certificate'))
 			$course_description = $_POST['course_description'];
 			$course_link = $_POST['course_link'];
 			$issue_certificate = $_POST['issue_certificate'];
+			$grade = $_POST['grade'];
 
 			if(is_array($recipient_name)){
 				foreach( $recipient_name as $key => $name ) {
 			        if(isset($issue_certificate[$key])){
-			        	$result = self::create_certificate($name, $recipient_email[$key], $course_name[$key], $course_id[$key], $course_description[$key], $course_link[$key]);
+			        	$result = self::create_certificate($name, $recipient_email[$key], $course_name[$key], $course_id[$key], $course_description[$key], $course_link[$key], $grade[$key]);
 			        }
 				}
 
 			} else {
 				//handle the case where PHP doesn't post as an Array
 				if(isset($issue_certificate)){
-		        	$result = self::create_certificate($name, $recipient_email, $course_name, $course_id, $course_description, $course_link);
+		        	$result = self::create_certificate($name, $recipient_email, $course_name, $course_id, $course_description, $course_link, $grade);
 		        }
 			}			
 
