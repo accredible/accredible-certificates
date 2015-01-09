@@ -264,8 +264,9 @@ if(!class_exists('Accredible_Certificate'))
 		        	$result = self::create_certificate($name, $recipient_email, $course_name, $course_id, $course_description, $course_link, $grade);
 		        }
 			}			
-             var_dump($_POST);
-			//wp_redirect(admin_url('admin.php?page=accredible-certificates/certificates-admin.php'));
+            
+            //var_dump($_POST);
+			wp_redirect(admin_url('admin.php?page=accredible-certificates/certificates-admin.php'));
 		}
 
 		public static function get_courses($user){
