@@ -1,6 +1,19 @@
 <script type="text/javascript">
 function disableCertificateSubmitButton() {
     document.getElementById("create_certificates").disabled = 'true';
+
+}
+
+function disableUnHide() {
+  var elements = document.getElementsByClassName("test");
+  var second_elements = document.getElementsByClassName("test1");
+  // loop over them all
+  for (var i=0; i<elements.length; i++) {
+     if(elements[i].checked){ 
+    	second_elements[i].disabled = true;
+    }
+  }
+  
 }
 </script>
 
@@ -109,23 +122,23 @@ function disableCertificateSubmitButton() {
 						echo "</td>";
 						echo "<td>";
 						    			
-						//$return_array = $accredible_certificates::find_certificate($all_certificates, $user);
+						$return_array = $accredible_certificates::find_certificate($all_certificates, $user);
 
-						//$no_cert = $return_array[0];
-						//$cert_id = $return_array[1];
-						//$approve = $return_array[2];
-						$no_cert = True;
+						$no_cert = $return_array[0];
+						$cert_id = $return_array[1];
+						$approve = $return_array[2];
+						//$no_cert = True;
                          
           
-					    if(is_array($all_certificates)){
-						    foreach ($all_certificates as $key => $cert) {
-							    if($cert->recipient->email == $user->user_email){
-							    	$no_cert = False;
-							    	$cert_id = $cert->id;
-							    	$approve = $cert->approve;
-							    }
-							}
-						}
+					   // if(is_array($all_certificates)){
+						 //   foreach ($all_certificates as $key => $cert) {
+							//    if($cert->recipient->email == $user->user_email){
+							  //  	$no_cert = False;
+							    //	$cert_id = $cert->id;
+							    //	$approve = $cert->approve;
+							    //}
+							//}
+					//	}
                         
 						 
 						if($no_cert){
@@ -143,7 +156,8 @@ function disableCertificateSubmitButton() {
 						    setup_postdata( $post, $more_link_text, $stripteaser );
 						    echo '<input type="hidden" name="course_description[]" value="' . esc_attr(get_the_excerpt()) . '" />';
 					        wp_reset_postdata( $post );
-				    	    echo '<input type="checkbox" name="issue_certificate[]">';
+				    	    echo '<input class="test" id="test" type="checkbox" name="issue_certificate[]">';
+				    	    echo '<input class="test1" id="test1" type="hidden" value="0" name="issue_certificate[]">';
 						} else {
 						    if($approve){
 						    		echo '<a target="_blank" href="https://www.accredible.com/#/' . $cert_id . '">' . $cert_id . '</a>';
@@ -152,7 +166,7 @@ function disableCertificateSubmitButton() {
 						    	}
 						    				
 						}
-						    			
+					    			
 						echo "</td>";
 						echo "</tr>";
 				}
@@ -161,8 +175,8 @@ function disableCertificateSubmitButton() {
 			}
 
 	    }
-
-	    echo '<br><br><input type="submit" value="Create Certificates" id="create_certificates" class="button button-primary" onclick="setTimeout(disableCertificateSubmitButton, 1);" />';
+        
+	    echo '<br><br><input type="submit" value="Create Certificates" id="create_certificates" class="button button-primary" onclick="setTimeout(disableCertificateSubmitButton, 1);disableUnHide();" />';
 		echo '</form>';
 	}
   }
