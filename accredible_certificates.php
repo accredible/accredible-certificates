@@ -146,7 +146,7 @@ if(!class_exists('Accredible_Certificate'))
 		 */
 		public static function create_certificate($recipient_name, $recipient_email, $course_name, $course_id, $course_description, $course_link, $grade)
 		{
-			$curl = curl_init('https://staging.accredible.com/v1/credentials');
+			$curl = curl_init('https://api.accredible.com/v1/credentials');
 			
 		    if (empty($grade))
 		    {			
@@ -227,7 +227,7 @@ if(!class_exists('Accredible_Certificate'))
 		 */
 		public static function certificates($course_id)
 		{
-			$curl = curl_init('https://staging.accredible.com/v1/credentials?achievement_id=' . $course_id . '&full_view=true');
+			$curl = curl_init('https://api.accredible.com/v1/credentials?achievement_id=' . $course_id . '&full_view=true');
 			curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
 			curl_setopt( $curl, CURLOPT_HTTPHEADER, array( 'Authorization: Token token="' . get_option('api_key') . '"' ) );
 			$result = json_decode( curl_exec($curl) );
