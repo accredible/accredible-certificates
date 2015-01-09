@@ -26,9 +26,11 @@ Currently the plugin is only compatible with Academy Theme.
 Note: By default your Accredible account is in Sandbox mode and any certificates you create will need to be manually published via the Accredible API Dashboard before being emailed to students.
 
 If you're using Academy Theme and would like students to be able to access certificates then please:
+
 1. Access the Theme Editor from the Administration > Appearance > Editor menu
 2. Open module_form.php from the right sidebar.
 3. Replace the entire file contents with:
+
 
 ```php
 <form action="<?php echo themex_url(true, ThemexCore::getURL('register')); ?>" method="POST">
@@ -65,7 +67,7 @@ If you're using Academy Theme and would like students to be able to access certi
 </form>
 ```
 
-4. Click 'Update file'
+Then click 'Update file'
 
 ## How to use
 
@@ -93,6 +95,9 @@ Visit https://accredible.com to obtain a free API key.
 ![3. You can automatically issue a certificate when a student completes a course](screenshot-3.png)
 
 ## Changelog
+
+#### 0.1.5
+More bug fixes and improvements.
 
 #### 0.1.4
 Bug fixes and improvements.
