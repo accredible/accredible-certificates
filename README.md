@@ -17,7 +17,7 @@ Currently the plugin is only compatible with Academy Theme.
 
 ## Installation
 
-1. Visit https://accredible.com to obtain a free API key
+1. Visit https://accredible.com to obtain an API key
 2. Ensure you have the Wordpress Academy Theme active
 3. Install the plugin
 4. Activate the plugin through the 'Plugins' menu in WordPress
