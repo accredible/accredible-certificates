@@ -11,7 +11,7 @@ This plugin allows you to issue dynamic, digital certificates for online learnin
 
 ## Description
 
-This module enables you to issue dynamic, digital certificates for free using the Accredible API on your Wordpress instance. They act as a replacement for the PDF certificates normally generated for your courses. An example output certificate can be viewed at: [https://accredible.com/example](https://accredible.com/example).
+This module enables you to issue dynamic, digital certificates using the Accredible API on your Wordpress instance. They act as a replacement for the PDF certificates normally generated for your courses. An example output certificate can be viewed at: [https://accredible.com/example](https://accredible.com/example).
 
 Currently the plugin is only compatible with Academy Theme.
 
