@@ -3,13 +3,13 @@
 Plugin Name: Accredible Certificates
 Plugin URI: https://github.com/accredible/wp_plugin
 Description: Issue Accredible course certificates for Academy Theme.
-Version: 0.1.5
+Version: 0.2.0
 Author: Accredible
 Author URI: https://www.accredible.com
 License: GPL2
 */
 /*
-Copyright 2014 Accredible
+Copyright 2015 Accredible
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License, version 2, as
@@ -24,6 +24,9 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
+
+// For composer dependencies
+require 'vendor/autoload.php';
 
 if(!class_exists('Accredible_Certificate'))
 {
@@ -146,80 +149,54 @@ if(!class_exists('Accredible_Certificate'))
 		 */
 		public static function create_certificate($recipient_name, $recipient_email, $course_name, $course_id, $course_description, $course_link, $grade)
 		{
-			$curl = curl_init('https://api.accredible.com/v1/credentials');
 			
-		    if (empty($grade))
+			if (empty($grade))
 		    {			
 				$data = array(  
-			    "credential" => array( 
-			        "recipient" => array( 
-			            "name" => $recipient_name,
-			            "email" => $recipient_email
-			        ),
-			        "name" => $course_name,
-			        "description" => $course_description,
-			        "course_link" => $course_link,
-			        "achievement_id" => $course_id//,
-			        // "evidence_items" => array(  
-			        //     array(
-			        //         "description" => "Final grade of course",
-			        //         "category" => "grade",
-			        //         "sring_object" => $grade
-			        //     )
-			        // ),
-			        // "references" => array(  
-			        //     array(
-			        //         "description" => "John worked hard on this course and provided exemplary understanding of the core concepts", 
-			        //         "referee" => array( 
-			        //             "name" => "Jane Doe",
-			        //             "email" => "person2@example.com"
-			        //         ), 
-			        //         "relationship" => "managed"
-			        //     )
-			        // )
-			    ) 
-			);
+				    "credential" => array( 
+				        "recipient" => array( 
+				            "name" => $recipient_name,
+				            "email" => $recipient_email
+				        ),
+				        "name" => $course_name,
+				        "description" => $course_description,
+				        "course_link" => $course_link,
+				        "achievement_id" => $course_id
+				    ) 
+				);
             }
             else{
-              $data = array(  
-			    "credential" => array( 
-			        "recipient" => array( 
-			            "name" => $recipient_name,
-			            "email" => $recipient_email
-			        ),
-			        "name" => $course_name,
-			        "description" => $course_description,
-			        "course_link" => $course_link,
-			        "grade" => $grade,
-			        "achievement_id" => $course_id,
-			        "evidence_items" => array(  
-			          array(
-			             "description" => "Final grade of course",
-			             "category" => "grade",
-			             "string_object" => $grade
-			             )
-			         )//,
-			        // "references" => array(  
-			        //     array(
-			        //         "description" => "John worked hard on this course and provided exemplary understanding of the core concepts", 
-			        //         "referee" => array( 
-			        //             "name" => "Jane Doe",
-			        //             "email" => "person2@example.com"
-			        //         ), 
-			        //         "relationship" => "managed"
-			        //     )
-			        // )
-			    ) 
-			);
+                $data = array(  
+				    "credential" => array( 
+				        "recipient" => array( 
+				            "name" => $recipient_name,
+				            "email" => $recipient_email
+				        ),
+				        "name" => $course_name,
+				        "description" => $course_description,
+				        "course_link" => $course_link,
+				        "grade" => $grade,
+				        "achievement_id" => $course_id,
+				        "evidence_items" => array(  
+				          array(
+				             "description" => "Final grade of course",
+				             "category" => "grade",
+				             "string_object" => $grade
+				             )
+				         )
+				    ) 
+			    );
             }
-			curl_setopt($curl, CURLOPT_POST, 1);
-			curl_setopt($curl, CURLOPT_POSTFIELDS, http_build_query($data));
-			curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
-			curl_setopt( $curl, CURLOPT_HTTPHEADER, array( 'Authorization: Token token="' . get_option('api_key') . '"' ) );
-			$result = json_decode( curl_exec($curl) );
-			curl_close($curl);
+
+			$client = new GuzzleHttp\Client();
+
+			$result = $client->post('https://api.accredible.com/v1/credentials', [
+			    'headers' =>  ['Authorization' => 'Token token="'.get_option('api_key').'"'],
+			    'json' => $data
+			]);
+
+			//$result = json_decode($res->getBody());
 			$result_string = print_r($result, true);
-			//print_r($result);
 		}
 
 		/*
@@ -227,17 +204,14 @@ if(!class_exists('Accredible_Certificate'))
 		 */
 		public static function certificates($course_id)
 		{
-			$curl = curl_init('https://api.accredible.com/v1/credentials?achievement_id=' . $course_id . '&full_view=true');
-			curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
-			curl_setopt( $curl, CURLOPT_HTTPHEADER, array( 'Authorization: Token token="' . get_option('api_key') . '"' ) );
-			$result = json_decode( curl_exec($curl) );
-			curl_close($curl);
+			$client = new GuzzleHttp\Client();
+			$res = $client->get('https://api.accredible.com/v1/credentials?achievement_id=' . $course_id . '&full_view=true', ['headers' =>  ['Authorization' => 'Token token="'.get_option('api_key').'"']]);
+			$result = json_decode($res->getBody());
 			return $result;
-			//return "ffff";
 		}
 
 		function register_certificates_admin_menu_page(){
-		    add_menu_page( 'Certificates', 'Certificates', 'edit_post', 'accredible-certificates/certificates-admin.php', '', 'dashicons-tablet', 40 );
+		    add_menu_page( 'Certificates', 'Certificates', 'edit_posts', 'accredible-certificates/certificates-admin.php', '', 'dashicons-tablet', 40 );
 		}
 
 		public static function wpse10500_action() {
