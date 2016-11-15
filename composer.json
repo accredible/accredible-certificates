@@ -1,5 +1,5 @@
 {
 	"require": {
-		"accredible/acms-api-php": "dev-master"
+		"accredible/acms-api-php": "0.1.1"
 	}
 }
