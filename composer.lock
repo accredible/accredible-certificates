@@ -4,20 +4,59 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "fc2ebae6d72dfb2c14c436760bf42dff",
+    "hash": "3c233a99aee5343e9c88aeee7d80898d",
+    "content-hash": "43ceb19103bc851d0811a59fc0370d28",
     "packages": [
         {
-            "name": "guzzlehttp/guzzle",
-            "version": "4.2.3",
+            "name": "accredible/acms-api-php",
+            "version": "dev-master",
             "source": {
                 "type": "git",
-                "url": "https://github.com/guzzle/guzzle.git",
-                "reference": "66fd916e9f9130bc22c51450476823391cb2f67c"
+                "url": "https://github.com/accredible/acms-php-api.git",
+                "reference": "1ab58ece2af6bdd91dc1c9748b78d12fe562d991"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/guzzle/guzzle/zipball/66fd916e9f9130bc22c51450476823391cb2f67c",
-                "reference": "66fd916e9f9130bc22c51450476823391cb2f67c",
+                "url": "https://api.github.com/repos/accredible/acms-php-api/zipball/1ab58ece2af6bdd91dc1c9748b78d12fe562d991",
+                "reference": "1ab58ece2af6bdd91dc1c9748b78d12fe562d991",
+                "shasum": ""
+            },
+            "require": {
+                "guzzlehttp/guzzle": "~4.0",
+                "php": ">=5.3"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "ACMS\\": "src",
+                    "ACMS\\Tests\\": "tests"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Alan Heppenstall",
+                    "email": "alan@accredible.com"
+                }
+            ],
+            "description": "PHP wrappers for Accredible ACMS API",
+            "time": "2016-11-11 09:13:52"
+        },
+        {
+            "name": "guzzlehttp/guzzle",
+            "version": "4.2.4",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/guzzle/guzzle.git",
+                "reference": "13a8e5acff26b0a87d353042170b48976da004a1"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/guzzle/guzzle/zipball/13a8e5acff26b0a87d353042170b48976da004a1",
+                "reference": "13a8e5acff26b0a87d353042170b48976da004a1",
                 "shasum": ""
             },
             "require": {
@@ -69,7 +108,7 @@
                 "rest",
                 "web service"
             ],
-            "time": "2014-10-05 19:29:14"
+            "time": "2016-07-15 17:44:18"
         },
         {
             "name": "guzzlehttp/streams",
@@ -128,7 +167,9 @@
     "packages-dev": [],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {
+        "accredible/acms-api-php": 20
+    },
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": [],

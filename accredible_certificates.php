@@ -28,6 +28,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 // For composer dependencies
 require 'vendor/autoload.php';
 
+use ACMS\Api;
+
 if(!class_exists('Accredible_Certificate'))
 {
 	class Accredible_Certificate
