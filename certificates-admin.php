@@ -1,3 +1,31 @@
+<?php
+require_once 'users_list.php';
+
+?>
+		<div class="wrap">
+			<h2>Wordpress Users</h2>
+			<p>123456789</p>
+			<div id="poststuff">
+				<div id="post-body" class="metabox-holder">
+					<div id="post-body-content">
+						<div class="meta-box-sortables ui-sortable">
+							<form method="post">
+								<?php
+
+								$table_instance = new Users_List();
+
+								$table_instance->prepare_items();
+								$table_instance->display(); ?>
+							</form>
+						</div>
+					</div>
+				</div>
+				<br class="clear">
+			</div>
+		</div>
+
+
+
 <script type="text/javascript">
 function disableCertificateSubmitButton() {
     document.getElementById("create_certificates").disabled = 'true';
@@ -27,20 +55,6 @@ function disableUnHide() {
 		echo "<p><strong>Please ensure you have entered an API key in the plugin settings page.</strong></p>";
 	
 	} else {
-
-		$wp_user_search = $wpdb->get_results("SELECT ID, display_name FROM $wpdb->users ORDER BY ID");
-
-		foreach ( $wp_user_search as $userid ) {
-			$user_id       = (int) $userid->ID;
-			$user_login    = stripslashes($userid->user_login);
-			$display_name  = stripslashes($userid->display_name);
-
-			$return  = '';
-			$return .= "\t" . '<li>'. $display_name .'</li>' . "\n";
-
-			print($return);
-		}
-		
 
 		// $theme = wp_get_theme(); // gets the current theme
 		// if ('Academy' == $theme->name || 'Academy' == $theme->parent_theme) {

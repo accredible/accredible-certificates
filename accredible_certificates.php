@@ -90,6 +90,23 @@ if(!class_exists('Accredible_Certificate'))
 			return $links;
 		}
 
+		/**
+		 * Get an array of credentials for a particular email address
+		 * @param String $email 
+		 * @return Array $credentials
+		 */
+		public static function get_credentials_for_email($email){
+			$api = new Api(get_option('api_key'));
+			
+			$credentials = $api->get_credentials(null, $email);
+
+			return $credentials;
+		}
+
+
+
+		// Deprecated below here
+
 		
 		/**
 		 * On the scheduled action hook, run the function.
@@ -142,7 +159,7 @@ if(!class_exists('Accredible_Certificate'))
 			}
 		}
 
-		function acc_load_plugin_css() {
+		public function acc_load_plugin_css() {
 			wp_enqueue_style( 'accredible_certificates-style', plugins_url( '/css/style.css', __FILE__ ) );
 		}
 
