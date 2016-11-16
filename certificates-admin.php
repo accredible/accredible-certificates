@@ -24,9 +24,16 @@
 		}
 
 ?>
-		<div class="wrap">
+		<div class="wrap accredible-credentials-wrap">
 			<h2>Accredible Certificates &amp; Badges</h2>
-			<p>Select one or more users below and then choose the group you'd like to create credentials for.</p>
+			<p>To create new digital certificates or open badges:
+				<ol>
+					<li>Select one or more users in the table</li>
+					<li>Select a group from the drop down</li>
+					<li>Click Create Credentials</li>
+				</ol>
+			</p>
+			<p>To update certificate or badge appearance or to create a new group visit: <a href="https://www.accredible.com/issuer/dashboard" target="_blank">https://www.accredible.com/issuer/dashboard</a></p>
 			<div id="poststuff">
 				<div id="post-body" class="metabox-holder">
 					<div id="post-body-content">
