@@ -14,6 +14,15 @@
 	
 	} else {
 
+		$table_instance = new Users_List();
+
+		// Display a notice if we have no groups with which to create credentials
+		if($table_instance->no_groups){
+			echo '<div class="notice notice-error is-dismissible"> ';
+			echo 	'<p><strong>Your Accredible account does not have any Groups. Please create a Group before trying to create Credentials: <a href="https://www.accredible.com/issuer/dashboard/groups" target="_blank">https://www.accredible.com/issuer/dashboard/groups</a></strong></p>';
+			echo '</div>';
+		}
+
 ?>
 		<div class="wrap">
 			<h2>Accredible Certificates &amp; Badges</h2>
@@ -24,9 +33,6 @@
 						<div class="meta-box-sortables ui-sortable">
 							<form method="post">
 								<?php
-
-								$table_instance = new Users_List();
-
 								$table_instance->prepare_items();
 								$table_instance->display(); ?>
 							</form>

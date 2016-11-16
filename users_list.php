@@ -12,6 +12,8 @@ if ( ! class_exists( 'Accredible_Certificate' ) ) {
 
 class Users_List extends WP_List_Table {
 
+	public $no_groups = false;
+
 	/** Class constructor */
 	public function __construct() {
 
@@ -169,6 +171,11 @@ class Users_List extends WP_List_Table {
 
 	 	for ($i=0; $i < count($groups); $i++) { 
 	 		$options .= "\n\t<option value='" . esc_attr($groups[$i]->id) . "'>" . esc_attr($groups[$i]->name) . "</option>";
+	 	}
+
+	 	// set the flag to show there are no groups
+	 	if(count($groups) == 0){
+	 		$this->no_groups = true;
 	 	}
 
 		return $options;
