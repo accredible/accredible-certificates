@@ -69,17 +69,20 @@ function disableUnHide() {
 			</div>
 		</div>
 
-
-
-
-<div class="wrap">
 <?php
 
 	
 
 		// $theme = wp_get_theme(); // gets the current theme
 		// if ('Academy' == $theme->name || 'Academy' == $theme->parent_theme) {
-		//   academy_theme();   
+		//   //academy_theme();   
+		// 	echo "academy";
+
+		// 	$themexCourse = new ThemexCourse();
+		// 	$user = wp_get_current_user();
+		// 	$courses = @Accredible_Acadmey_Theme::get_course_ids($user);
+
+		// 	var_dump($courses);
 		// } else {
 		// 	echo "<p><strong>Please install and activate the Academy Theme to use this plugin.</strong></p>";
 		// }
@@ -231,4 +234,3 @@ function disableUnHide() {
   //}
 
 ?>   
-</div>
