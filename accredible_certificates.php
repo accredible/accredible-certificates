@@ -103,6 +103,34 @@ if(!class_exists('Accredible_Certificate'))
 			return $credentials;
 		}
 
+		/**
+		 * Create a credential
+		 * @param String $name 
+		 * @param String $email 
+		 * @param int $group_id 
+		 * @return mixed $response
+		 */
+		public static function create_credential($name, $email, $group_id){
+			$api = new Api(get_option('api_key'));
+
+			$response = $api->create_credential($name, $email, $group_id);
+
+			return $response;
+		}
+
+
+		/**
+		 * Get all credential groups
+		 * @return Array $groups
+		 */
+		public static function get_groups(){
+			$api = new Api(get_option('api_key'));
+
+			$response = $api->get_groups(1000, 1);
+
+			return $response->groups;
+		}
+
 
 
 		// Deprecated below here

@@ -1,10 +1,23 @@
 <?php
-require_once 'users_list.php';
+	
+	require_once 'users_list.php';
+
+	$api_key = get_option('api_key');
+
+	if(empty($api_key)){
+
+		echo '<br><br>';
+		echo '<p><strong>Please ensure you have entered an API key in the plugin settings page.</strong></p>';
+		echo '<p>To find your API key scroll down to the API key section on this page: <a href="https://www.accredible.com/issuer/dashboard/settings/account" target="_blank">https://www.accredible.com/issuer/dashboard/settings/account</a></p>';
+		echo '<p>It looks like this:</p>';
+		echo '<img src="https://s3.amazonaws.com/accredible-moodle-instructions/wordpress/example-apikey.png" style="width: 600px;">';
+	
+	} else {
 
 ?>
 		<div class="wrap">
-			<h2>Wordpress Users</h2>
-			<p>123456789</p>
+			<h2>Accredible Certificates &amp; Badges</h2>
+			<p>Select one or more users below and then choose the group you'd like to create credentials for.</p>
 			<div id="poststuff">
 				<div id="post-body" class="metabox-holder">
 					<div id="post-body-content">
@@ -23,7 +36,6 @@ require_once 'users_list.php';
 				<br class="clear">
 			</div>
 		</div>
-
 
 
 <script type="text/javascript">
@@ -48,13 +60,7 @@ function disableUnHide() {
 <div class="wrap">
 <?php
 
-	$api_key = get_option('api_key');
-
-	if(empty($api_key)){
-
-		echo "<p><strong>Please ensure you have entered an API key in the plugin settings page.</strong></p>";
 	
-	} else {
 
 		// $theme = wp_get_theme(); // gets the current theme
 		// if ('Academy' == $theme->name || 'Academy' == $theme->parent_theme) {
