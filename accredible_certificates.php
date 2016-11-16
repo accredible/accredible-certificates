@@ -28,6 +28,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 // For composer dependencies
 require 'vendor/autoload.php';
 
+use ACMS\Api;
+
 if(!class_exists('Accredible_Certificate'))
 {
 	class Accredible_Certificate
@@ -50,12 +52,10 @@ if(!class_exists('Accredible_Certificate'))
 			//form request
 			add_action('admin_action_wpse10500', array(&$this, 'wpse10500_action') );
 
- 			//require accredible styles
- 			add_action( 'wp_enqueue_scripts', array( $this, 'acc_load_plugin_css' ) );		
+ 			//require accredible admin styles
+ 			add_action( 'admin_enqueue_scripts', array( &$this, 'acc_load_plugin_css' ) );	
 
  			add_action( 'hourly_certificate_issuance', array( $this, 'issue_certificates_automatically') );
-
- 			add_action('get_url', array($this, 'get_url'));
 
  			add_action('find_certificate', array($this, 'find_certificate'));
  			
@@ -80,13 +80,76 @@ if(!class_exists('Accredible_Certificate'))
 			wp_clear_scheduled_hook( 'hourly_certificate_issuance' );
 		} // END public static function deactivate
 
-		// Add the settings link to the plugins page
-		function plugin_settings_link($links)
+		/**
+		 * Add the settings link to the plugins page
+		 * @param type $links 
+		 * @return type
+		 */
+		public function plugin_settings_link($links)
 		{
-			$settings_link = '<a href="options-general.php?page=accredible-certificates">Settings</a>';
+			$settings_link = '<a href="' . admin_url( 'options-general.php?page=accredible-certificates' ) . '">Settings</a>';
 			array_unshift($links, $settings_link);
 			return $links;
 		}
+
+		/**
+		 * Get an array of credentials for a particular email address
+		 * @param String $email 
+		 * @return Array $credentials
+		 */
+		public static function get_credentials_for_email($email){
+			$api = new Api(get_option('api_key'));
+			
+			$credentials = $api->get_credentials(null, $email);
+
+			return $credentials;
+		}
+
+		/**
+		 * Create a credential
+		 * @param String $name 
+		 * @param String $email 
+		 * @param int $group_id 
+		 * @return mixed $response
+		 */
+		public static function create_credential($name, $email, $group_id){
+			$api = new Api(get_option('api_key'));
+
+			$response = $api->create_credential($name, $email, $group_id);
+
+			return $response;
+		}
+
+		/**
+		 * Get all credential groups
+		 * @return Array $groups
+		 */
+		public static function get_groups(){
+			$api = new Api(get_option('api_key'));
+
+			$response = $api->get_groups(1000, 1);
+
+			return $response->groups;
+		}
+
+		/**
+		 * Register the admin menu item
+		 * @return null
+		 */
+		public function register_certificates_admin_menu_page(){
+		    add_menu_page( 'Certificates & Badges', 'Certificates & Badges', 'edit_posts', 'accredible-certificates/certificates-admin.php', '', 'dashicons-tablet', 40 );
+		}
+
+		/**
+		 * Load the admin styles
+		 * @return type
+		 */
+		public static function acc_load_plugin_css() {
+			wp_register_style( 'accredible-admin-style', plugins_url( '/css/style.css', __FILE__ ) );
+			wp_enqueue_style('accredible-admin-style'); 
+		}
+
+		// Deprecated below here
 
 		
 		/**
@@ -138,10 +201,6 @@ if(!class_exists('Accredible_Certificate'))
 				
 				wp_reset_postdata( $post );
 			}
-		}
-
-		function acc_load_plugin_css() {
-			wp_enqueue_style( 'accredible_certificates-style', plugins_url( '/css/style.css', __FILE__ ) );
 		}
 
 		/*
@@ -210,9 +269,7 @@ if(!class_exists('Accredible_Certificate'))
 			return $result;
 		}
 
-		function register_certificates_admin_menu_page(){
-		    add_menu_page( 'Certificates', 'Certificates', 'edit_posts', 'accredible-certificates/certificates-admin.php', '', 'dashicons-tablet', 40 );
-		}
+		
 
 		public static function wpse10500_action() {
 

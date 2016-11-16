@@ -8,4 +8,6 @@ $baseDir = dirname($vendorDir);
 return array(
     'GuzzleHttp\\Stream\\' => array($vendorDir . '/guzzlehttp/streams/src'),
     'GuzzleHttp\\' => array($vendorDir . '/guzzlehttp/guzzle/src'),
+    'ACMS\\Tests\\' => array($vendorDir . '/accredible/acms-api-php/tests'),
+    'ACMS\\' => array($vendorDir . '/accredible/acms-api-php/src'),
 );

@@ -1,5 +1,5 @@
 {
-"require": {
-"guzzlehttp/guzzle": "~4.0"
-}
+	"require": {
+		"accredible/acms-api-php": "0.1.1"
+	}
 }

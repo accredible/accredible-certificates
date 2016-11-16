@@ -1,3 +1,8 @@
 #toplevel_page_accredible_certificates-certificates-admin .dashicons-before:before{
   content: "\f471";
 }
+
+/* hide bulk actions on the users list */
+.accredible-credentials-wrap .bulkactions{
+	display: none;
+}
