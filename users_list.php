@@ -274,6 +274,11 @@ class Users_List extends WP_List_Table {
 				$credential = @Accredible_Certificate::create_credential($userdata->user_nicename, $userdata->user_email, $group_id);
 			}
 
+			// let the user know that the creation was successful
+			echo '<div class="notice notice-success is-dismissible">';
+    		echo '<p>Credentials created!</p>';
+			echo '</div>';
+
 		}
 	}
 
