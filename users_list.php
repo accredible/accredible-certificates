@@ -197,7 +197,7 @@ class Users_List extends WP_List_Table {
 			<?php echo $this->get_group_select_options(); ?>
 		</select>
 	<?php
-		submit_button( __( 'Create Credentials' ), '', 'create-credentials', false );
+		submit_button( __( 'Create Credentials' ), '', 'create-credentials', false , 'onclick="setTimeout(disableCertificateSubmitButton, 1)"');
 		echo '</div>';
 	}
 

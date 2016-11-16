@@ -1,3 +1,22 @@
+<script type="text/javascript">
+function disableCertificateSubmitButton() {
+    document.getElementById("create-credentials").disabled = 'true';
+
+}
+
+function disableUnHide() {
+  var elements = document.getElementsByClassName("test");
+  var second_elements = document.getElementsByClassName("test1");
+  // loop over them all
+  for (var i=0; i<elements.length; i++) {
+     if(elements[i].checked){ 
+    	second_elements[i].disabled = true;
+    }
+  }
+  
+}
+</script>
+
 <?php
 	
 	require_once 'users_list.php';
@@ -51,24 +70,7 @@
 		</div>
 
 
-<script type="text/javascript">
-function disableCertificateSubmitButton() {
-    document.getElementById("create_certificates").disabled = 'true';
 
-}
-
-function disableUnHide() {
-  var elements = document.getElementsByClassName("test");
-  var second_elements = document.getElementsByClassName("test1");
-  // loop over them all
-  for (var i=0; i<elements.length; i++) {
-     if(elements[i].checked){ 
-    	second_elements[i].disabled = true;
-    }
-  }
-  
-}
-</script>
 
 <div class="wrap">
 <?php
