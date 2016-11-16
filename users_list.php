@@ -240,9 +240,13 @@ class Users_List extends WP_List_Table {
 	 * @return string The bulk action required.
 	 */
 	public function current_action() {
-		if ( isset( $_REQUEST['create-credentials'] ) &&
-			( ! empty( $_REQUEST['group_id'] ) || ! empty( $_REQUEST['group_id2'] ) ) ) {
+		if ( isset( $_REQUEST['create-credentials'] ) && ( ! empty( $_REQUEST['group_id'] ) || ! empty( $_REQUEST['group_id2'] ) ) ) {
 			return 'create-credentials';
+		} else if ( isset( $_REQUEST['create-credentials'] ) && ( empty( $_REQUEST['group_id'] ) && empty( $_REQUEST['group_id2'] ) ) ){
+			// let the user know they need to select a group
+			echo '<div class="notice notice-error is-dismissible">';
+    		echo '<p>You need to select a Group to create Credentials.</p>';
+			echo '</div>';
 		}
 		return parent::current_action();
 	}
