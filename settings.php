@@ -21,17 +21,15 @@ if(!class_exists('Accredible_Certificates_Settings'))
         	// register your plugin's settings
         	register_setting('accredible_certificates-group', 'api_key');
 
-            register_setting('accredible_certificates-group', 'automatically_issue_certificates');
+            // add your settings section
+            add_settings_section(
+                'accredible_certificates-section', 
+                'Accredible Credentials API Settings', 
+                array(&$this, 'settings_section_accredible_certificates'), 
+                'accredible_certificates'
+            );
 
-        	// add your settings section
-        	add_settings_section(
-        	    'accredible_certificates-section', 
-        	    'Accredible Certificates API Settings', 
-        	    array(&$this, 'settings_section_accredible_certificates'), 
-        	    'accredible_certificates'
-        	);
-        	
-        	// add your setting's fields
+            // add your setting's fields
             add_settings_field(
                 'accredible_certificates-api_key', 
                 'API Key', 
@@ -43,16 +41,23 @@ if(!class_exists('Accredible_Certificates_Settings'))
                 )
             );
 
-            add_settings_field(
-                'accredible_certificates-automatically_issue_certificates', 
-                'Automatically Issue Certificate upon Course Completition', 
-                array(&$this, 'settings_field_checkbox'), 
-                'accredible_certificates', 
-                'accredible_certificates-section',
-                array(
-                    'field' => 'automatically_issue_certificates'
-                )
-            );
+            $auto_sync = @Accredible_Certificate::auto_sync_available();
+
+            if($auto_sync){
+                register_setting('accredible_certificates-group', 'automatically_issue_certificates');
+
+                 add_settings_field(
+                    'accredible_certificates-automatically_issue_certificates', 
+                    'Automatically Issue Credential upon Course Completition', 
+                    array(&$this, 'settings_field_checkbox'), 
+                    'accredible_certificates', 
+                    'accredible_certificates-section',
+                    array(
+                        'field' => 'automatically_issue_certificates'
+                    )
+                );
+            }
+           
             // Possibly do additional admin_init tasks
         } // END public static function activate
         

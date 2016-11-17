@@ -39,6 +39,9 @@ if(!class_exists('Accredible_Certificate'))
 {
 	class Accredible_Certificate
 	{
+		
+		public static $accredible_db_version = '1.0.0';
+
 		/**
 		 * Construct the plugin object
 		 */
@@ -57,7 +60,10 @@ if(!class_exists('Accredible_Certificate'))
  			//require accredible admin styles
  			add_action( 'admin_enqueue_scripts', array( &$this, 'acc_load_plugin_css' ) );	
 
- 			//add_action( 'hourly_certificate_issuance', array( $this, 'issue_certificates_automatically') );
+ 			add_action( 'hourly_certificate_issuance', array( &$this, 'sync_with_accredible') );
+
+ 			register_activation_hook( __FILE__, array( &$this, 'activate' ));
+			register_deactivation_hook( __FILE__, array( &$this, 'deactivate' ));
 
  			
 		} // END public function __construct
@@ -67,8 +73,16 @@ if(!class_exists('Accredible_Certificate'))
 		 */
 		public static function activate()
 		{
+			// Update the DB
+			self::accredible_db_install();
+
+			// Set auto issue to false by default
+			add_option( 'automatically_issue_certificates', 0 );
+
 			//cron job for automatic certificate creation
  			wp_schedule_event( time(), 'hourly', 'hourly_certificate_issuance' );
+
+
 
 		} // END public static function activate
 
@@ -80,6 +94,32 @@ if(!class_exists('Accredible_Certificate'))
 			//remove job for automatic certificate creation
 			wp_clear_scheduled_hook( 'hourly_certificate_issuance' );
 		} // END public static function deactivate
+
+
+		/**
+		 * Create the database table for course and group mapping
+		 * @return null
+		 */
+		public static function accredible_db_install() {
+			global $wpdb;
+			self::$accredible_db_version;
+
+			$table_name = $wpdb->prefix . 'accredible_mapping';
+			
+			$charset_collate = $wpdb->get_charset_collate();
+
+			$sql = "CREATE TABLE $table_name (
+				id mediumint(9) NOT NULL AUTO_INCREMENT,
+				course_id mediumint(9) NOT NULL,
+				group_id mediumint(9) NOT NULL,
+				PRIMARY KEY  (id)
+			) $charset_collate;";
+
+			require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
+			dbDelta( $sql );
+
+			add_option( 'accredible_db_version', $accredible_db_version );
+		}
 
 		/**
 		 * Add the settings link to the plugins page
@@ -134,6 +174,34 @@ if(!class_exists('Accredible_Certificate'))
 		}
 
 		/**
+		 * Create a group on Accredible
+		 * @return mixed $response
+		 */
+		public static function create_group($name, $course_name, $course_description, $course_link){
+			$api = new Api(get_option('api_key'));
+
+			$response = $api->create_group($name, $course_name, $course_description, $course_link);
+
+			return $response->group;	
+		}
+
+		/**
+		 * Update a group on Accredible
+		 * @param int $id 
+		 * @param String $course_name 
+		 * @param String $course_description 
+		 * @param String $course_link 
+		 * @return mixed $response
+		 */
+		public static function update_group($id, $course_name, $course_description, $course_link){
+			$api = new Api(get_option('api_key'));
+
+			$response = $api->update_group($id, $course_name, $course_description, $course_link);
+
+			return $response->group;	
+		}
+
+		/**
 		 * Register the admin menu item
 		 * @return null
 		 */
@@ -148,6 +216,29 @@ if(!class_exists('Accredible_Certificate'))
 		public static function acc_load_plugin_css() {
 			wp_register_style( 'accredible-admin-style', plugins_url( '/css/style.css', __FILE__ ) );
 			wp_enqueue_style('accredible-admin-style'); 
+		}
+
+		/**
+		 * Should we show the issuer an option to auto create credentials?
+		 * @return boolean
+		 */
+		public static function auto_sync_available(){
+			$theme = wp_get_theme(); // gets the current theme
+			if ('Academy' == $theme->name || 'Academy' == $theme->parent_theme) {
+		  		return true;
+			} else {
+				return false;
+			}
+		}
+
+		/**
+		 * Function called hourly to sync with Accredible
+		 * @return null
+		 */
+		public static function sync_with_accredible(){
+			if(get_option('automatically_issue_certificates') == 1){
+				Accredible_Acadmey_Theme::sync_with_accredible();
+			}
 		}
 
 		// Deprecated below here
