@@ -1,29 +1,34 @@
-#Accredible Certificates
-Contributors: accredible 
-Tags: certificate, online course, lms 
-Requires at least: 3.0.1 
-Tested up to: 4.0 
-Stable tag: 0.2.0
-License: GPLv2 or later 
-License URI: http://www.gnu.org/licenses/gpl-2.0.html 
+![Accredible Logo](https://s3.amazonaws.com/accredible-cdn/accredible_logo_sm.png)
 
-This plugin allows you to issue dynamic, digital certificates for online learning courses. It can issue certificates for Wordpress sites that make use of the Academy Theme.
+# Accredible Moodle Activity Plugin
 
-## Description
+## Overview
+The Accredible platform enables organizations to create, manage and distribute digital credentials as digital certificates or open badges.
 
-This module enables you to issue dynamic, digital certificates using the Accredible API on your Wordpress instance. They act as a replacement for the PDF certificates normally generated for your courses. An example output certificate can be viewed at: [https://accredible.com/example](https://accredible.com/example).
+An example digital certificate and badge can be viewed here: https://www.credential.net/10000005
 
-Currently the plugin is only compatible with Academy Theme.
+This plugin enables you to issue dynamic, digital certificates or open badges on your Wordpress instance.
+
+If you're using Academy Theme then we automatically create groups on Accredible for each course and automatically generate certificates or badges on an hourly basis.
+
+## Example Output
+![Example Digital Certificate](https://s3.amazonaws.com/accredible-cdn/example-digital-certificate.png)
+
+![Example Open Badge](https://s3.amazonaws.com/accredible-cdn/example-digital-badge.png)
+
+## Compatability
+
+Tested on Wordpress 3+.
+
+---
 
 ## Installation
 
 1. Visit https://accredible.com to obtain an API key
-2. Ensure you have the Wordpress Academy Theme active
-3. Install the plugin
-4. Activate the plugin through the 'Plugins' menu in WordPress
-5. Go to the plugin settings and input your API key
+2. Install the plugin
+3. Activate the plugin through the 'Plugins' menu in WordPress
+4. Go to the plugin settings and input your API key
 
-Note: By default your Accredible account is in Sandbox mode and any certificates you create will need to be manually published via the Accredible API Dashboard before being emailed to students.
 
 If you're using Academy Theme and would like students to be able to access certificates then please:
 
@@ -67,20 +72,18 @@ If you're using Academy Theme and would like students to be able to access certi
 </form>
 ```
 
-Then click 'Update file'
-
-## How to use
-
-Note: By default your Accredible account is in Sandbox mode and any certificates you create will need to be manually published via the Accredible API Dashboard before being emailed to students.
+Then click 'Update file'.
 
 ### Manually creating certificates
-1. Go to the 'Certificates' page in the Wordpress admin menu
-2. On the list of your courses and students, select which students you would like to issue certificates to
-3. Click 'Create Certificates'
+1. Go to the 'Certificates & Badges' page in the Wordpress admin menu.
+2. On the list of your users, select which students you would like to issue certificates to and then select a group.
+3. Click 'Create Credentials'
+
+![Certificates Admin](https://s3.amazonaws.com/accredible-moodle-instructions/wordpress/certificates-admin.png)
 
 ### Automatically creating certificates
 1. Go to the plugin settings and check 'Automatically Issue Certificate upon Course Completition'
-2. When a user completed a course they will be automatically issued a certificate
+2. When a user completed a course they will be automatically issued a certificate/badge.
 
 ## Frequently Asked Questions
 
@@ -88,13 +91,14 @@ Note: By default your Accredible account is in Sandbox mode and any certificates
 
 Visit https://accredible.com to obtain a free API key.
 
-## Screenshots
+#### Can you add support for another Wordpress LMS or theme?
 
-![1. This is a dynamic, digital certificate](screenshot-1.png)
-![2. This is the admin interface](screenshot-2.png)
-![3. You can automatically issue a certificate when a student completes a course](screenshot-3.png)
+Sure, just post an issue and we'll get to work: https://github.com/accredible/accredible-certificates/issues
 
 ## Changelog
+
+#### 1.0.0
+Allow creation and management of certificates and badges for any users - not just Academy Theme. 
 
 #### 0.2.0
 Replace Curl requirement so that plugin works on Windows hosts.
