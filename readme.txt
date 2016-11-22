@@ -97,6 +97,12 @@ Visit https://accredible.com to obtain a free API key.
 
 Sure, just post an issue and we'll get to work: https://github.com/accredible/accredible-certificates/issues
 
+== Screenshots ==
+
+1. Digital Certificate
+2. Digital Open Badge
+3. Create digital certificates
+
 == Changelog ==
 
 = 1.0.0 =
