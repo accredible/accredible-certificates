@@ -4,21 +4,21 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "03cff47b6c81c10d00272e7f96182bba",
-    "content-hash": "f94d8e38324479c640df10181f7b4d18",
+    "hash": "28a512846c353b5e045f9217d921dff1",
+    "content-hash": "2fc333aa25e62d8dd824651bb8ae8893",
     "packages": [
         {
             "name": "accredible/acms-api-php",
-            "version": "v0.1.1",
+            "version": "v0.1.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/accredible/acms-php-api.git",
-                "reference": "857752aeb3c618373ef239eb3ba51f717cada33f"
+                "reference": "46ecb0db77701a445e5bd9129de183bfcda3d7cd"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/accredible/acms-php-api/zipball/857752aeb3c618373ef239eb3ba51f717cada33f",
-                "reference": "857752aeb3c618373ef239eb3ba51f717cada33f",
+                "url": "https://api.github.com/repos/accredible/acms-php-api/zipball/46ecb0db77701a445e5bd9129de183bfcda3d7cd",
+                "reference": "46ecb0db77701a445e5bd9129de183bfcda3d7cd",
                 "shasum": ""
             },
             "require": {
@@ -43,7 +43,7 @@
                 }
             ],
             "description": "PHP wrappers for Accredible ACMS API",
-            "time": "2016-11-11 09:13:12"
+            "time": "2016-11-17 11:18:29"
         },
         {
             "name": "guzzlehttp/guzzle",

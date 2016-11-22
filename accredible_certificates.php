@@ -30,10 +30,18 @@ require 'vendor/autoload.php';
 
 use ACMS\Api;
 
+// Require Academy Theme logic
+if ( ! class_exists( 'Accredible_Acadmey_Theme' ) ) {
+	require_once('accredible-academy-theme.php');
+}
+
 if(!class_exists('Accredible_Certificate'))
 {
 	class Accredible_Certificate
 	{
+		
+		public static $accredible_db_version = '1.0.0';
+
 		/**
 		 * Construct the plugin object
 		 */
@@ -49,15 +57,14 @@ if(!class_exists('Accredible_Certificate'))
 
 			add_action( 'admin_menu', array( $this, 'register_certificates_admin_menu_page' ));
 
-			//form request
-			add_action('admin_action_wpse10500', array(&$this, 'wpse10500_action') );
-
  			//require accredible admin styles
  			add_action( 'admin_enqueue_scripts', array( &$this, 'acc_load_plugin_css' ) );	
 
- 			add_action( 'hourly_certificate_issuance', array( $this, 'issue_certificates_automatically') );
+ 			add_action( 'hourly_certificate_issuance', array( &$this, 'sync_with_accredible') );
 
- 			add_action('find_certificate', array($this, 'find_certificate'));
+ 			register_activation_hook( __FILE__, array( &$this, 'activate' ));
+			register_deactivation_hook( __FILE__, array( &$this, 'deactivate' ));
+
  			
 		} // END public function __construct
 
@@ -66,8 +73,16 @@ if(!class_exists('Accredible_Certificate'))
 		 */
 		public static function activate()
 		{
+			// Update the DB
+			self::accredible_db_install();
+
+			// Set auto issue to false by default
+			add_option( 'automatically_issue_certificates', 0 );
+
 			//cron job for automatic certificate creation
  			wp_schedule_event( time(), 'hourly', 'hourly_certificate_issuance' );
+
+
 
 		} // END public static function activate
 
@@ -79,6 +94,32 @@ if(!class_exists('Accredible_Certificate'))
 			//remove job for automatic certificate creation
 			wp_clear_scheduled_hook( 'hourly_certificate_issuance' );
 		} // END public static function deactivate
+
+
+		/**
+		 * Create the database table for course and group mapping
+		 * @return null
+		 */
+		public static function accredible_db_install() {
+			global $wpdb;
+			self::$accredible_db_version;
+
+			$table_name = $wpdb->prefix . 'accredible_mapping';
+			
+			$charset_collate = $wpdb->get_charset_collate();
+
+			$sql = "CREATE TABLE $table_name (
+				id mediumint(9) NOT NULL AUTO_INCREMENT,
+				course_id mediumint(9) NOT NULL,
+				group_id mediumint(9) NOT NULL,
+				PRIMARY KEY  (id)
+			) $charset_collate;";
+
+			require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
+			dbDelta( $sql );
+
+			add_option( 'accredible_db_version', $accredible_db_version );
+		}
 
 		/**
 		 * Add the settings link to the plugins page
@@ -133,6 +174,34 @@ if(!class_exists('Accredible_Certificate'))
 		}
 
 		/**
+		 * Create a group on Accredible
+		 * @return mixed $response
+		 */
+		public static function create_group($name, $course_name, $course_description, $course_link){
+			$api = new Api(get_option('api_key'));
+
+			$response = $api->create_group($name, $course_name, $course_description, $course_link);
+
+			return $response->group;	
+		}
+
+		/**
+		 * Update a group on Accredible
+		 * @param int $id 
+		 * @param String $course_name 
+		 * @param String $course_description 
+		 * @param String $course_link 
+		 * @return mixed $response
+		 */
+		public static function update_group($id, $course_name, $course_description, $course_link){
+			$api = new Api(get_option('api_key'));
+
+			$response = $api->update_group($id, $course_name, $course_description, $course_link);
+
+			return $response->group;	
+		}
+
+		/**
 		 * Register the admin menu item
 		 * @return null
 		 */
@@ -149,114 +218,49 @@ if(!class_exists('Accredible_Certificate'))
 			wp_enqueue_style('accredible-admin-style'); 
 		}
 
-		// Deprecated below here
-
-		
 		/**
-		 * On the scheduled action hook, run the function.
+		 * Should we show the issuer an option to auto create credentials?
+		 * @return boolean
 		 */
-		public static function issue_certificates_automatically() {
-
-			global $wpdb;
-
-			error_log("Issuing certificates");
-			$query="
-				SELECT * FROM ".$wpdb->comments." 
-				WHERE comment_type = 'user_certificate'
-			";
-
-			$relations=$wpdb->get_results($query);
-
-			foreach ($relations as $key => $completion) {
-
-				$course = ThemexCourse::getCourse($completion->comment_post_ID, true);
-
-
-				$user = get_user_by("id", $completion->user_id);
-				$grade = ThemexCourse::getGrade($completion->comment_post_ID, $completion->user_id);
-
-				if($user->first_name && $user->last_name ){
-    				$recipient_name = $user->first_name . ' ' . $user->last_name;
-    			} else {
-    				$recipient_name = $user->display_name;
-    			}
-				
-				global $post;
-				$post = get_post($completion->comment_post_ID);
-				setup_postdata( $post, $more_link_text, $stripteaser );
-
-				$existing = Accredible_Certificate::certificates($completion->comment_post_ID);
-				$existing_certificates = $existing->credentials;
-
-				$issue = true;
-				foreach ($existing_certificates as $key => $certificate) {
-					if($certificate->recipient->email == $user->user_email){
-						$issue = false;
-					}
-				}
-               
-				if($issue){
-					Accredible_Certificate::create_certificate($recipient_name, $user->user_email, get_the_title($completion->comment_post_ID), $completion->comment_post_ID, get_the_excerpt(), get_permalink($completion->comment_post_ID), $grade);				
-				}    
-				
-				wp_reset_postdata( $post );
+		public static function auto_sync_available(){
+			$theme = wp_get_theme(); // gets the current theme
+			if ('Academy' == $theme->name || 'Academy' == $theme->parent_theme) {
+		  		return true;
+			} else {
+				return false;
 			}
 		}
 
-		/*
-		 * Create Accredible certificate
+		/**
+		 * Function called hourly to sync with Accredible
+		 * @return null
 		 */
-		public static function create_certificate($recipient_name, $recipient_email, $course_name, $course_id, $course_description, $course_link, $grade)
-		{
-			
-			if (empty($grade))
-		    {			
-				$data = array(  
-				    "credential" => array( 
-				        "recipient" => array( 
-				            "name" => $recipient_name,
-				            "email" => $recipient_email
-				        ),
-				        "name" => $course_name,
-				        "description" => $course_description,
-				        "course_link" => $course_link,
-				        "achievement_id" => $course_id
-				    ) 
-				);
-            }
-            else{
-                $data = array(  
-				    "credential" => array( 
-				        "recipient" => array( 
-				            "name" => $recipient_name,
-				            "email" => $recipient_email
-				        ),
-				        "name" => $course_name,
-				        "description" => $course_description,
-				        "course_link" => $course_link,
-				        "grade" => $grade,
-				        "achievement_id" => $course_id,
-				        "evidence_items" => array(  
-				          array(
-				             "description" => "Final grade of course",
-				             "category" => "grade",
-				             "string_object" => $grade
-				             )
-				         )
-				    ) 
-			    );
-            }
-
-			$client = new GuzzleHttp\Client();
-
-			$result = $client->post('https://api.accredible.com/v1/credentials', [
-			    'headers' =>  ['Authorization' => 'Token token="'.get_option('api_key').'"'],
-			    'json' => $data
-			]);
-
-			//$result = json_decode($res->getBody());
-			$result_string = print_r($result, true);
+		public static function sync_with_accredible(){
+			if(get_option('automatically_issue_certificates') == 1){
+				Accredible_Acadmey_Theme::sync_with_accredible();
+			}
 		}
+
+		/**
+		 * Send batch requests via the ACMS API
+		 * @param Array $requests 
+		 * @return mixed $response
+		 */
+		public static function batch_requests($requests){
+			$api = new Api(get_option('api_key'));
+
+			for ($i=0; $i < count($requests); $i++) { 
+				$requests[$i]['url'] = "v1/" . $requests[$i]['url'];
+			}
+
+			$response = $api->send_batch_requests($requests);
+
+			return $response;	
+		}
+
+		// Deprecated below here
+
+		
 
 		/*
 		 * Get existing certificates for a course
@@ -269,43 +273,6 @@ if(!class_exists('Accredible_Certificate'))
 			return $result;
 		}
 
-		
-
-		public static function wpse10500_action() {
-
-			$recipient_name = $_POST['recipient_name'];
-			$recipient_email = $_POST['recipient_email'];
-			$course_name = $_POST['course_name'];
-			$course_id = $_POST['course_id'];
-			$course_description = $_POST['course_description'];
-			$course_link = $_POST['course_link'];
-			$issue_certificate = $_POST['issue_certificate'];
-			$grade = $_POST['grade'];
-
-			if(is_array($recipient_name)){
-				foreach( $recipient_name as $key => $name ) {
-			        if($issue_certificate[$key] == "on"){
-			        	$result = self::create_certificate($name, $recipient_email[$key], $course_name[$key], $course_id[$key], $course_description[$key], $course_link[$key], $grade[$key]);
-			        }
-				}
-
-			} else {
-				//handle the case where PHP doesn't post as an Array
-				if($issue_certificate == "on"){
-		        	$result = self::create_certificate($name, $recipient_email, $course_name, $course_id, $course_description, $course_link, $grade);
-		        }
-			}			
-            
-            //var_dump($_POST);
-			wp_redirect(admin_url('admin.php?page=accredible-certificates/certificates-admin.php'));
-		}
-
-		public static function get_courses($user){
-			$themexCourse = new ThemexCourse($user);
-
-			$courses = ThemexCourse::getCourses($user);
-			return $courses;
-		}
 
 		public static function hasCertificate($course_id, $user_id){
          
@@ -330,20 +297,6 @@ if(!class_exists('Accredible_Certificate'))
 		  }
 	      return $cert_exit;
 		}
-        
-        public static function find_certificate($all_certificates, $user){
-           $no_cert = True;
-            if(is_array($all_certificates)){
-			foreach ($all_certificates as $key => $cert) {
-			  if($cert->recipient->email == $user->user_email){
-				$no_cert = False;
-				$cert_id = $cert->id;
-			    $approve = $cert->approve;
-			    }
-			  }
-			}
-			return array($no_cert, $cert_id, $approve);
-        }
 
 	} // END class accredible_certificates
 } // END if(!class_exists('accredible_certificates'))

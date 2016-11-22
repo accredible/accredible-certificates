@@ -52,10 +52,25 @@ class Users_List extends WP_List_Table {
 
 		$result = $wpdb->get_results( $sql, 'ARRAY_A' );
 
-		for ($x=0; $x < count($result); $x++) { 
-			$credentials = @Accredible_Certificate::get_credentials_for_email($result[$x]["user_email"]);
-		    $result[$x]["credentials"] = $credentials->credentials;
-		}
+		// batch request to get user credentials
+		$requests = [];
+        for ($x=0; $x < count($result); $x++) { 
+        	array_push($requests, ["method" => "get", "url" => "all_credentials", "params" => ["email" =>  $result[$x]["user_email"]] ]);
+        }
+        $response = @Accredible_Certificate::batch_requests($requests);
+
+        for ($i=0; $i < count($response->results); $i++) { 
+        	if($response->results[$i]->body != "Not Found") {
+        		$credentials = json_decode($response->results[$i]->body);
+        		$result[$i]["credentials"] = $credentials->credentials;
+        	}
+        }
+
+  //       // single requests for credentials
+		// for ($x=0; $x < count($result); $x++) { 
+		// 	$credentials = @Accredible_Certificate::get_credentials_for_email($result[$x]["user_email"]);
+		//     $result[$x]["credentials"] = $credentials->credentials;
+		// }
 
 		return $result;
 	}
@@ -197,7 +212,7 @@ class Users_List extends WP_List_Table {
 			<?php echo $this->get_group_select_options(); ?>
 		</select>
 	<?php
-		submit_button( __( 'Create Credentials' ), '', 'create-credentials', false );
+		submit_button( __( 'Create Credentials' ), '', 'create-credentials', false , 'onclick="setTimeout(disableCertificateSubmitButton, 1)"');
 		echo '</div>';
 	}
 
