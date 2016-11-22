@@ -1,15 +1,15 @@
 <?php
 /*
-Plugin Name: Accredible Certificates
-Plugin URI: https://github.com/accredible/wp_plugin
-Description: Issue Accredible course certificates for Academy Theme.
-Version: 0.2.0
+Plugin Name: Accredible Certificates & Badges
+Plugin URI: https://github.com/accredible/accredible-certificates
+Description: Issue Accredible digital certificates and open badges on Wordpress.
+Version: 1.0.0
 Author: Accredible
 Author URI: https://www.accredible.com
 License: GPL2
 */
 /*
-Copyright 2015 Accredible
+Copyright 2016 Accredible
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License, version 2, as
