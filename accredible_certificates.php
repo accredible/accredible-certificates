@@ -241,6 +241,23 @@ if(!class_exists('Accredible_Certificate'))
 			}
 		}
 
+		/**
+		 * Send batch requests via the ACMS API
+		 * @param Array $requests 
+		 * @return mixed $response
+		 */
+		public static function batch_requests($requests){
+			$api = new Api(get_option('api_key'));
+
+			for ($i=0; $i < count($requests); $i++) { 
+				$requests[$i]['url'] = "v1/" . $requests[$i]['url'];
+			}
+
+			$response = $api->send_batch_requests($requests);
+
+			return $response;	
+		}
+
 		// Deprecated below here
 
 		

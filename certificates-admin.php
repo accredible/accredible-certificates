@@ -44,7 +44,7 @@ function disableUnHide() {
 
 ?>
 		<div class="wrap accredible-credentials-wrap">
-			<h2>Accredible Certificates &amp; Badges</h2>
+			<h2>Accredible Certificates &amp; Badges6</h2>
 			<p>To create new digital certificates or open badges:
 				<ol>
 					<li>Select one or more users in the table</li>
