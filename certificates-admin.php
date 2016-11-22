@@ -3,18 +3,6 @@ function disableCertificateSubmitButton() {
     document.getElementById("create-credentials").disabled = 'true';
 
 }
-
-function disableUnHide() {
-  var elements = document.getElementsByClassName("test");
-  var second_elements = document.getElementsByClassName("test1");
-  // loop over them all
-  for (var i=0; i<elements.length; i++) {
-     if(elements[i].checked){ 
-    	second_elements[i].disabled = true;
-    }
-  }
-  
-}
 </script>
 
 <?php
@@ -44,7 +32,7 @@ function disableUnHide() {
 
 ?>
 		<div class="wrap accredible-credentials-wrap">
-			<h2>Accredible Certificates &amp; Badges6</h2>
+			<h2>Accredible Certificates &amp; Badges</h2>
 			<p>To create new digital certificates or open badges:
 				<ol>
 					<li>Select one or more users in the table</li>
