@@ -1,7 +1,7 @@
 === Accredible Certificates ===
 Contributors: accredible
 Donate link: https://accredible.com/
-Tags: certificate, online course, lms
+Tags: certificate, certificates, online course, lms, badges, badges, open badge
 Requires at least: 3.0.1
 Tested up to: 4.6.1
 Stable tag: 1.0.0
