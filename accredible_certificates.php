@@ -128,7 +128,7 @@ if(!class_exists('Accredible_Certificate'))
 		 */
 		public function plugin_settings_link($links)
 		{
-			$settings_link = '<a href="' . admin_url( 'options-general.php?page=accredible-certificates' ) . '">Settings</a>';
+			$settings_link = '<a href="' . admin_url( 'options-general.php?page=accredible_certificates' ) . '">Settings</a>';
 			array_unshift($links, $settings_link);
 			return $links;
 		}
