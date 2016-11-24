@@ -137,7 +137,7 @@ class Users_List extends WP_List_Table {
 	function column_credentials ($item) {
 		$string = "";
 		foreach ($item['credentials'] as $credential) {
-			$string = $string . "<a href='" . $credential->url . "'>" . $credential->url . "</a><br>";
+			$string = $string . "<a href='" . $credential->url . "' target='_blank'>" . $credential->url . "</a><br>";
 		}
 		return $string;
 	}
