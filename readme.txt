@@ -18,6 +18,8 @@ An example digital certificate and badge can be viewed here: https://www.credent
 
 This plugin enables you to issue dynamic, digital certificates or open badges on your Wordpress instance.
 
+A video walkthrough of the plugin can be viewed here: https://youtu.be/s5krPN6GvTY
+
 If you're using Academy Theme then we automatically create groups on Accredible for each course and automatically generate certificates or badges on an hourly basis.
 
 == Example Output ==
