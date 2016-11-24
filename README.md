@@ -97,6 +97,9 @@ Sure, just post an issue and we'll get to work: https://github.com/accredible/ac
 
 ## Changelog
 
+#### 1.0.1
+Bug fixes
+
 #### 1.0.0
 Allow creation and management of certificates and badges for any users - not just Academy Theme. 
 
