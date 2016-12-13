@@ -18,7 +18,7 @@ class Users_List extends WP_List_Table {
 	public function __construct() {
 
 		parent::__construct( 
-			array( 'this' => 'that' 
+			array(
 				'singular' => __( 'Recipient', 'sp' ), //singular name of the listed records
 				'plural'   => __( 'Recipients', 'sp' ), //plural name of the listed records
 				'ajax'     => false //does this table support ajax?
