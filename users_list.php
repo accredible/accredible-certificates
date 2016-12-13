@@ -17,11 +17,13 @@ class Users_List extends WP_List_Table {
 	/** Class constructor */
 	public function __construct() {
 
-		parent::__construct( [
-			'singular' => __( 'Recipient', 'sp' ), //singular name of the listed records
-			'plural'   => __( 'Recipients', 'sp' ), //plural name of the listed records
-			'ajax'     => false //does this table support ajax?
-		] );
+		parent::__construct( 
+			array(
+				'singular' => __( 'Recipient', 'sp' ), //singular name of the listed records
+				'plural'   => __( 'Recipients', 'sp' ), //plural name of the listed records
+				'ajax'     => false //does this table support ajax?
+			)
+		);
 
 	}
 
@@ -148,13 +150,13 @@ class Users_List extends WP_List_Table {
 	 * @return array
 	 */
 	function get_columns() {
-		$columns = [
+		$columns = array(
 			'cb'			=> '<input type="checkbox" />',
 			'user_login'    => 'Login',
 			'user_nicename' => 'Name',
 			'user_email'    => 'Email',
 			'credentials' 	=> 'Credentials'
-		];
+		);
 
 		return $columns;
 	}
@@ -234,10 +236,10 @@ class Users_List extends WP_List_Table {
 		$current_page = $this->get_pagenum();
 		$total_items  = self::record_count();
 
-		$this->set_pagination_args( [
+		$this->set_pagination_args( array(
 			'total_items' => $total_items, //WE have to calculate the total number of items
 			'per_page'    => $per_page //WE have to determine how many items to show on a page
-		] );
+		) );
 
 		$this->items = self::get_users( $per_page, $current_page );
 

@@ -99,6 +99,9 @@ Sure, just post an issue and we'll get to work: https://github.com/accredible/ac
 
 ## Changelog
 
+#### 1.1.0
+Support PHP 5.4.
+
 #### 1.0.1
 Bug fixes
 
