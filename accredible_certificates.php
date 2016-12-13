@@ -268,7 +268,8 @@ if(!class_exists('Accredible_Certificate'))
 		public static function certificates($course_id)
 		{
 			$client = new GuzzleHttp\Client();
-			$res = $client->get('https://api.accredible.com/v1/credentials?achievement_id=' . $course_id . '&full_view=true', ['headers' =>  ['Authorization' => 'Token token="'.get_option('api_key').'"']]);
+			$params = array(  'headers' => array( 'Authorization' => 'Token token="'.get_option('api_key').'"' ));
+			$res = $client->get('https://api.accredible.com/v1/credentials?achievement_id=' . $course_id . '&full_view=true', $params);
 			$result = json_decode($res->getBody());
 			return $result;
 		}
