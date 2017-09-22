@@ -1,6 +1,6 @@
 ![Accredible Logo](https://s3.amazonaws.com/accredible-cdn/accredible_logo_sm.png)
 
-# Accredible Wordpress Certificates & Badges Plugin
+# Accredible Wordpress Certificates & Open Badges Plugin
 
 ## Overview
 The Accredible platform enables organizations to create, manage and distribute digital credentials as digital certificates or open badges.

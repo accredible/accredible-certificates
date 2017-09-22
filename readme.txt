@@ -1,24 +1,33 @@
-=== Accredible Certificates ===
+=== Accredible Certificates & Open Badges ===
 Contributors: accredible
-Donate link: https://accredible.com/
-Tags: certificate, certificates, online course, lms, badges, badges, open badge
+Donate link: https://www.accredible.com/
+Tags: accredible, certificate, certificates, digital certificates, online course, lms, learning management system, e-learning, elearning, badges, badge, open badge, mozilla open badge, blockchain, blockchain credential, credential, credentials
 Requires at least: 3.0.1
 Tested up to: 4.6.1
 Stable tag: 1.1.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-Issue dynamic, digital certificates or open badges on your Wordpress site.
+Certificates, open badges and blockchain credentials. Create, update and manage them on your Wordpress site.
 
 == Description ==
 
-The Accredible platform enables organizations to create, manage and distribute digital credentials as digital certificates or open badges.
+The Accredible platform enables organizations to create, manage and distribute digital credentials as digital certificates, open badges and blockchain credentials.
 
 An example digital certificate and badge can be viewed here: https://www.credential.net/10000005
 
 This plugin enables you to issue dynamic, digital certificates or open badges on your Wordpress instance.
 
 A video walkthrough of the plugin can be viewed here: https://youtu.be/s5krPN6GvTY
+
+Benefits of digital credentials:
+
+* Every time your recipients share their credentials, your brand spreads across the web.
+* View analytics on your alumni.
+* Create a directory of your graduates.
+* Unlimited certificate and badge designs.
+* Easy sharing, exporting and printing.
+* Make sure people can't lie about taking your course.
 
 If you're using Academy Theme then we automatically create groups on Accredible for each course and automatically generate certificates or badges on an hourly basis.
 
@@ -104,6 +113,9 @@ Sure, just post an issue and we'll get to work: https://github.com/accredible/ac
 1. Digital Certificate
 2. Digital Open Badge
 3. Create digital certificates
+4. Responsive certificate designs
+5. Marketing click throughs and impressions
+6. Example Google certificate.
 
 == Changelog ==
 
