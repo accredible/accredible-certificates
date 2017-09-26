@@ -99,6 +99,12 @@ Sure, just post an issue and we'll get to work: https://github.com/accredible/ac
 
 ## Changelog
 
+#### 1.1.2
+Fix bug with second drop down group selection not always working.
+
+#### 1.1.1
+Better documentation.
+
 #### 1.1.0
 Support PHP 5.4.
 
