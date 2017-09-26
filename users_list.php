@@ -278,7 +278,11 @@ class Users_List extends WP_List_Table {
 
 			$accredible_certificates = new Accredible_Certificate();
 
-			$group_id = esc_sql( $_POST['group_id'] );
+			if ( isset( $_POST['group_id'] ) && ( ! empty( $_POST['group_id'] ) ) ) {
+				$group_id = esc_sql( $_POST['group_id'] );
+			} else {
+				$group_id = esc_sql( $_POST['group_id2'] );
+			}
 
 			$users = $_POST['credential_users'];
 
