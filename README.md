@@ -99,6 +99,9 @@ Sure, just post an issue and we'll get to work: https://github.com/accredible/ac
 
 ## Changelog
 
+#### 1.2.0
+Use the Wordpress user full name and a few small updates.
+
 #### 1.1.2
 Fix bug with second drop down group selection not always working.
 
