@@ -64,7 +64,7 @@ if(!class_exists('Accredible_Certificates_Settings'))
         public function settings_section_accredible_certificates()
         {
             // Think of this as help text for the section.
-            echo 'Enter your API key below.';
+            echo 'Enter your API key below:';
         }
         
         /**
