@@ -30,8 +30,14 @@ if(!class_exists('Accredible_Acadmey_Theme'))
 				if($mapping !== null && count($mapping) > 0){
 					$user = get_user_by("id", $completion->user_id);
 
+					if($user->first_name && $user->last_name ){
+	    				$recipient_name = $user->first_name . ' ' . $user->last_name;
+	    			} else {
+	    				$recipient_name = $user->display_name;
+	    			}
+
 					// create a credential
-					$credential = @Accredible_Certificate::create_credential($user->user_nicename, $user->user_email, $mapping[0]->group_id);
+					$credential = @Accredible_Certificate::create_credential($recipient_name, $user->user_email, $mapping[0]->group_id);
 				}
 
 			}
@@ -161,8 +167,6 @@ if(!class_exists('Accredible_Acadmey_Theme'))
 				}
                
 				if($issue){
-					@Accredible_Certificate::create_credential($userdata->user_nicename, $user->user_email, $group_id);
-
 					Accredible_Certificate::create_certificate($recipient_name, $user->user_email, get_the_title($completion->comment_post_ID), $completion->comment_post_ID, get_the_excerpt(), get_permalink($completion->comment_post_ID), $grade);				
 				}    
 				
