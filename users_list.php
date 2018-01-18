@@ -291,8 +291,14 @@ class Users_List extends WP_List_Table {
 				// find the user
 				$userdata = WP_User::get_data_by( 'id', $users[$i] );
 
+				if($userdata->first_name && $userdata->last_name ){
+    				$recipient_name = $userdata->first_name . ' ' . $userdata->last_name;
+    			} else {
+    				$recipient_name = $userdata->display_name;
+    			}
+
 				// create a credential
-				$credential = @Accredible_Certificate::create_credential($userdata->user_nicename, $userdata->user_email, $group_id);
+				$credential = @Accredible_Certificate::create_credential($recipient_name, $userdata->user_email, $group_id);
 			}
 
 			// let the user know that the creation was successful
