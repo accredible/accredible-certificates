@@ -4,16 +4,33 @@ namespace ACMS\Tests;
 
 use ACMS\Api;
 
+// backward compatibility
+if (!class_exists('\PHPUnit\Framework\TestCase') &&
+    class_exists('\PHPUnit_Framework_TestCase')) {
+    class_alias('\PHPUnit_Framework_TestCase', 'PHPUnit\Framework\TestCase');
+}
+
+use PHPUnit\Framework\TestCase;
+
 //fwrite(STDERR, print_r($example_credential, TRUE));
 
 // TODO: Add mocked response tests for speed
 
-class ApiTest extends \PHPUnit_Framework_TestCase {
+class ApiTest extends TestCase {
+
+    // backward compatibility
+    public function expectException($exception) {
+        if (!method_exists('TestCase','expectException')) {
+            $this->setExpectedException($exception);
+        } else {
+            $this->expectException($exception);
+        }
+    }
 
     public $group;
 
 	protected function setUp(){
-        $this->api = new Api($_SERVER['API_KEY'], true);
+        $this->api = new Api("7b47e413b0216b489f0034960db4e84f", true);
 
         // Create a group
         $group_name = $this->RandomString(20);
@@ -38,7 +55,7 @@ class ApiTest extends \PHPUnit_Framework_TestCase {
 
     public function testSetAPIKey(){
         // Check the API key is set
-        $this->assertEquals($_SERVER['API_KEY'], $this->api->getAPIKey());
+        $this->assertEquals("7b47e413b0216b489f0034960db4e84f", $this->api->getAPIKey());
     }
 
     public function testGetCredential(){
@@ -58,7 +75,7 @@ class ApiTest extends \PHPUnit_Framework_TestCase {
     	// Check if we can get credentials given an email
 		$example_credentials = $this->api->get_credentials(null, "john@example.com", 1);
 		$example_credential = array_values($example_credentials->credentials)[0];
-		
+
 		$this->assertEquals("john@example.com", $example_credential->recipient->email);
 
 		//cleanup
@@ -72,6 +89,15 @@ class ApiTest extends \PHPUnit_Framework_TestCase {
 
 		//cleanup
 		$this->api->delete_credential($new_credential->credential->id);
+    }
+
+    public function testCreateCredentialLegacy(){
+        //Check we can create a Credential
+        $new_credential = $this->api->create_credential_legacy("John Doe", "john@example.com", $this->group->group->name);
+        $this->assertEquals("John Doe", $new_credential->credential->recipient->name);
+
+        //cleanup
+        $this->api->delete_credential($new_credential->credential->id);
     }
 
     public function testUpdateCredential(){
@@ -146,16 +172,41 @@ class ApiTest extends \PHPUnit_Framework_TestCase {
 		$this->assertEquals($group_name, $response->group->name);
     }
 
+    public function testGetDesigns(){
+
+        // Can we get a group?
+        $requested_designs = $this->api->get_designs(10, 1);
+        $this->assertInternalType("int", $requested_designs->designs{0}->id);
+    }
+
+    public function testRecipientSSOLink(){
+
+        //ensure the group has a design so our credential can be published
+        $requested_designs = $this->api->get_designs(1, 1);
+        $this->api->update_group($this->group->group->id, null, null, null, null, $requested_designs->designs{0}->id);
+
+        $credential = $this->api->create_credential("John Doe", "john@example.com", $this->group->group->id);
+
+        // Can we create a recipient redirect link
+        $redirect = $this->api->recipient_sso_link(null, null, "john@example.com", null, $this->group->group->id);
+        $this->assertRegexp('/&jwt=/', (string) $redirect->link);
+
+        // Cleanup - Remove credential
+        $this->api->delete_credential($credential->credential->id);
+
+    }
+
+
     public function testSendBatchRequests(){
         $group_name = $this->RandomString(20);
 
-        $group_data = array(  
-            "group" => array( 
+        $group_data = array(
+            "group" => array(
                 "name" => $group_name,
                 "course_name" => "Example Course",
                 "course_description" => "Example Description",
                 "course_link" => "https://www.accredible.com"
-            ) 
+            )
         );
 
         $requests = [

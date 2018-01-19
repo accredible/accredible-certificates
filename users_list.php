@@ -7,7 +7,7 @@ if ( ! class_exists( 'WP_List_Table' ) ) {
 
 // Require the Accredible API
 if ( ! class_exists( 'Accredible_Certificate' ) ) {
-	require_once('accredible_certificates.php');
+	require_once( plugin_dir_path( __FILE__ ) . 'accredible_certificates.php' );
 }
 
 class Users_List extends WP_List_Table {
@@ -36,7 +36,6 @@ class Users_List extends WP_List_Table {
 	 * @return mixed
 	 */
 	public static function get_users( $per_page = 10, $page_number = 1 ) {
-
 		$accredible_certificates = new Accredible_Certificate();
 
 		global $wpdb;

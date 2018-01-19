@@ -26,13 +26,13 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
 // For composer dependencies
-require 'vendor/autoload.php';
+require plugin_dir_path( __FILE__ ) . 'vendor/autoload.php';
 
 use ACMS\Api;
 
 // Require Academy Theme logic
 if ( ! class_exists( 'Accredible_Acadmey_Theme' ) ) {
-	require_once('accredible-academy-theme.php');
+	require_once( plugin_dir_path( __FILE__ ) . 'accredible-academy-theme.php' );
 }
 
 if(!class_exists('Accredible_Certificate'))
@@ -49,7 +49,7 @@ if(!class_exists('Accredible_Certificate'))
 		{
 
 			// Initialize Settings
-			require_once(sprintf("%s/settings.php", dirname(__FILE__)));
+			require_once( plugin_dir_path( __FILE__ ) . 'settings.php' );
 			$Accredible_Certificates_Settings = new Accredible_Certificates_Settings();
 
 			$plugin = plugin_basename(__FILE__);

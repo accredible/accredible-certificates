@@ -7,7 +7,7 @@ function disableCertificateSubmitButton() {
 
 <?php
 	
-	require_once 'users_list.php';
+	require_once( plugin_dir_path( __FILE__ ) . 'users_list.php' );
 
 	$api_key = get_option('api_key');
 
@@ -18,9 +18,7 @@ function disableCertificateSubmitButton() {
 		echo '<p>To find your API key scroll down to the API key section on this page: <a href="https://dashboard.accredible.com/issuer/dashboard/settings/api_integrations" target="_blank">https://dashboard.accredible.com/issuer/dashboard/settings/api_integrations</a></p>';
 		echo '<p>It looks like this:</p>';
 		echo '<img src="https://s3.amazonaws.com/accredible-moodle-instructions/wordpress/example-apikey.png" style="width: 600px;">';
-	
 	} else {
-
 		$table_instance = new Users_List();
 
 		// Display a notice if we have no groups with which to create credentials
@@ -53,7 +51,8 @@ function disableCertificateSubmitButton() {
 							<form method="post">
 								<?php
 								$table_instance->prepare_items();
-								$table_instance->display(); ?>
+								$table_instance->display();
+								 ?>
 							</form>
 						</div>
 					</div>
