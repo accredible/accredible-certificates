@@ -58,7 +58,14 @@ class Users_List extends WP_List_Table {
         for ($x=0; $x < count($result); $x++) { 
         	array_push($requests, ["method" => "get", "url" => "all_credentials", "params" => ["email" =>  $result[$x]["user_email"]] ]);
         }
-        $response = @Accredible_Certificate::batch_requests($requests);
+
+        try {
+        	$response = @Accredible_Certificate::batch_requests($requests);
+        } catch (Exception $e) {
+        //dump response here using try catch
+        	echo '<pre>'; print_r($requests); echo '</pre>';
+        	echo $e->getMessage();
+		}
 
         for ($i=0; $i < count($response->results); $i++) { 
         	if($response->results[$i]->body != "Not Found") {
@@ -66,12 +73,6 @@ class Users_List extends WP_List_Table {
         		$result[$i]["credentials"] = $credentials->credentials;
         	}
         }
-
-  //       // single requests for credentials
-		// for ($x=0; $x < count($result); $x++) { 
-		// 	$credentials = @Accredible_Certificate::get_credentials_for_email($result[$x]["user_email"]);
-		//     $result[$x]["credentials"] = $credentials->credentials;
-		// }
 
 		return $result;
 	}

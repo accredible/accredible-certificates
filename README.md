@@ -99,6 +99,9 @@ Sure, just post an issue and we'll get to work: https://github.com/accredible/ac
 
 ## Changelog
 
+#### 1.2.1
+Added better debugging for easier customer support.
+
 #### 1.2.0
 Use the Wordpress user full name and a few small updates.
 
