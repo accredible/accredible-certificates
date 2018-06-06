@@ -99,6 +99,9 @@ Sure, just post an issue and we'll get to work: https://github.com/accredible/ac
 
 ## Changelog
 
+#### 1.3.0
+Update permissions required to issue certificates & badges.
+
 #### 1.2.1
 Added better debugging for easier customer support.
 

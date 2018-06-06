@@ -4,7 +4,7 @@ Donate link: https://www.accredible.com/
 Tags: accredible, certificate, certificates, digital certificates, online course, lms, learning management system, e-learning, elearning, badges, badge, open badge, mozilla open badge, blockchain, blockchain credential, credential, credentials
 Requires at least: 3.0.1
 Tested up to: 4.9.2
-Stable tag: 1.2.1
+Stable tag: 1.3.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -118,6 +118,9 @@ Sure, just post an issue and we'll get to work: https://github.com/accredible/ac
 6. Example Google certificate.
 
 == Changelog ==
+
+= 1.3.0 =
+Update permissions required to issue certificates & badges.
 
 = 1.2.1 =
 Added better debugging for easier customer support.
