@@ -99,6 +99,9 @@ Sure, just post an issue and we'll get to work: https://github.com/accredible/ac
 
 ## Changelog
 
+#### 1.4.0
+Added widget and shortcode to display/list recipient certificates & badges.
+
 #### 1.3.0
 Update permissions required to issue certificates & badges.
 
