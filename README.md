@@ -9,6 +9,8 @@ An example digital certificate and badge can be viewed here: https://www.credent
 
 This plugin enables you to issue dynamic, digital certificates or open badges on your Wordpress instance.
 
+The plugin also allows you to display certificates and badges to your Wordpress users.
+
 A video walkthrough of the plugin can be viewed here: https://youtu.be/s5krPN6GvTY
 
 If you're using Academy Theme then we automatically create groups on Accredible for each course and automatically generate certificates or badges on an hourly basis.
@@ -30,51 +32,9 @@ Tested on Wordpress 3+.
 2. Install the plugin
 3. Activate the plugin through the 'Plugins' menu in WordPress
 4. Go to the plugin settings and input your API key
+5. Add the widget if desired. It will show a list of certificates or badges for a currently signed in user.
+6. Add the shortcode [accredible_credential image="true" limit="10" style="true"] to a page or post if desired. It will show certificates and badges for a currently signed in user.
 
-
-If you're using Academy Theme and would like students to be able to access certificates then please:
-
-1. Access the Theme Editor from the Administration > Appearance > Editor menu
-2. Open module_form.php from the right sidebar.
-3. Replace the entire file contents with:
-
-
-```php
-<form action="<?php echo themex_url(true, ThemexCore::getURL('register')); ?>" method="POST">
-	<?php if(!ThemexCourse::isSubscriber()) { ?>
-	<a href="#" class="button medium submit-button left"><?php _e('Subscribe Now', 'academy'); ?></a>
-	<input type="hidden" name="course_action" value="subscribe_user" />
-	<input type="hidden" name="user_redirect" value="<?php echo intval(reset(ThemexCourse::$data['plans'])); ?>" />
-	<?php } else if(!ThemexCourse::isMember()) { ?>
-		<?php if(ThemexCourse::$data['status']!='private' && ThemexCourse::$data['capacity']>=0) { ?>
-		<a href="#" class="button medium price-button submit-button left">		
-			<?php if(ThemexCourse::$data['status']=='premium' && ThemexCourse::$data['product']!=0) { ?>
-			<span class="caption"><?php _e('Take This Course', 'academy'); ?></span>
-			<span class="price"><?php echo ThemexCourse::$data['price']['text']; ?></span>
-			<?php } else { ?>
-			<?php _e('Take This Course', 'academy'); ?>
-			<?php } ?>
-		</a>
-		<input type="hidden" name="course_action" value="add_user" />
-		<input type="hidden" name="user_redirect" value="<?php echo ThemexCourse::$data['ID']; ?>" />
-		<?php } ?>
-	<?php } else { ?>
-		<?php if(!ThemexCore::checkOption('course_retake')) { ?>
-		<a href="#" class="button secondary medium submit-button left"><?php _e('Unsubscribe Now', 'academy'); ?></a>
-		<input type="hidden" name="course_action" value="remove_user" />
-		<?php } ?>
-		<?php if($result = Accredible_Certificate::hasCertificate(ThemexCourse::$data['ID'], ThemexUser::$data['user']['ID'])) { ?>
-		<a href="<?php echo "https://www.accredible.com/".$result; ?>" target="_blank" class="button medium certificate-button"><?php _e('View Certificate', 'academy'); ?></a>
-		<?php } ?>
-	<?php } ?>
-	<input type="hidden" name="course_id" value="<?php echo ThemexCourse::$data['ID']; ?>" />
-	<input type="hidden" name="plan_id" value="<?php echo intval(reset(ThemexCourse::$data['plans'])); ?>" />	
-	<input type="hidden" name="nonce" class="nonce" value="<?php echo wp_create_nonce(THEMEX_PREFIX.'nonce'); ?>" />
-	<input type="hidden" name="action" class="action" value="<?php echo THEMEX_PREFIX; ?>update_course" />
-</form>
-```
-
-Then click 'Update file'.
 
 ### Manually creating certificates
 1. Go to the 'Certificates & Badges' page in the Wordpress admin menu.
@@ -83,9 +43,6 @@ Then click 'Update file'.
 
 ![Certificates Admin](https://s3.amazonaws.com/accredible-moodle-instructions/wordpress/certificates-admin.png)
 
-### Automatically creating certificates
-1. Go to the plugin settings and check 'Automatically Issue Certificate upon Course Completition'
-2. When a user completed a course they will be automatically issued a certificate/badge.
 
 ## Frequently Asked Questions
 
