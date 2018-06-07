@@ -35,6 +35,11 @@ if ( ! class_exists( 'Accredible_Acadmey_Theme' ) ) {
 	require_once( plugin_dir_path( __FILE__ ) . 'accredible-academy-theme.php' );
 }
 
+// Require Widget for credential display
+if ( ! class_exists( 'Accredible_Widget' ) ) {
+	require_once( plugin_dir_path( __FILE__ ) . 'accredible_widget.php' );
+}
+
 if(!class_exists('Accredible_Certificate'))
 {
 	class Accredible_Certificate
@@ -279,7 +284,6 @@ if(!class_exists('Accredible_Certificate'))
          
           $user = get_user_by("id", $user_id);
           $all_certificates = Accredible_Certificate::certificates($course_id);
-          //$all_certificates = certificates($course_id);
           $all_certificates = $all_certificates->credentials;
           $cert_exit = False;
           if(is_array($all_certificates)){
