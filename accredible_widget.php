@@ -15,10 +15,6 @@ class Accredible_Widget extends WP_Widget {
 		// Set widget defaults
 		$defaults = array(
 			'title'    => '',
-			'text'     => '',
-			'textarea' => '',
-			'checkbox' => '',
-			'select'   => '',
 		);
 		
 		// Parse current settings with defaults
@@ -28,43 +24,6 @@ class Accredible_Widget extends WP_Widget {
 		<p>
 			<label for="<?php echo esc_attr( $this->get_field_id( 'title' ) ); ?>"><?php _e( 'Widget Title', 'text_domain' ); ?></label>
 			<input class="widefat" id="<?php echo esc_attr( $this->get_field_id( 'title' ) ); ?>" name="<?php echo esc_attr( $this->get_field_name( 'title' ) ); ?>" type="text" value="<?php echo esc_attr( $title ); ?>" />
-		</p>
-
-		<?php // Text Field ?>
-		<p>
-			<label for="<?php echo esc_attr( $this->get_field_id( 'text' ) ); ?>"><?php _e( 'Text:', 'text_domain' ); ?></label>
-			<input class="widefat" id="<?php echo esc_attr( $this->get_field_id( 'text' ) ); ?>" name="<?php echo esc_attr( $this->get_field_name( 'text' ) ); ?>" type="text" value="<?php echo esc_attr( $text ); ?>" />
-		</p>
-
-		<?php // Textarea Field ?>
-		<p>
-			<label for="<?php echo esc_attr( $this->get_field_id( 'textarea' ) ); ?>"><?php _e( 'Textarea:', 'text_domain' ); ?></label>
-			<textarea class="widefat" id="<?php echo esc_attr( $this->get_field_id( 'textarea' ) ); ?>" name="<?php echo esc_attr( $this->get_field_name( 'textarea' ) ); ?>"><?php echo wp_kses_post( $textarea ); ?></textarea>
-		</p>
-
-		<?php // Checkbox ?>
-		<p>
-			<input id="<?php echo esc_attr( $this->get_field_id( 'checkbox' ) ); ?>" name="<?php echo esc_attr( $this->get_field_name( 'checkbox' ) ); ?>" type="checkbox" value="1" <?php checked( '1', $checkbox ); ?> />
-			<label for="<?php echo esc_attr( $this->get_field_id( 'checkbox' ) ); ?>"><?php _e( 'Checkbox', 'text_domain' ); ?></label>
-		</p>
-
-		<?php // Dropdown ?>
-		<p>
-			<label for="<?php echo $this->get_field_id( 'select' ); ?>"><?php _e( 'Select', 'text_domain' ); ?></label>
-			<select name="<?php echo $this->get_field_name( 'select' ); ?>" id="<?php echo $this->get_field_id( 'select' ); ?>" class="widefat">
-			<?php
-			// Your options array
-			$options = array(
-				''        => __( 'Select', 'text_domain' ),
-				'option_1' => __( 'Option 1', 'text_domain' ),
-				'option_2' => __( 'Option 2', 'text_domain' ),
-				'option_3' => __( 'Option 3', 'text_domain' ),
-			);
-			// Loop through options and add each one to the select dropdown
-			foreach ( $options as $key => $name ) {
-				echo '<option value="' . esc_attr( $key ) . '" id="' . esc_attr( $key ) . '" '. selected( $select, $key, false ) . '>'. $name . '</option>';
-			} ?>
-			</select>
 		</p>
 
 	<?php }
@@ -95,21 +54,23 @@ class Accredible_Widget extends WP_Widget {
 			if ( $title ) {
 				echo $before_title . $title . $after_title;
 			}
-			// Display text field
-			if ( $text ) {
-				echo '<p>' . $text . '</p>';
-			}
-			// Display textarea field
-			if ( $textarea ) {
-				echo '<p>' . $textarea . '</p>';
-			}
-			// Display select field
-			if ( $select ) {
-				echo '<p>' . $select . '</p>';
-			}
-			// Display something if checkbox is true
-			if ( $checkbox ) {
-				echo '<p>Something awesome</p>';
+
+			$current_user = wp_get_current_user();
+			
+			if (0 == $current_user->ID) {
+			    // We don't have a user to get credentials for.
+			} else {
+				$accredible = new Accredible_Certificate;
+				$credentials = $accredible->get_credentials_for_email($current_user->user_email);
+				if($credentials->credentials){
+					echo '<ul>';
+					foreach ($credentials->credentials as $key => $credential) {
+						echo '<li>';
+						echo '<a href="' . $credential->url . '" target="_blank">' . $credential->name . '</a>';
+						echo '</li>';
+					}
+					echo '</ul>';
+				}
 			}
 		echo '</div>';
 		// WordPress core after_widget hook (always include )
