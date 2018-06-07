@@ -13,7 +13,6 @@ The plugin also allows you to display certificates and badges to your Wordpress 
 
 A video walkthrough of the plugin can be viewed here: https://youtu.be/s5krPN6GvTY
 
-If you're using Academy Theme then we automatically create groups on Accredible for each course and automatically generate certificates or badges on an hourly basis.
 
 ## Example Output
 ![Example Digital Certificate](https://s3.amazonaws.com/accredible-cdn/example-digital-certificate.png)
@@ -48,7 +47,13 @@ Tested on Wordpress 3+.
 
 #### How do I get an API key?
 
-Visit https://accredible.com to obtain a free API key.
+Visit https://www.accredible.com to obtain a free API key.
+
+#### How can I show certificates or badges to my users?
+
+You can use the widget or shortcode to display badges or certificates that belong to the current Wordpress user.
+
+The shortcode is: [accredible_credential] but it accepts a number of options: [accredible_credential image="true" limit="10" style="true"].
 
 #### Can you add support for another Wordpress LMS or theme?
 
