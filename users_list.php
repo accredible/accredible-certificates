@@ -35,7 +35,8 @@ class Users_List extends WP_List_Table {
 	 *
 	 * @return mixed
 	 */
-	public static function get_users( $per_page = 10, $page_number = 1 ) {
+	public static function get_users( $per_page = 20, $page_number = 1 ) {
+
 		$accredible_certificates = new Accredible_Certificate();
 
 		global $wpdb;
@@ -232,16 +233,17 @@ class Users_List extends WP_List_Table {
 		/** Process bulk action */
 		$this->process_bulk_action();
 
-		$per_page     = $this->get_items_per_page( 'users_per_page', 10 );
+		// Avoid bulk request overflows by limiting the page size
+		$per_page     = 20;
 		$current_page = $this->get_pagenum();
 		$total_items  = self::record_count();
 
 		$this->set_pagination_args( array(
 			'total_items' => $total_items, //WE have to calculate the total number of items
-			'per_page'    => $per_page //WE have to determine how many items to show on a page
+			'per_page'    => 20 //WE have to determine how many items to show on a page
 		) );
 
-		$this->items = self::get_users( $per_page, $current_page );
+		$this->items = self::get_users( 20, $current_page );
 
 	}
 

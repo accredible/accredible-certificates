@@ -61,6 +61,9 @@ Sure, just post an issue and we'll get to work: https://github.com/accredible/ac
 
 ## Changelog
 
+#### 1.4.1
+Limit the certificate users page to a maximum of 50.
+
 #### 1.4.0
 Added widget and shortcode to display/list recipient certificates & badges.
 
