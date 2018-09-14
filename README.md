@@ -61,6 +61,9 @@ Sure, just post an issue and we'll get to work: https://github.com/accredible/ac
 
 ## Changelog
 
+#### 1.4.2
+Add the ability to search through Wordpress users.
+
 #### 1.4.1
 Limit the certificate users page to a maximum of 50.
 
