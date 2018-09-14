@@ -84,25 +84,28 @@ class Users_List extends WP_List_Table {
 
 		$result = $wpdb->get_results($query, 'ARRAY_A');
 
-		// batch request to get user credentials
-		$requests = [];
-        for ($x=0; $x < count($result); $x++) { 
-        	array_push($requests, ["method" => "get", "url" => "all_credentials", "params" => ["email" =>  $result[$x]["user_email"]] ]);
-        }
+        // Don't attempt this query if there are no users
+        if(count($result) > 0){
+        	// batch request to get user credentials
+			$requests = [];
+	        for ($x=0; $x < count($result); $x++) { 
+	        	array_push($requests, ["method" => "get", "url" => "all_credentials", "params" => ["email" =>  $result[$x]["user_email"]] ]);
+	        }
 
-        try {
-        	$response = @Accredible_Certificate::batch_requests($requests);
-        } catch (Exception $e) {
-        //dump response here using try catch
-        	echo '<pre>'; print_r($requests); echo '</pre>';
-        	echo $e->getMessage();
-		}
+        	try {
+	        	$response = @Accredible_Certificate::batch_requests($requests);
+	        } catch (Exception $e) {
+	        //dump response here using try catch
+	        	echo '<pre>'; print_r($requests); echo '</pre>';
+	        	echo $e->getMessage();
+			}
 
-        for ($i=0; $i < count($response->results); $i++) { 
-        	if($response->results[$i]->body != "Not Found") {
-        		$credentials = json_decode($response->results[$i]->body);
-        		$result[$i]["credentials"] = $credentials->credentials;
-        	}
+	        for ($i=0; $i < count($response->results); $i++) { 
+	        	if($response->results[$i]->body != "Not Found") {
+	        		$credentials = json_decode($response->results[$i]->body);
+	        		$result[$i]["credentials"] = $credentials->credentials;
+	        	}
+	        }
         }
 
 		return $result;
