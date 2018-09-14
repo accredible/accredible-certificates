@@ -41,18 +41,48 @@ class Users_List extends WP_List_Table {
 
 		global $wpdb;
 
-		$sql = "SELECT id, user_login, user_nicename, user_email FROM {$wpdb->prefix}users";
+		if ( empty( $_REQUEST['orderby'] ) ) {
+			$_REQUEST['orderby'] = "id";
+			$_REQUEST['order'] = "desc";
+		}
+		$orderby = ' ORDER BY ' . esc_sql( $_REQUEST['orderby'] );
+		$orderby .= ! empty( $_REQUEST['order'] ) ? ' ' . esc_sql( $_REQUEST['order'] ) : ' ASC';
 
-		if ( ! empty( $_REQUEST['orderby'] ) ) {
-			$sql .= ' ORDER BY ' . esc_sql( $_REQUEST['orderby'] );
-			$sql .= ! empty( $_REQUEST['order'] ) ? ' ' . esc_sql( $_REQUEST['order'] ) : ' ASC';
+		$offset = ( $page_number - 1 ) * $per_page;
+
+		if ( ! empty( $_REQUEST['s'] ) ) {
+			$query = $wpdb->prepare( 
+				"
+					SELECT id, user_login, user_nicename, user_email FROM {$wpdb->prefix}users
+					WHERE ( user_email LIKE %s ) OR ( user_email LIKE %s ) OR ( user_login LIKE %s )
+				" . $orderby . "
+					LIMIT %d
+					OFFSET %d
+				", 
+			        array(
+					"%" . $_REQUEST['s'] . "%", 
+					"%" . $_REQUEST['s'] . "%", 
+					"%" . $_REQUEST['s'] . "%",
+					$per_page,
+					$offset
+				) 
+			);
+		} else {
+			$query = $wpdb->prepare( 
+				"
+					SELECT id, user_login, user_nicename, user_email FROM {$wpdb->prefix}users
+				" . $orderby . "
+					LIMIT %d
+					OFFSET %d
+				", 
+			        array(
+					$per_page,
+					$offset
+				) 
+			);
 		}
 
-		$sql .= " LIMIT $per_page";
-		$sql .= ' OFFSET ' . ( $page_number - 1 ) * $per_page;
-
-
-		$result = $wpdb->get_results( $sql, 'ARRAY_A' );
+		$result = $wpdb->get_results($query, 'ARRAY_A');
 
 		// batch request to get user credentials
 		$requests = [];
@@ -244,7 +274,6 @@ class Users_List extends WP_List_Table {
 		) );
 
 		$this->items = self::get_users( 20, $current_page );
-
 	}
 
 	/**

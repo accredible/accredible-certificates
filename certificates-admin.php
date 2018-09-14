@@ -51,6 +51,7 @@ function disableCertificateSubmitButton() {
 							<form method="post">
 								<?php
 								$table_instance->prepare_items();
+								$table_instance->search_box('Search Users', 'search');
 								$table_instance->display();
 								 ?>
 							</form>
