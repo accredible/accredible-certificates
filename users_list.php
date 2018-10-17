@@ -187,7 +187,7 @@ class Users_List extends WP_List_Table {
 		$columns = array(
 			'cb'			=> '<input type="checkbox" />',
 			'user_login'    => 'Login',
-			'user_nicename' => 'Name',
+			'user_nicename' => 'Username',
 			'user_email'    => 'Email',
 			'credentials' 	=> 'Credentials'
 		);
@@ -325,8 +325,11 @@ class Users_List extends WP_List_Table {
 				// find the user
 				$userdata = WP_User::get_data_by( 'id', $users[$i] );
 
-				if($userdata->first_name && $userdata->last_name ){
-    				$recipient_name = $userdata->first_name . ' ' . $userdata->last_name;
+				$user_firstname = get_user_meta( $users[$i], 'first_name', true );
+				$user_lastname = get_user_meta( $users[$i], 'last_name', true );
+
+				if($user_firstname && $user_lastname ){
+    				$recipient_name = $user_firstname . ' ' . $user_lastname;
     			} else {
     				$recipient_name = $userdata->display_name;
     			}
