@@ -87,6 +87,8 @@ add_action( 'widgets_init', 'register_accredible_custom_widget' );
 // [accredible_credential image="true" limit="10" style="true"]
 function accredible_credential_shortcode($atts = [], $content = null, $tag = ''){
 
+    $output = '';
+
 	// normalize attribute keys, lowercase
     $atts = array_change_key_case((array)$atts, CASE_LOWER);
  
@@ -114,22 +116,24 @@ function accredible_credential_shortcode($atts = [], $content = null, $tag = '')
 
 				// The user can choose between image or link.
 				if($atts_to_consume['image'] == "false"){
-					echo '<a href="' . $credential->url . '" target="_blank">' . $credential->name . '</a>';
+                    $output .= '<a href="' . $credential->url . '" target="_blank">' . $credential->name . '</a>';
 				} else {
 					// The user can choose to remove the default styling
 					if($atts_to_consume['style'] == "false"){
-						echo '<div class="accredible_credential">';
+                        $output .= '<div class="accredible_credential">';
 					} else {
-						echo '<div style="width: 300px; height: 200px; margin: 0 30px 30px 0; text-align: center; display: inline-block;" class="accredible_credential">';
+                        $output .= '<div style="width: 300px; height: 200px; margin: 0 30px 30px 0; text-align: center; display: inline-block;" class="accredible_credential">';
 					}
-					echo '<a href="' . $credential->url . '">';
-					echo '<img src="' . $credential->seo_image . '" style="max-width:100%; max-height:100%; margin: 0 auto;">';
-					echo '</a>';
-					echo '</div>';
+                    $output .= '<a href="' . $credential->url . '">';
+                    $output .= '<img src="' . $credential->seo_image . '" style="max-width:100%; max-height:100%; margin: 0 auto;">';
+                    $output .= '</a>';
+                    $output .= '</div>';
 				}
 			}
 		}
 	}
+
+    return $output;
 }
 
 add_shortcode( 'accredible_credential', 'accredible_credential_shortcode');
