@@ -61,6 +61,9 @@ Sure, just post an issue and we'll get to work: https://github.com/accredible/ac
 
 ## Changelog
 
+#### 1.4.4
+Shortcode no longer incorrectly outputs content.
+
 #### 1.4.3
 Use the Wordpress user's full name rather than nicename.
 
