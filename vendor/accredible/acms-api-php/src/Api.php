@@ -121,7 +121,10 @@ class Api {
 
 		$client = new \GuzzleHttp\Client();
 
-		$params = array('Authorization' => 'Token token="'.$this->getAPIKey().'"');
+		$params = array(
+			'Authorization' => 'Token token="'.$this->getAPIKey().'"',
+			'Accredible-Integration' => 'Wordpress'
+		);
 
 		$response = $client->post($this->api_endpoint.'credentials', array(
 		    'headers' => $params,
@@ -163,7 +166,10 @@ class Api {
 
         $client = new \GuzzleHttp\Client();
 
-        $params = array('Authorization' => 'Token token="'.$this->getAPIKey().'"');
+        $params = array(
+			'Authorization' => 'Token token="'.$this->getAPIKey().'"',
+			'Accredible-Integration' => 'Wordpress'
+		);
 
         $response = $client->post($this->api_endpoint.'credentials', array(
             'headers' => $params,
