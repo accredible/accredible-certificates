@@ -61,6 +61,9 @@ Sure, just post an issue and we'll get to work: https://github.com/accredible/ac
 
 ## Changelog
 
+#### 1.4.6
+Update HTTP request headers of the API
+
 #### 1.4.5
 Test against latest WP version.
 
