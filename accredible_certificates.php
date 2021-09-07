@@ -3,7 +3,7 @@
 Plugin Name: Accredible Certificates & Open Badges
 Plugin URI: https://github.com/accredible/accredible-certificates
 Description: Certificates, open badges and blockchain credentials. Create, update and manage them on your Wordpress site.
-Version: 1.4.4
+Version: 1.4.6
 Author: Accredible
 Author URI: https://www.accredible.com
 License: GPL2
