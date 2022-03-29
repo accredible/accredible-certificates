@@ -288,7 +288,8 @@ if(!class_exists('Accredible_Certificate'))
           $cert_exit = False;
           if(is_array($all_certificates)){
 			foreach ($all_certificates as $key => $cert) {
-			  if($cert->recipient->email == $user->user_email){
+			  $user_email = strtolower( $user->user_email );
+			  if($cert->recipient->email == $user_email){
 			    $cert_exit = True;
 			    $cert_id = $cert->id;
 			    $approve = $cert->approve;
