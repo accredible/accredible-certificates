@@ -85,6 +85,9 @@ class Api {
 	 */
 	public function get_credentials($group_id = null, $email = null, $page_size = null, $page = 1){
 		$client = new \GuzzleHttp\Client();
+        if ($email) {
+            $email = strtolower($email);
+        }
 
 		$params = array('headers' =>  array('Authorization' => 'Token token="'.$this->getAPIKey().'"'));
 

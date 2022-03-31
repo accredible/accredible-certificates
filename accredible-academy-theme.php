@@ -161,7 +161,7 @@ if(!class_exists('Accredible_Acadmey_Theme'))
 
 				$issue = true;
 				foreach ($existing_certificates as $key => $certificate) {
-					if($certificate->recipient->email == $user->user_email){
+					if($certificate->recipient->email == strtolower( $user->user_email )){
 						$issue = false;
 					}
 				}
