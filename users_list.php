@@ -89,7 +89,7 @@ class Users_List extends WP_List_Table {
         	// batch request to get user credentials
 			$requests = [];
 	        for ($x=0; $x < count($result); $x++) { 
-	        	array_push($requests, ["method" => "get", "url" => "all_credentials", "params" => ["email" =>  $result[$x]["user_email"]] ]);
+	        	array_push($requests, ["method" => "get", "url" => "all_credentials", "params" => ["email" =>  strtolower( $result[$x]["user_email"] )] ]);
 	        }
 
         	try {

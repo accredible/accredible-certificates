@@ -82,6 +82,9 @@ Sure, just post an issue and we'll get to work: https://github.com/accredible/ac
 
 == Changelog ==
 
+= 1.4.8 =
+Fix issue with uppercase emails
+
 = 1.4.7 =
 Fix version info of the plugin
 
