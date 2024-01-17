@@ -61,6 +61,9 @@ Sure, just post an issue and we'll get to work: https://github.com/accredible/ac
 
 ## Changelog
 
+#### 1.4.9
+Fix issue in API Settings page
+
 #### 1.4.8
 Fix issue with uppercase emails
 

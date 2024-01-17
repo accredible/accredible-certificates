@@ -74,8 +74,8 @@ if(!class_exists('Accredible_Certificates_Settings'))
         {
             // Get the field name from the $args array
             $field = $args['field'];
-            // Get the value of this setting
-            $value = get_option($field);
+            // Get the value of this setting and escape it to prevent xss
+            $value = esc_attr(get_option($field));
             // echo a proper input type="text"
             echo sprintf('<input type="text" name="%s" id="%s" value="%s" />', $field, $field, $value);
         } // END public function settings_field_input_text($args)
