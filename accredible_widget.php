@@ -33,7 +33,9 @@ class Accredible_Widget extends WP_Widget {
 		);
 
 		// Parse current settings with defaults.
-		extract( wp_parse_args( (array) $instance, $defaults ) ); ?>
+		$instance = wp_parse_args( (array) $instance, $defaults );
+		$title = $instance['title'];
+		?>
 
 		<?php // Widget Title. ?>
 		<p>
@@ -67,7 +69,12 @@ class Accredible_Widget extends WP_Widget {
 	 * @param array $instance The instance.
 	 */
 	public function widget( $args, $instance ) {
-		extract( $args );
+		// Get widget arguments
+		$before_widget = $args['before_widget'];
+		$after_widget = $args['after_widget'];
+		$before_title = $args['before_title'];
+		$after_title = $args['after_title'];
+
 		// Check the widget options.
 		$title    = isset( $instance['title'] ) ? apply_filters( 'widget_title', $instance['title'] ) : '';
 		$text     = isset( $instance['text'] ) ? $instance['text'] : '';
