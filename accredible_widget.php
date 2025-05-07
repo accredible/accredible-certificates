@@ -1,6 +1,16 @@
-<?php // The widget class
+<?php
+/**
+ * The widget class.
+ *
+ * @package Accredible_Certificates
+ */
+
+defined( 'ABSPATH' ) || die;
+
 class Accredible_Widget extends WP_Widget {
-	// Main constructor.
+	/**
+	 * Main constructor.
+	 */
 	public function __construct() {
 		parent::__construct(
 			'accredible_widget',
@@ -10,7 +20,12 @@ class Accredible_Widget extends WP_Widget {
 			)
 		);
 	}
-	// The widget form (for the backend).
+
+	/**
+	 * The widget form (for the backend).
+	 *
+	 * @param array $instance The widget instance.
+	 */
 	public function form( $instance ) {
 		// Set widget defaults.
 		$defaults = array(
@@ -27,7 +42,14 @@ class Accredible_Widget extends WP_Widget {
 		</p>
 
 	<?php }
-	// Update widget settings.
+
+	/**
+	 * Update widget settings.
+	 *
+	 * @param array $new_instance The new instance.
+	 * @param array $old_instance The old instance.
+	 * @return array The updated instance.
+	 */
 	public function update( $new_instance, $old_instance ) {
 		$instance             = $old_instance;
 		$instance['title']    = isset( $new_instance['title'] ) ? wp_strip_all_tags( $new_instance['title'] ) : '';
@@ -37,7 +59,13 @@ class Accredible_Widget extends WP_Widget {
 		$instance['select']   = isset( $new_instance['select'] ) ? wp_strip_all_tags( $new_instance['select'] ) : '';
 		return $instance;
 	}
-	// Display the widget.
+
+	/**
+	 * Display the widget.
+	 *
+	 * @param array $args The arguments.
+	 * @param array $instance The instance.
+	 */
 	public function widget( $args, $instance ) {
 		extract( $args );
 		// Check the widget options.
@@ -78,15 +106,24 @@ class Accredible_Widget extends WP_Widget {
 		echo esc_html( $after_widget );
 	}
 }
-// Register the widget.
+
+/**
+ * Register the widget.
+ */
 function register_accredible_custom_widget() {
 	register_widget( 'Accredible_Widget' );
 }
 
 add_action( 'widgets_init', 'register_accredible_custom_widget' );
 
+/**
+ * The shortcode.
+ *
+ * @param array $atts The attributes.
+ * @param string $content The content.
+ * @param string $tag The tag.
+ */
 function accredible_credential_shortcode( $atts = array(), $content = null, $tag = '' ) {
-
 	$output = '';
 
 	// Normalize attribute keys, lowercase.
