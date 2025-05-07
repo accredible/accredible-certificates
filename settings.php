@@ -29,7 +29,13 @@ if ( ! class_exists( 'Accredible_Certificates_Settings' ) ) {
 		 */
 		public function admin_init() {
 			// Register your plugin's settings.
-			register_setting( 'accredible_certificates-group', 'api_key' );
+			$args = array(
+				'type'              => 'string',
+				'description'       => 'API Key for Accredible Credentials API',
+				'sanitize_callback' => 'sanitize_text_field',
+				'default'           => '',
+			);
+			register_setting( 'accredible_certificates-group', 'api_key', $args );
 
 			// Add your settings section.
 			add_settings_section(
@@ -55,17 +61,21 @@ if ( ! class_exists( 'Accredible_Certificates_Settings' ) ) {
 			try {
 				$auto_sync = Accredible_Certificate::auto_sync_available();
 			} catch ( Exception $e ) {
-				// Log the error if needed.
-				error_log( 'Accredible Certificates: ' . $e->getMessage() );
 				$auto_sync = false;
 			}
 
 			if ( $auto_sync ) {
-				register_setting( 'accredible_certificates-group', 'automatically_issue_certificates' );
+				$args = array(
+					'type'              => 'boolean',
+					'description'       => 'Automatically issue credentials upon course completion',
+					'sanitize_callback' => 'rest_sanitize_boolean',
+					'default'           => false,
+				);
+				register_setting( 'accredible_certificates-group', 'automatically_issue_certificates', $args );
 
 				add_settings_field(
 					'accredible_certificates-automatically_issue_certificates',
-					'Automatically Issue Credential upon Course Completition',
+					'Automatically Issue Credential upon Course Completion',
 					array( &$this, 'settings_field_checkbox' ),
 					'accredible_certificates',
 					'accredible_certificates-section',
