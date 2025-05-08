@@ -137,7 +137,7 @@ class Users_List extends WP_List_Table {
 			try {
 				$response = Accredible_Certificate::batch_requests( $requests );
 			} catch ( Exception $e ) {
-				// Create a WP_Error object for proper error handling
+				// Create a WP_Error object for proper error handling.
 				$error = new WP_Error(
 					'accredible_certificate_error',
 					$e->getMessage(),
@@ -147,12 +147,12 @@ class Users_List extends WP_List_Table {
 					)
 				);
 
-				// Display user-friendly error message
+				// Display user-friendly error message.
 				echo '<div class="notice notice-error is-dismissible">';
 				echo '<p>' . esc_html__( 'Error fetching credentials. Please try again later.', 'accredible-certificates' ) . '</p>';
 				echo '</div>';
 
-				// If WP_DEBUG is enabled, log the error
+				// If WP_DEBUG is enabled, log the error.
 				if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
 					// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
 					error_log( $error->get_error_message() );
@@ -205,11 +205,11 @@ class Users_List extends WP_List_Table {
 			case 'credentials':
 				return $this->column_credentials( $item );
 			default:
-				// Return a formatted display of the column value if it exists
+				// Return a formatted display of the column value if it exists.
 				if ( isset( $item[ $column_name ] ) ) {
 					return esc_html( $item[ $column_name ] );
 				}
-				// Return a dash for empty or undefined columns
+				// Return a dash for empty or undefined columns.
 				return '—';
 		}
 	}
