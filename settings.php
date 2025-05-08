@@ -3,8 +3,9 @@
  * Settings page for the Accredible Certificates plugin.
  *
  * @package    Accredible_Certificates
- * @subpackage Accredible_Certificates/admin
  */
+
+defined( 'ABSPATH' ) || die;
 
 if ( ! class_exists( 'Accredible_Certificates_Settings' ) ) {
 	/**
