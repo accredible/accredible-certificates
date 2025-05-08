@@ -1,112 +1,157 @@
 <?php
+/**
+ * Users List Table for Accredible Certificates
+ *
+ * @package Accredible_Certificates
+ */
 
-// Require the list table class
+defined( 'ABSPATH' ) || die;
+
 if ( ! class_exists( 'WP_List_Table' ) ) {
-	require_once( ABSPATH . 'wp-admin/includes/class-wp-list-table.php' );
+	// Require the list table class.
+	require_once ABSPATH . 'wp-admin/includes/class-wp-list-table.php';
 }
 
-// Require the Accredible API
+/**
+ * Require the Accredible API
+ */
 if ( ! class_exists( 'Accredible_Certificate' ) ) {
-	require_once( plugin_dir_path( __FILE__ ) . 'accredible_certificates.php' );
+	require_once plugin_dir_path( __FILE__ ) . 'accredible_certificates.php';
 }
 
+/**
+ * Class Users_List
+ *
+ * Handles the display and management of users list table for Accredible certificates.
+ * Extends WP_List_Table to create a custom table for managing certificate recipients.
+ *
+ * @package    Accredible_Certificates
+ */
 class Users_List extends WP_List_Table {
-
+	/**
+	 * Flag to indicate if there are no groups available.
+	 *
+	 * @var boolean
+	 */
 	public $no_groups = false;
 
 	/** Class constructor */
 	public function __construct() {
 
-		parent::__construct( 
+		parent::__construct(
 			array(
-				'singular' => __( 'Recipient', 'sp' ), //singular name of the listed records
-				'plural'   => __( 'Recipients', 'sp' ), //plural name of the listed records
-				'ajax'     => false //does this table support ajax?
+				'singular' => __( 'Recipient', 'accredible-certificates' ), // Singular name of the listed records.
+				'plural'   => __( 'Recipients', 'accredible-certificates' ), // Plural name of the listed records.
+				'ajax'     => false, // Does this table support ajax?
 			)
 		);
-
 	}
 
 	/**
-	 * Retrieve users data from the database
+	 * Retrieve users' data from the database.
 	 *
-	 * @param int $per_page
-	 * @param int $page_number
+	 * @param int $per_page    Number of users to retrieve per page.
+	 * @param int $page_number Current page number.
 	 *
 	 * @return mixed
 	 */
 	public static function get_users( $per_page = 20, $page_number = 1 ) {
-
 		$accredible_certificates = new Accredible_Certificate();
 
 		global $wpdb;
 
-		if ( empty( $_REQUEST['orderby'] ) ) {
-			$_REQUEST['orderby'] = "id";
-			$_REQUEST['order'] = "desc";
+		// Define allowed columns for ordering.
+		$allowed_columns = array(
+			'id',
+			'user_login',
+			'user_nicename',
+			'user_email',
+		);
+
+		// Get and validate orderby parameter.
+		$order_by = self::sanitize_request_parameter( 'orderby' );
+		if ( ! in_array( $order_by, $allowed_columns, true ) ) {
+			$order_by = 'id';
 		}
-		$orderby = ' ORDER BY ' . esc_sql( $_REQUEST['orderby'] );
-		$orderby .= ! empty( $_REQUEST['order'] ) ? ' ' . esc_sql( $_REQUEST['order'] ) : ' ASC';
+
+		// Get and validate order parameter.
+		$order = self::sanitize_request_parameter( 'order' );
+		$order = strtoupper( $order );
+		if ( ! in_array( $order, array( 'ASC', 'DESC' ), true ) ) {
+			$order = 'DESC';
+		}
 
 		$offset = ( $page_number - 1 ) * $per_page;
 
-		if ( ! empty( $_REQUEST['s'] ) ) {
-			$query = $wpdb->prepare( 
-				"
-					SELECT id, user_login, user_nicename, user_email FROM {$wpdb->prefix}users
-					WHERE ( user_email LIKE %s ) OR ( user_email LIKE %s ) OR ( user_login LIKE %s )
-				" . $orderby . "
-					LIMIT %d
-					OFFSET %d
-				", 
-			        array(
-					"%" . $_REQUEST['s'] . "%", 
-					"%" . $_REQUEST['s'] . "%", 
-					"%" . $_REQUEST['s'] . "%",
+		$search_term = self::sanitize_request_parameter( 's' );
+		if ( ! empty( $search_term ) ) {
+			$like  = '%' . $wpdb->esc_like( $search_term ) . '%';
+			$query = $wpdb->prepare(
+				"SELECT id, user_login, user_nicename, user_email 
+				FROM {$wpdb->prefix}users
+				WHERE user_email LIKE %s 
+				OR user_login LIKE %s
+				ORDER BY %s %s
+				LIMIT %d
+				OFFSET %d",
+				array(
+					$like,
+					$like,
+					$order_by,
+					$order,
 					$per_page,
-					$offset
-				) 
+					$offset,
+				)
 			);
 		} else {
-			$query = $wpdb->prepare( 
-				"
-					SELECT id, user_login, user_nicename, user_email FROM {$wpdb->prefix}users
-				" . $orderby . "
-					LIMIT %d
-					OFFSET %d
-				", 
-			        array(
+			$query = $wpdb->prepare(
+				"SELECT id, user_login, user_nicename, user_email 
+				FROM {$wpdb->prefix}users
+				ORDER BY %s %s
+				LIMIT %d
+				OFFSET %d",
+				array(
+					$order_by,
+					$order,
 					$per_page,
-					$offset
-				) 
+					$offset,
+				)
 			);
 		}
 
-		$result = $wpdb->get_results($query, 'ARRAY_A');
+		$result = $wpdb->get_results( $query, 'ARRAY_A' ); // phpcs:ignore WordPress.DB
 
-        // Don't attempt this query if there are no users
-        if(count($result) > 0){
-        	// batch request to get user credentials
-			$requests = [];
-	        for ($x=0; $x < count($result); $x++) { 
-	        	array_push($requests, ["method" => "get", "url" => "all_credentials", "params" => ["email" =>  strtolower( $result[$x]["user_email"] )] ]);
-	        }
-
-        	try {
-	        	$response = @Accredible_Certificate::batch_requests($requests);
-	        } catch (Exception $e) {
-	        //dump response here using try catch
-	        	echo '<pre>'; print_r($requests); echo '</pre>';
-	        	echo $e->getMessage();
+		// Don't attempt this query if there are no users.
+		$result_count = count( $result );
+		if ( $result_count > 0 ) {
+			// Batch request to get user credentials.
+			$requests = array();
+			for ( $x = 0; $x < $result_count; $x++ ) {
+				$requests[] = array(
+					'method' => 'get',
+					'url'    => 'all_credentials',
+					'params' => array( 'email' => strtolower( $result[ $x ]['user_email'] ) ),
+				);
 			}
 
-	        for ($i=0; $i < count($response->results); $i++) { 
-	        	if($response->results[$i]->body != "Not Found") {
-	        		$credentials = json_decode($response->results[$i]->body);
-	        		$result[$i]["credentials"] = $credentials->credentials;
-	        	}
-	        }
-        }
+			try {
+				$response = Accredible_Certificate::batch_requests( $requests );
+			} catch ( Exception $e ) {
+				// Dump response here using try catch.
+				echo '<pre>';
+				print_r( $requests );
+				echo '</pre>';
+				echo esc_html( $e->getMessage() );
+			}
+
+			$response_results_count = count( $response->results );
+			for ( $i = 0; $i < $response_results_count; $i++ ) {
+				if ( 'Not Found' !== $response->results[ $i ]->body ) {
+					$credentials                 = json_decode( $response->results[ $i ]->body );
+					$result[ $i ]['credentials'] = $credentials->credentials;
+				}
+			}
+		}
 
 		return $result;
 	}
@@ -119,22 +164,20 @@ class Users_List extends WP_List_Table {
 	public static function record_count() {
 		global $wpdb;
 
-		$sql = "SELECT COUNT(*) FROM {$wpdb->prefix}users";
-
-		return $wpdb->get_var( $sql );
+		return $wpdb->get_var( "SELECT COUNT(*) FROM {$wpdb->prefix}users" ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery
 	}
 
 
 	/** Text displayed when no user data is available */
 	public function no_items() {
-		_e( 'No users avaliable.', 'sp' );
+		esc_html_e( 'No users available.', 'accredible-certificates' );
 	}
 
 	/**
-	 * Render a column when no column specific method exist.
+	 * Render a column when no column-specific method exists.
 	 *
-	 * @param array $item
-	 * @param string $column_name
+	 * @param array  $item item.
+	 * @param string $column_name column name.
 	 *
 	 * @return mixed
 	 */
@@ -148,32 +191,34 @@ class Users_List extends WP_List_Table {
 			case 'credentials':
 				return $this->column_credentials( $item );
 			default:
-				return print_r( $item, true ); //Show the whole array for troubleshooting purposes
+				return print_r( $item, true ); // Show the whole array for troubleshooting purposes.
 		}
 	}
 
 	/**
 	 * Render the bulk edit checkbox
 	 *
-	 * @param array $item
+	 * @param array $item item.
 	 *
 	 * @return string
 	 */
-	function column_cb( $item ) {
+	public function column_cb( $item ) {
 		return sprintf(
-			'<input type="checkbox" name="credential_users[]" value="%s" />', $item['id']
+			'<input type="checkbox" name="credential_users[]" value="%s" />',
+			$item['id']
 		);
 	}
 
 	/**
 	 * Render items in the credential column
-	 * @param array $item 
+	 *
+	 * @param array $item item.
 	 * @return string
 	 */
-	function column_credentials ($item) {
-		$string = "";
-		foreach ($item['credentials'] as $credential) {
-			$string = $string . "<a href='" . $credential->url . "' target='_blank'>" . $credential->url . "</a><br>";
+	public function column_credentials( $item ) {
+		$string = '';
+		foreach ( $item['credentials'] as $credential ) {
+			$string = $string . "<a href='" . $credential->url . "' target='_blank'>" . $credential->url . '</a><br>';
 		}
 		return $string;
 	}
@@ -183,13 +228,13 @@ class Users_List extends WP_List_Table {
 	 *
 	 * @return array
 	 */
-	function get_columns() {
+	public function get_columns() {
 		$columns = array(
-			'cb'			=> '<input type="checkbox" />',
+			'cb'            => '<input type="checkbox" />',
 			'user_login'    => 'Login',
 			'user_nicename' => 'Username',
 			'user_email'    => 'Email',
-			'credentials' 	=> 'Credentials'
+			'credentials'   => 'Credentials',
 		);
 
 		return $columns;
@@ -202,53 +247,54 @@ class Users_List extends WP_List_Table {
 	 */
 	public function get_sortable_columns() {
 		$sortable_columns = array(
-			'user_login' => array( 'user_login', true ),
+			'user_login'    => array( 'user_login', true ),
 			'user_nicename' => array( 'user_nicename', false ),
-			'user_email' => array( 'user_email', false )
+			'user_email'    => array( 'user_email', false ),
 		);
 
 		return $sortable_columns;
 	}
 
 	/**
-	 * Get the select options for the gr
-	 * @return type
+	 * Get the select options for the group dropdown.
+	 *
+	 * @return string
 	 */
 	public function get_group_select_options() {
 		$accredible_certificates = new Accredible_Certificate();
-	 	$groups = @Accredible_Certificate::get_groups();
+		$groups                  = @Accredible_Certificate::get_groups();
 
-	 	$options = '';
+		$options      = '';
+		$groups_count = count( $groups );
+		for ( $i = 0; $i < $groups_count; $i++ ) {
+			$options .= "\n\t<option value='" . esc_attr( $groups[ $i ]->id ) . "'>" . esc_attr( $groups[ $i ]->name ) . '</option>';
+		}
 
-	 	for ($i=0; $i < count($groups); $i++) { 
-	 		$options .= "\n\t<option value='" . esc_attr($groups[$i]->id) . "'>" . esc_attr($groups[$i]->name) . "</option>";
-	 	}
-
-	 	// set the flag to show there are no groups
-	 	if(count($groups) == 0){
-	 		$this->no_groups = true;
-	 	}
+		// set the flag to show there are no groups.
+		if ( 0 === $groups_count ) {
+			$this->no_groups = true;
+		}
 
 		return $options;
 	}
 
 	/**
-	 * Method to ovveride the header nav and add our groups dropdown and button - https://github.com/WordPress/WordPress/blob/eeefec932f3d4f3b50369f6523c2cd8fad3d467f/wp-admin/includes/class-wp-users-list-table.php#L259
-	 * @param type $which 
-	 * @return type
+	 * Method to override the header nav and add our groups dropdown and button - https://github.com/WordPress/WordPress/blob/eeefec932f3d4f3b50369f6523c2cd8fad3d467f/wp-admin/includes/class-wp-users-list-table.php#L259
+	 *
+	 * @param type $which which.
 	 */
-    public function extra_tablenav( $which ) {
+	public function extra_tablenav( $which ) {
 
 		$id = 'bottom' === $which ? 'group_id2' : 'group_id';
-	?>
+		?>
 	<div class="alignleft actions">
-		<label class="screen-reader-text" for="<?php echo $id ?>"><?php _e( 'Select Group' ) ?></label>
-		<select name="<?php echo $id ?>" id="<?php echo $id ?>">
-			<option value=""><?php _e( 'Select Group' ) ?></option>
-			<?php echo $this->get_group_select_options(); ?>
+		<label class="screen-reader-text" for="<?php echo esc_attr( $id ); ?>"><?php esc_html_e( 'Select Group', 'accredible-certificates' ); ?></label>
+		<select name="<?php echo esc_attr( $id ); ?>" id="<?php echo esc_attr( $id ); ?>">
+			<option value=""><?php esc_html_e( 'Select Group', 'accredible-certificates' ); ?></option>
+			<?php echo esc_html( $this->get_group_select_options() ); ?>
 		</select>
-	<?php
-		submit_button( __( 'Create Credentials' ), '', 'create-credentials', false , 'onclick="setTimeout(disableCertificateSubmitButton, 1)"');
+		<?php
+		submit_button( __( 'Create Credentials', 'accredible-certificates' ), '', 'create-credentials', false, 'onclick="setTimeout(disableCertificateSubmitButton, 1)"' );
 		echo '</div>';
 	}
 
@@ -257,24 +303,25 @@ class Users_List extends WP_List_Table {
 	 */
 	public function prepare_items() {
 
-		$columns = $this->get_columns();
-		$hidden = array();
-  		$sortable = $this->get_sortable_columns();
-  		$this->_column_headers = array($columns, $hidden, $sortable);
-		//$this->_column_headers = $this->get_column_info();
+		$columns               = $this->get_columns();
+		$hidden                = array();
+		$sortable              = $this->get_sortable_columns();
+		$this->_column_headers = array( $columns, $hidden, $sortable );
 
 		/** Process bulk action */
 		$this->process_bulk_action();
 
-		// Avoid bulk request overflows by limiting the page size
+		// Avoid bulk request overflows by limiting the page size.
 		$per_page     = 20;
 		$current_page = $this->get_pagenum();
 		$total_items  = self::record_count();
 
-		$this->set_pagination_args( array(
-			'total_items' => $total_items, //WE have to calculate the total number of items
-			'per_page'    => 20 //WE have to determine how many items to show on a page
-		) );
+		$this->set_pagination_args(
+			array(
+				'total_items' => $total_items, // WE have to calculate the total number of items.
+				'per_page'    => 20, // WE have to determine how many items to show on a page.
+			)
+		);
 
 		$this->items = self::get_users( 20, $current_page );
 	}
@@ -291,61 +338,134 @@ class Users_List extends WP_List_Table {
 	 * @return string The bulk action required.
 	 */
 	public function current_action() {
-		if ( isset( $_REQUEST['create-credentials'] ) && ( ! empty( $_REQUEST['group_id'] ) || ! empty( $_REQUEST['group_id2'] ) ) ) {
+		$create_credentials = self::sanitize_request_parameter( 'create-credentials' );
+		if ( ! $create_credentials ) {
+			return parent::current_action();
+		}
+
+		$group_id  = self::sanitize_request_parameter( 'group_id' );
+		$group_id2 = self::sanitize_request_parameter( 'group_id2' );
+
+		if ( ! empty( $group_id ) || ! empty( $group_id2 ) ) {
 			return 'create-credentials';
-		} else if ( isset( $_REQUEST['create-credentials'] ) && ( empty( $_REQUEST['group_id'] ) && empty( $_REQUEST['group_id2'] ) ) ){
-			// let the user know they need to select a group
+		}
+
+		if ( empty( $group_id ) && empty( $group_id2 ) ) {
+			// Let the user know they need to select a group.
 			echo '<div class="notice notice-error is-dismissible">';
-    		echo '<p>You need to select a Group to create Credentials.</p>';
+			echo '<p>You need to select a Group to create Credentials.</p>';
 			echo '</div>';
 		}
+
 		return parent::current_action();
 	}
 
 	/**
-	 * When the action is submitted we should do what the user suggested - make credentials
-	 * @return type
+	 * When the action is submitted, we should do what the user suggested - make credentials
 	 */
 	public function process_bulk_action() {
-		//Detect when a bulk action is being triggered...
-		if ( 'create-credentials' === $this->current_action() ) {
+		// Verify nonce first.
+		$nonce = self::sanitize_post_parameter( 'accredible_certificates_nonce' );
+		self::verify_nonce( $nonce, 'accredible_certificates_bulk_action' );
 
+		// Detect when a bulk action is being triggered...
+		if ( 'create-credentials' === $this->current_action() ) {
 			$accredible_certificates = new Accredible_Certificate();
 
-			if ( isset( $_POST['group_id'] ) && ( ! empty( $_POST['group_id'] ) ) ) {
-				$group_id = esc_sql( $_POST['group_id'] );
+			// Get and validate group_id from either group_id or group_id2.
+			$group_id = self::sanitize_post_parameter( 'group_id' );
+			if ( empty( $group_id ) ) {
+				$group_id = self::sanitize_post_parameter( 'group_id2' );
+			}
+
+			// Get and validate credential_users array.
+			$users = self::get_credential_users();
+
+			// Only proceed if we have both a group_id and users.
+			if ( ! empty( $group_id ) && ! empty( $users ) ) {
+				// Create credentials for each user.
+				foreach ( $users as $user_id ) {
+					// Find the user.
+					$userdata = WP_User::get_data_by( 'id', $user_id );
+					if ( ! $userdata ) {
+						continue;
+					}
+
+					$user_firstname = get_user_meta( $user_id, 'first_name', true );
+					$user_lastname  = get_user_meta( $user_id, 'last_name', true );
+
+					$recipient_name = ( $user_firstname && $user_lastname )
+						? $user_firstname . ' ' . $user_lastname
+						: $userdata->display_name;
+
+					// Create a credential.
+					$credential = @Accredible_Certificate::create_credential(
+						$recipient_name,
+						$userdata->user_email,
+						$group_id
+					);
+				}
+
+				// Let the user know that the creation was successful.
+				echo '<div class="notice notice-success is-dismissible">';
+				echo '<p>Credentials created!</p>';
+				echo '</div>';
 			} else {
-				$group_id = esc_sql( $_POST['group_id2'] );
+				// Let the user know that the creation failed.
+				echo '<div class="notice notice-error is-dismissible">';
+				echo '<p>Failed to create credentials. Please ensure you have selected both a group and users.</p>';
+				echo '</div>';
 			}
-
-			$users = $_POST['credential_users'];
-
-			// create credentials for each user
-			for ($i=0; $i < count($users); $i++) { 
-				// find the user
-				$userdata = WP_User::get_data_by( 'id', $users[$i] );
-
-				$user_firstname = get_user_meta( $users[$i], 'first_name', true );
-				$user_lastname = get_user_meta( $users[$i], 'last_name', true );
-
-				if($user_firstname && $user_lastname ){
-    				$recipient_name = $user_firstname . ' ' . $user_lastname;
-    			} else {
-    				$recipient_name = $userdata->display_name;
-    			}
-
-				// create a credential
-				$credential = @Accredible_Certificate::create_credential($recipient_name, $userdata->user_email, $group_id);
-			}
-
-			// let the user know that the creation was successful
-			echo '<div class="notice notice-success is-dismissible">';
-    		echo '<p>Credentials created!</p>';
-			echo '</div>';
-
 		}
 	}
 
+	/**
+	 * Process and sanitize the credential users array from POST data.
+	 *
+	 * @return array Array of sanitized user IDs.
+	 */
+	private static function get_credential_users() {
+		$users            = array();
+		$credential_users = isset( $_POST['credential_users'] ) ? wp_unslash( $_POST['credential_users'] ) : array(); // phpcs:ignore WordPress.Security.NonceVerification
+
+		if ( is_array( $credential_users ) ) {
+			$users = array_map( 'absint', array_keys( $credential_users ) );
+		}
+
+		return $users;
+	}
+
+	/**
+	 * Verify WP nonce for the action.
+	 *
+	 * @param string $nonce Nonce value that was used for verification.
+	 * @param string $action Should give context to what is taking place and be the same when nonce was created.
+	 */
+	private static function verify_nonce( $nonce, $action ) {
+		if ( ! ( isset( $nonce ) && wp_verify_nonce( $nonce, $action ) ) ) {
+			wp_die( 'Invalid nonce.' );
+		}
+	}
+
+	/**
+	 * Sanitize a string parameter.
+	 *
+	 * @param string      $key The key of the parameter.
+	 * @param string|null $default_value The default value if the parameter is not set.
+	 */
+	private static function sanitize_request_parameter( $key, $default_value = null ) {
+		return isset( $_REQUEST[ $key ] ) ? sanitize_key( wp_unslash( $_REQUEST[ $key ] ) ) : $default_value; // phpcs:ignore WordPress.Security.NonceVerification
+	}
+
+	/**
+	 * Sanitize a post parameter.
+	 *
+	 * @param string      $key The key of the parameter.
+	 * @param string|null $default_value The default value if the parameter is not set.
+	 */
+	private static function sanitize_post_parameter( $key, $default_value = null ) {
+		return isset( $_POST[ $key ] ) ? sanitize_text_field( wp_unslash( $_POST[ $key ] ) ) : $default_value; // phpcs:ignore WordPress.Security.NonceVerification
+	}
 }
 
 ?>
