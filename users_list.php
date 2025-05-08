@@ -364,13 +364,14 @@ class Users_List extends WP_List_Table {
 	 * When the action is submitted, we should do what the user suggested - make credentials
 	 */
 	public function process_bulk_action() {
-		// Verify nonce first.
-		$nonce = self::sanitize_post_parameter( 'accredible_certificates_nonce' );
-		self::verify_nonce( $nonce, 'accredible_certificates_bulk_action' );
 
 		// Detect when a bulk action is being triggered...
 		if ( 'create-credentials' === $this->current_action() ) {
 			$accredible_certificates = new Accredible_Certificate();
+
+			// Verify nonce.
+			$nonce = self::sanitize_post_parameter( 'accredible_certificates_nonce' );
+			self::verify_nonce( $nonce, 'accredible_certificates_bulk_action' );
 
 			// Get and validate group_id from either group_id or group_id2.
 			$group_id = self::sanitize_post_parameter( 'group_id' );
