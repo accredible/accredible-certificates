@@ -137,11 +137,26 @@ class Users_List extends WP_List_Table {
 			try {
 				$response = Accredible_Certificate::batch_requests( $requests );
 			} catch ( Exception $e ) {
-				// Dump response here using try catch.
-				echo '<pre>';
-				print_r( $requests );
-				echo '</pre>';
-				echo esc_html( $e->getMessage() );
+				// Create a WP_Error object for proper error handling
+				$error = new WP_Error(
+					'accredible_certificate_error',
+					$e->getMessage(),
+					array(
+						'requests' => $requests,
+						'status'   => 'error',
+					)
+				);
+
+				// Display user-friendly error message
+				echo '<div class="notice notice-error is-dismissible">';
+				echo '<p>' . esc_html__( 'Error fetching credentials. Please try again later.', 'accredible-certificates' ) . '</p>';
+				echo '</div>';
+
+				// If WP_DEBUG is enabled, log the error
+				if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+					// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
+					error_log( $error->get_error_message() );
+				}
 			}
 
 			$response_results_count = count( $response->results );
@@ -182,7 +197,6 @@ class Users_List extends WP_List_Table {
 	 * @return mixed
 	 */
 	public function column_default( $item, $column_name ) {
-
 		switch ( $column_name ) {
 			case 'user_login':
 			case 'user_nicename':
@@ -191,7 +205,12 @@ class Users_List extends WP_List_Table {
 			case 'credentials':
 				return $this->column_credentials( $item );
 			default:
-				return print_r( $item, true ); // Show the whole array for troubleshooting purposes.
+				// Return a formatted display of the column value if it exists
+				if ( isset( $item[ $column_name ] ) ) {
+					return esc_html( $item[ $column_name ] );
+				}
+				// Return a dash for empty or undefined columns
+				return '—';
 		}
 	}
 
@@ -267,7 +286,7 @@ class Users_List extends WP_List_Table {
 		$options      = '';
 		$groups_count = count( $groups );
 		for ( $i = 0; $i < $groups_count; $i++ ) {
-			$options .= "\n\t<option value='" . esc_attr( $groups[ $i ]->id ) . "'>" . esc_attr( $groups[ $i ]->name ) . '</option>';
+			$options .= "\n\t<option value='" . esc_attr( $groups[ $i ]->id ) . "'>" . esc_html( $groups[ $i ]->name ) . '</option>';
 		}
 
 		// set the flag to show there are no groups.
@@ -291,7 +310,7 @@ class Users_List extends WP_List_Table {
 		<label class="screen-reader-text" for="<?php echo esc_attr( $id ); ?>"><?php esc_html_e( 'Select Group', 'accredible-certificates' ); ?></label>
 		<select name="<?php echo esc_attr( $id ); ?>" id="<?php echo esc_attr( $id ); ?>">
 			<option value=""><?php esc_html_e( 'Select Group', 'accredible-certificates' ); ?></option>
-			<?php echo esc_html( $this->get_group_select_options() ); ?>
+			<?php echo wp_kses_post( $this->get_group_select_options() ); ?>
 		</select>
 		<?php
 		submit_button( __( 'Create Credentials', 'accredible-certificates' ), '', 'create-credentials', false, 'onclick="setTimeout(disableCertificateSubmitButton, 1)"' );
