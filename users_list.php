@@ -177,9 +177,8 @@ class Users_List extends WP_List_Table {
 	 * @return null|string
 	 */
 	public static function record_count() {
-		global $wpdb;
-
-		return $wpdb->get_var( "SELECT COUNT(*) FROM {$wpdb->prefix}users" ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery
+		$user_count = count_users();
+		return $user_count['total_users'];
 	}
 
 
@@ -446,7 +445,10 @@ class Users_List extends WP_List_Table {
 	 */
 	private static function get_credential_users() {
 		$users            = array();
-		$credential_users = isset( $_POST['credential_users'] ) ? wp_unslash( $_POST['credential_users'] ) : array(); // phpcs:ignore WordPress.Security.NonceVerification
+		// nonce verification is handled in the process_bulk_action method.
+		// phpcs:disable WordPress.Security.NonceVerification, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+		$credential_users = isset( $_POST['credential_users'] ) ? wp_unslash( $_POST['credential_users'] ) : array();
+		// phpcs:enable WordPress.Security.NonceVerification, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 
 		if ( is_array( $credential_users ) ) {
 			$users = array_map( 'absint', array_keys( $credential_users ) );
@@ -474,6 +476,7 @@ class Users_List extends WP_List_Table {
 	 * @param string|null $default_value The default value if the parameter is not set.
 	 */
 	private static function sanitize_request_parameter( $key, $default_value = null ) {
+		// nonce verification is handled in the current_action method.
 		return isset( $_REQUEST[ $key ] ) ? sanitize_key( wp_unslash( $_REQUEST[ $key ] ) ) : $default_value; // phpcs:ignore WordPress.Security.NonceVerification
 	}
 
@@ -484,6 +487,7 @@ class Users_List extends WP_List_Table {
 	 * @param string|null $default_value The default value if the parameter is not set.
 	 */
 	private static function sanitize_post_parameter( $key, $default_value = null ) {
+		// nonce verification is handled in the process_bulk_action method.
 		return isset( $_POST[ $key ] ) ? sanitize_text_field( wp_unslash( $_POST[ $key ] ) ) : $default_value; // phpcs:ignore WordPress.Security.NonceVerification
 	}
 }
