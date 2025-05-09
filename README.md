@@ -34,8 +34,11 @@ Tested on Wordpress 3+.
 3. Activate the plugin through the 'Plugins' menu in WordPress
 4. Go to the plugin settings and input your API key
 5. Add the widget if desired. It will show a list of certificates or badges for a currently signed in user.
-6. Add the shortcode `[accredible_credential image="true" limit="10" style="true"]` to a page or post if desired. It will
-   show certificates and badges for a currently signed in user.
+6. Add the shortcode below to a page or post if desired. It will show certificates and badges for a currently signed in user.
+
+```
+[accredible_credential image="true" limit="10" style="true"] 
+```
 
 ### Manually creating certificates
 
@@ -55,8 +58,14 @@ Visit https://www.accredible.com to obtain a free API key.
 
 You can use the widget or shortcode to display badges or certificates that belong to the current Wordpress user.
 
-The shortcode is: `[accredible_credential]` but it accepts a number of
-options: `[accredible_credential image="true" limit="10" style="true"]`.
+The shortcode is:
+```
+[accredible_credential]
+```
+but it accepts a number of options:
+```
+[accredible_credential image="true" limit="10" style="true"]
+```
 
 #### Can you add support for another Wordpress LMS or theme?
 
