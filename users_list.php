@@ -444,7 +444,7 @@ class Users_List extends WP_List_Table {
 	 * @return array Array of sanitized user IDs.
 	 */
 	private static function get_credential_users() {
-		$users            = array();
+		$users = array();
 		// nonce verification is handled in the process_bulk_action method.
 		// phpcs:disable WordPress.Security.NonceVerification, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 		$credential_users = isset( $_POST['credential_users'] ) ? wp_unslash( $_POST['credential_users'] ) : array();
