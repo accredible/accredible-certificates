@@ -3,14 +3,7 @@
 wp-config.php
 
 # WordPress Content Directory
-wp-content/uploads/
-wp-content/blogs.dir/
-wp-content/upgrade/
-wp-content/backup-db/
-wp-content/advanced-cache.php
-wp-content/wp-cache-config.php
-wp-content/cache/
-wp-content/backups/
+wp-content/
 
 # SEO and Sitemap Files
 sitemap.xml
@@ -26,6 +19,7 @@ vendor/.git
 # IDE Files
 .idea/
 .vscode/
+.cursor/
 
 # Zip files
 *.zip
