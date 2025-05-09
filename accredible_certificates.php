@@ -17,6 +17,7 @@
 defined( 'ABSPATH' ) || die;
 
 define( 'ACCREDIBLE_CERTIFICATES_VERSION', '1.4.10' );
+define( 'ACCREDILBE_CERTIFICATES_PLUGIN_PATH', plugin_dir_path( __FILE__ ) );
 define( 'ACCREDIBLE_CERTIFICATES_SCRIPT_VERSION_TOKEN', ACCREDIBLE_CERTIFICATES_VERSION );
 
 if ( ! defined( 'ACCREDIBLE_CERTIFICATES_PLUGIN_URL' ) ) {
@@ -40,9 +41,9 @@ require plugin_dir_path( __FILE__ ) . 'vendor/autoload.php';
 
 use ACMS\Api;
 
-require_once plugin_dir_path( __FILE__ ) . 'accredible-academy-theme.php'; // Require Academy Theme logic.
-require_once plugin_dir_path( __FILE__ ) . 'accredible_widget.php'; // Require Widget for credential display.
-require_once plugin_dir_path( __FILE__ ) . 'settings.php'; // Require Settings.
+require_once ACCREDILBE_CERTIFICATES_PLUGIN_PATH . 'accredible-academy-theme.php'; // Require Academy Theme logic.
+require_once ACCREDILBE_CERTIFICATES_PLUGIN_PATH . 'accredible_widget.php'; // Require Widget for credential display.
+require_once ACCREDILBE_CERTIFICATES_PLUGIN_PATH . 'settings.php'; // Require Settings.
 
 if ( ! class_exists( 'Accredible_Certificate' ) ) {
 	/**
@@ -214,7 +215,14 @@ if ( ! class_exists( 'Accredible_Certificate' ) ) {
 		 * Register the admin menu item
 		 */
 		public function register_certificates_admin_menu_page() {
-			add_menu_page( 'Certificates & Badges', 'Certificates & Badges', 'list_users', 'accredible-certificates/certificates-admin.php', '', 'dashicons-tablet', 40 );
+			add_menu_page( 'Certificates & Badges', 'Certificates & Badges', 'list_users', 'certificates-admin', array( $this, 'render_certificates_admin_page' ), 'dashicons-tablet', 40 );
+		}
+
+		/**
+		 * Render the certificates admin page
+		 */
+		public function render_certificates_admin_page() {
+			require_once ACCREDILBE_CERTIFICATES_PLUGIN_PATH . 'certificates-admin.php';
 		}
 
 		/**
