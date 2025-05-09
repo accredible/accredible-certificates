@@ -42,6 +42,7 @@ use ACMS\Api;
 
 require_once plugin_dir_path( __FILE__ ) . 'accredible-academy-theme.php'; // Require Academy Theme logic.
 require_once plugin_dir_path( __FILE__ ) . 'accredible_widget.php'; // Require Widget for credential display.
+require_once plugin_dir_path( __FILE__ ) . 'settings.php'; // Require Settings.
 
 if ( ! class_exists( 'Accredible_Certificate' ) ) {
 	/**
@@ -59,10 +60,8 @@ if ( ! class_exists( 'Accredible_Certificate' ) ) {
 		 * Construct the plugin object
 		 */
 		public function __construct() {
-
 			// Initialize Settings.
-			require_once plugin_dir_path( __FILE__ ) . 'settings.php';
-			$Accredible_Certificates_Settings = new Accredible_Certificates_Settings();
+			new Accredible_Certificates_Settings();
 
 			$plugin = plugin_basename( __FILE__ );
 			add_filter( "plugin_action_links_$plugin", array( $this, 'plugin_settings_link' ) );
@@ -225,7 +224,7 @@ if ( ! class_exists( 'Accredible_Certificate' ) ) {
 		 * Load the admin styles
 		 */
 		public static function acc_load_plugin_css() {
-			$version = defined('WP_DEBUG') && WP_DEBUG ? time() : ACCREDIBLE_CERTIFICATES_SCRIPT_VERSION_TOKEN;
+			$version = defined( 'WP_DEBUG' ) && WP_DEBUG ? time() : ACCREDIBLE_CERTIFICATES_SCRIPT_VERSION_TOKEN;
 			wp_register_style( 'accredible-admin-style', plugins_url( '/css/style.css', __FILE__ ), array(), $version );
 			wp_enqueue_style( 'accredible-admin-style' );
 		}
@@ -322,7 +321,7 @@ if ( ! class_exists( 'Accredible_Certificate' ) ) {
 	} // END class Accredible_Certificate.
 }
 
-if ( class_exists( 'Accredible_Certificate' ) ) {	
+if ( class_exists( 'Accredible_Certificate' ) ) {
 	// Installation and uninstallation hooks.
 	register_activation_hook( __FILE__, array( 'Accredible_Certificate', 'activate' ) );
 	register_deactivation_hook( __FILE__, array( 'Accredible_Certificate', 'deactivate' ) );
