@@ -115,74 +115,77 @@ if ( ! class_exists( 'Accredible_Widget' ) ) {
 			// WordPress core after_widget hook (always include).
 			echo esc_html( $after_widget );
 		}
-	}
 
-	/**
-	 * Register the widget.
-	 */
-	function register_accredible_custom_widget() {
-		register_widget( 'Accredible_Widget' );
-	}
+		/**
+		 * Register the widget.
+		 */
+		public static function register_widget() {
+			register_widget( 'Accredible_Widget' );
+		}
 
-	add_action( 'widgets_init', 'register_accredible_custom_widget' );
+		/**
+		 * The shortcode.
+		 *
+		 * @param array  $atts The attributes.
+		 * @param string $content The content.
+		 * @param string $tag The tag.
+		 */
+		public static function credential_shortcode( $atts = array(), $content = null, $tag = '' ) {
+			$output = '';
 
-	/**
-	 * The shortcode.
-	 *
-	 * @param array  $atts The attributes.
-	 * @param string $content The content.
-	 * @param string $tag The tag.
-	 */
-	function accredible_credential_shortcode( $atts = array(), $content = null, $tag = '' ) {
-		$output = '';
+			// Normalize attribute keys, lowercase.
+			$atts = array_change_key_case( (array) $atts, CASE_LOWER );
 
-		// Normalize attribute keys, lowercase.
-		$atts = array_change_key_case( (array) $atts, CASE_LOWER );
+			// Override default attributes with user attributes.
+			$atts_to_consume = shortcode_atts(
+				array(
+					'image' => 'true',
+					'limit' => '10',
+					'style' => 'true',
+				),
+				$atts,
+				$tag
+			);
 
-		// Override default attributes with user attributes.
-		$atts_to_consume = shortcode_atts(
-			array(
-				'image' => 'true',
-				'limit' => '10',
-				'style' => 'true',
-			),
-			$atts,
-			$tag
-		);
+			$current_user = wp_get_current_user();
 
-		$current_user = wp_get_current_user();
+			if ( 0 !== $current_user->ID ) {
+				$accredible  = new Accredible_Certificate();
+				$credentials = $accredible->get_credentials_for_email( $current_user->user_email );
+				if ( $credentials->credentials ) {
+					foreach ( $credentials->credentials as $key => $credential ) {
 
-		if ( 0 !== $current_user->ID ) {
-			$accredible  = new Accredible_Certificate();
-			$credentials = $accredible->get_credentials_for_email( $current_user->user_email );
-			if ( $credentials->credentials ) {
-				foreach ( $credentials->credentials as $key => $credential ) {
-
-					// The user can set a limit on the number of credentials displayed.
-					if ( $key >= (int) $atts_to_consume['limit'] ) {
-						break;
-					}
-
-					// The user can choose between image or link.
-					if ( false === $atts_to_consume['image'] ) {
-						$output .= '<a href="' . esc_url( $credential->url ) . '" target="_blank">' . esc_html( $credential->name ) . '</a>';
-					} else {
-						// The user can choose to remove the default styling.
-						if ( false === $atts_to_consume['style'] ) {
-							$output .= '<div class="accredible_credential">';
-						} else {
-							$output .= '<div style="width: 300px; height: 200px; margin: 0 30px 30px 0; text-align: center; display: inline-block;" class="accredible_credential">';
+						// The user can set a limit on the number of credentials displayed.
+						if ( $key >= (int) $atts_to_consume['limit'] ) {
+							break;
 						}
-						$output .= '<a href="' . esc_url( $credential->url ) . '">';
-						$output .= '<img src="' . esc_url( $credential->seo_image ) . '" style="max-width:100%; max-height:100%; margin: 0 auto;">'; // phpcs:disable PluginCheck.CodeAnalysis.ImageFunctions.NonEnqueuedImage
-						$output .= '</a>';
-						$output .= '</div>';
+
+						// The user can choose between image or link.
+						if ( false === $atts_to_consume['image'] ) {
+							$output .= '<a href="' . esc_url( $credential->url ) . '" target="_blank">' . esc_html( $credential->name ) . '</a>';
+						} else {
+							// The user can choose to remove the default styling.
+							if ( false === $atts_to_consume['style'] ) {
+								$output .= '<div class="accredible_credential">';
+							} else {
+								$output .= '<div style="width: 300px; height: 200px; margin: 0 30px 30px 0; text-align: center; display: inline-block;" class="accredible_credential">';
+							}
+							$output .= '<a href="' . esc_url( $credential->url ) . '">';
+							$output .= '<img src="' . esc_url( $credential->seo_image ) . '" style="max-width:100%; max-height:100%; margin: 0 auto;">'; // phpcs:disable PluginCheck.CodeAnalysis.ImageFunctions.NonEnqueuedImage
+							$output .= '</a>';
+							$output .= '</div>';
+						}
 					}
 				}
 			}
+			return $output;
 		}
-		return $output;
 	}
-	add_shortcode( 'accredible_credential', 'accredible_credential_shortcode' );
+
+	// Register the widget.
+	add_action( 'widgets_init', array( 'Accredible_Widget', 'register_widget' ) );
+
+	// Register the shortcode.
+	add_shortcode( 'accredible_credential', array( 'Accredible_Widget', 'credential_shortcode' ) );
 }
 ?>
