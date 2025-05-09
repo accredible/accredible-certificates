@@ -77,7 +77,7 @@ Sure, just post an issue and we'll get to work: https://github.com/accredible/ac
 
 ### Development setup
 
-- ⚠ Be careful to **UNINSTALL** the plugin in this docker environment since **WordPress completely removes your local plugin directory** on uninstallation including `.git` so you will lose all your work in the directory. (In contrast, activation and deactivation of the plugin do not trigger any dangerous operations.)
+- ⚠ Be careful not to **UNINSTALL** the plugin in this docker environment since **WordPress completely removes your local plugin directory** on uninstallation including `.git` so you will lose all your work in the directory. (In contrast, activation and deactivation of the plugin do not trigger any dangerous operations.)
 
 #### Prerequisites
 
