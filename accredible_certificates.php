@@ -16,9 +16,24 @@
 
 defined( 'ABSPATH' ) || die;
 
-define( 'ACCREDIBLE_CERTIFICATES_VERSION', '1.4.9' );
+define( 'ACCREDIBLE_CERTIFICATES_VERSION', '1.4.10' );
 define( 'ACCREDIBLE_CERTIFICATES_SCRIPT_VERSION_TOKEN', ACCREDIBLE_CERTIFICATES_VERSION );
 
+if ( ! defined( 'ACCREDIBLE_CERTIFICATES_PLUGIN_URL' ) ) {
+	$accredible_certificates_plugin_url = trailingslashit( WP_PLUGIN_URL . '/' . basename( __DIR__ ) );
+	$accredible_certificates_plugin_url = str_replace( array( 'https://', 'http://' ), array( '//', '//' ), $accredible_certificates_plugin_url );
+
+	/**
+	 * Define Accredible - Set the plugin relative URL.
+	 *
+	 * Will be set based on the WordPress define `WP_PLUGIN_URL`.
+	 *
+	 * @uses WP_PLUGIN_URL
+	 *
+	 * @var string URL to plugin install directory.
+	 */
+	define( 'ACCREDIBLE_CERTIFICATES_PLUGIN_URL', $accredible_certificates_plugin_url );
+}
 
 // For composer dependencies.
 require plugin_dir_path( __FILE__ ) . 'vendor/autoload.php';
@@ -217,7 +232,8 @@ if ( ! class_exists( 'Accredible_Certificate' ) ) {
 		 * Load the admin styles
 		 */
 		public static function acc_load_plugin_css() {
-			wp_register_style( 'accredible-admin-style', plugins_url( '/css/style.css', __FILE__ ), array(), ACCREDIBLE_CERTIFICATES_SCRIPT_VERSION_TOKEN );
+			$version = defined('WP_DEBUG') && WP_DEBUG ? time() : ACCREDIBLE_CERTIFICATES_SCRIPT_VERSION_TOKEN;
+			wp_register_style( 'accredible-admin-style', plugins_url( '/css/style.css', __FILE__ ), array(), $version );
 			wp_enqueue_style( 'accredible-admin-style' );
 		}
 
