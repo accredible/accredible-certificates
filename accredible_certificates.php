@@ -105,7 +105,6 @@ if ( ! class_exists( 'Accredible_Certificate' ) ) {
 		 */
 		public static function accredible_db_install() {
 			global $wpdb;
-			self::$accredible_db_version;
 
 			$table_name = $wpdb->prefix . 'accredible_mapping';
 
@@ -121,7 +120,7 @@ if ( ! class_exists( 'Accredible_Certificate' ) ) {
 			require_once ABSPATH . 'wp-admin/includes/upgrade.php';
 			dbDelta( $sql );
 
-			add_option( 'accredible_db_version', $accredible_db_version );
+			add_option( 'accredible_db_version', self::$accredible_db_version );
 		}
 
 		/**
@@ -140,7 +139,7 @@ if ( ! class_exists( 'Accredible_Certificate' ) ) {
 		 * Get an array of credentials for a particular email address
 		 *
 		 * @param string $email email.
-		 * @return stdObject $credentials
+		 * @return \ACMS\stdObject $credentials
 		 */
 		public static function get_credentials_for_email( $email ) {
 			$api = new Api( get_option( 'api_key' ) );
@@ -156,14 +155,12 @@ if ( ! class_exists( 'Accredible_Certificate' ) ) {
 		 * @param string $name name.
 		 * @param string $email email.
 		 * @param int    $group_id group id.
-		 * @return mixed $response
+		 * @return \ACMS\stdObject $response
 		 */
 		public static function create_credential( $name, $email, $group_id ) {
 			$api = new Api( get_option( 'api_key' ) );
 
-			$response = $api->create_credential( $name, $email, $group_id );
-
-			return $response;
+			return $api->create_credential( $name, $email, $group_id );
 		}
 
 		/**
@@ -200,9 +197,9 @@ if ( ! class_exists( 'Accredible_Certificate' ) ) {
 		 * Update a group on Accredible
 		 *
 		 * @param int    $id group id.
-		 * @param String $course_name course name.
-		 * @param String $course_description course description.
-		 * @param String $course_link course link.
+		 * @param string $course_name course name.
+		 * @param string $course_description course description.
+		 * @param string $course_link course link.
 		 * @return mixed $response
 		 */
 		public static function update_group( $id, $course_name, $course_description, $course_link ) {
@@ -284,8 +281,7 @@ if ( ! class_exists( 'Accredible_Certificate' ) ) {
 			$client = new GuzzleHttp\Client();
 			$params = array( 'headers' => array( 'Authorization' => 'Token token="' . get_option( 'api_key' ) . '"' ) );
 			$res    = $client->get( 'https://api.accredible.com/v1/credentials?achievement_id=' . $course_id . '&full_view=true', $params );
-			$result = json_decode( $res->getBody() );
-			return $result;
+			return json_decode( $res->getBody() );
 		}
 
 		/**
