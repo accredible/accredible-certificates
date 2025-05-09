@@ -12,12 +12,7 @@ if ( ! class_exists( 'WP_List_Table' ) ) {
 	require_once ABSPATH . 'wp-admin/includes/class-wp-list-table.php';
 }
 
-/**
- * Require the Accredible API
- */
-if ( ! class_exists( 'Accredible_Certificate' ) ) {
-	require_once plugin_dir_path( __FILE__ ) . 'accredible_certificates.php';
-}
+require_once plugin_dir_path( __FILE__ ) . 'accredible_certificates.php'; // require the accredible certificates class.
 
 /**
  * Class Users_List

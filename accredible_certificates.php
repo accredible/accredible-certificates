@@ -40,15 +40,8 @@ require plugin_dir_path( __FILE__ ) . 'vendor/autoload.php';
 
 use ACMS\Api;
 
-// Require Academy Theme logic.
-if ( ! class_exists( 'Accredible_Acadmey_Theme' ) ) {
-	require_once plugin_dir_path( __FILE__ ) . 'accredible-academy-theme.php';
-}
-
-// Require Widget for credential display.
-if ( ! class_exists( 'Accredible_Widget' ) ) {
-	require_once plugin_dir_path( __FILE__ ) . 'accredible_widget.php';
-}
+require_once plugin_dir_path( __FILE__ ) . 'accredible-academy-theme.php'; // Require Academy Theme logic.
+require_once plugin_dir_path( __FILE__ ) . 'accredible_widget.php'; // Require Widget for credential display.
 
 if ( ! class_exists( 'Accredible_Certificate' ) ) {
 	/**
@@ -256,7 +249,7 @@ if ( ! class_exists( 'Accredible_Certificate' ) ) {
 		 */
 		public static function sync_with_accredible() {
 			if ( 1 === get_option( 'automatically_issue_certificates' ) ) {
-				Accredible_Acadmey_Theme::sync_with_accredible();
+				Accredible_Academy_Theme::sync_with_accredible();
 			}
 		}
 
@@ -303,7 +296,7 @@ if ( ! class_exists( 'Accredible_Certificate' ) ) {
 		 * @param int $user_id user id.
 		 * @return boolean $cert_exit
 		 */
-		public static function hasCertificate( $course_id, $user_id ) {
+		public static function has_certificate( $course_id, $user_id ) {
 
 			$user             = get_user_by( 'id', $user_id );
 			$all_certificates = self::certificates( $course_id );
@@ -326,15 +319,14 @@ if ( ! class_exists( 'Accredible_Certificate' ) ) {
 			}
 			return $cert_exit;
 		}
-	} // END class accredible_certificates
-} // END "if(!class_exists('accredible_certificates'))".
+	} // END class Accredible_Certificate.
+}
 
-if ( class_exists( 'Accredible_Certificate' ) ) {
+if ( class_exists( 'Accredible_Certificate' ) ) {	
 	// Installation and uninstallation hooks.
 	register_activation_hook( __FILE__, array( 'Accredible_Certificate', 'activate' ) );
 	register_deactivation_hook( __FILE__, array( 'Accredible_Certificate', 'deactivate' ) );
 
 	// Instantiate the plugin class.
 	$accredible_certificate = new Accredible_Certificate();
-
 }
