@@ -12,8 +12,6 @@ if ( ! class_exists( 'Accredible_Academy_Theme' ) ) {
 	class Accredible_Academy_Theme {
 		/**
 		 * Sync Data between Academy theme and Accredible
-		 *
-		 * @return null
 		 */
 		public static function sync_with_accredible() {
 			global $wpdb;
@@ -29,7 +27,7 @@ if ( ! class_exists( 'Accredible_Academy_Theme' ) ) {
 				// Get the course group mapping.
 				$mapping = self::get_mapping( $completion->comment_post_ID );
 
-				if ( $mapping !== null && count( $mapping ) > 0 ) {
+				if ( ! empty( $mapping ) ) {
 					$user = get_user_by( 'id', $completion->user_id );
 
 					if ( $user->first_name && $user->last_name ) {
@@ -47,10 +45,9 @@ if ( ! class_exists( 'Accredible_Academy_Theme' ) ) {
 		/**
 		 * Get course IDs for Academy Theme's courses that a user has access to
 		 *
-		 * @param type $user
 		 * @return array $courses_ids
 		 */
-		public static function get_course_ids( $user ) {
+		public static function get_course_ids() {
 			global $wpdb;
 			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 			$courses = $wpdb->get_results(
@@ -61,8 +58,8 @@ if ( ! class_exists( 'Accredible_Academy_Theme' ) ) {
 					ORDER BY post_date DESC",
 					'publish',
 					'course'
-				) 
-			); 
+				)
+			);
 
 			$courses_ids = wp_list_pluck( $courses, 'ID' );
 			return $courses_ids;
@@ -70,34 +67,36 @@ if ( ! class_exists( 'Accredible_Academy_Theme' ) ) {
 
 		/**
 		 * Syncs academy theme courses with Accreidble
-		 *
-		 * @return null
 		 */
 		public static function sync_course_with_group() {
 			global $wpdb;
-			$course_ids = self::get_course_ids();
-
-			for ( $i = 0; $i < count( $course_ids ); $i++ ) {
+			$course_ids       = self::get_course_ids();
+			$course_ids_count = count( $course_ids );
+			for ( $i = 0; $i < $course_ids_count; $i++ ) {
 				$course = ThemexCourse::getCourse( $course_ids[ $i ], true );
 
 				// Check if we have an existing mapping.
 				$mapping = self::get_mapping( $course_ids[ $i ] );
-				if ( $mapping !== null && count( $mapping ) > 0 ) {
+				if ( ! empty( $mapping ) ) {
 					// Then update details.
-					global $post;
-					$post = get_post( $course_ids[ $i ] );
-					setup_postdata( $post, $more_link_text, $stripteaser );
-
-					$group = @Accredible_Certificate::update_group( $mapping[0]->group_id, get_the_title( $course_ids[ $i ] ), get_the_excerpt(), get_permalink( $course_ids[ $i ] ) );
+					$post_obj = get_post( $course_ids[ $i ] );
+					$group = @Accredible_Certificate::update_group( 
+						$mapping[0]->group_id, 
+						get_the_title( $post_obj ), 
+						get_the_excerpt( $post_obj ), 
+						get_permalink( $post_obj ) 
+					);
 				} else {
 					// Else create a new group and mapping.
-					global $post;
-					$post = get_post( $course_ids[ $i ] );
-					setup_postdata( $post, $more_link_text, $stripteaser );
-
-					$group_name = urlencode( get_the_title( $course_ids[ $i ] ) . wp_rand() );
+					$post_obj = get_post( $course_ids[ $i ] );
+					$group_name = urlencode( get_the_title( $post_obj ) . wp_rand() );
 					// Then make a new group on accredible.
-					$group = @Accredible_Certificate::create_group( $group_name, get_the_title( $course_ids[ $i ] ), get_the_excerpt(), get_permalink( $course_ids[ $i ] ) );
+					$group = @Accredible_Certificate::create_group( 
+						$group_name, 
+						get_the_title( $post_obj ), 
+						get_the_excerpt( $post_obj ), 
+						get_permalink( $post_obj ) 
+					);
 
 					// Save to db.
 					// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery
@@ -115,8 +114,8 @@ if ( ! class_exists( 'Accredible_Academy_Theme' ) ) {
 		/**
 		 * Get the course mapping for a particular course id
 		 *
-		 * @param type $course_id
-		 * @return type
+		 * @param int $course_id Course ID.
+		 * @return array $relations
 		 */
 		public static function get_mapping( $course_id ) {
 			global $wpdb;
@@ -150,16 +149,12 @@ if ( ! class_exists( 'Accredible_Academy_Theme' ) ) {
 					$recipient_name = $user->display_name;
 				}
 
-				global $post;
-				$post = get_post( $completion->comment_post_ID );
-				setup_postdata( $post, $more_link_text, $stripteaser );
-
 				$existing              = Accredible_Certificate::certificates( $completion->comment_post_ID );
 				$existing_certificates = $existing->credentials;
 
 				$issue = true;
 				foreach ( $existing_certificates as $key => $certificate ) {
-					if ( $certificate->recipient->email == strtolower( $user->user_email ) ) {
+					if ( strtolower( $user->user_email ) === strtolower( $certificate->recipient->email ) ) {
 						$issue = false;
 					}
 				}
@@ -167,8 +162,6 @@ if ( ! class_exists( 'Accredible_Academy_Theme' ) ) {
 				if ( $issue ) {
 					Accredible_Certificate::create_certificate( $recipient_name, $user->user_email, get_the_title( $completion->comment_post_ID ), $completion->comment_post_ID, get_the_excerpt(), get_permalink( $completion->comment_post_ID ), $grade );
 				}
-
-				wp_reset_postdata( $post );
 			}
 		}
 	}
