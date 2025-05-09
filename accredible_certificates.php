@@ -30,7 +30,7 @@ if ( ! defined( 'ACCREDIBLE_CERTIFICATES_PLUGIN_URL' ) ) {
 	 *
 	 * @uses WP_PLUGIN_URL
 	 *
-	 * @var string URL to plugin install directory.
+	 * @var string $accredible_certificates_plugin_url URL to plugin install directory.
 	 */
 	define( 'ACCREDIBLE_CERTIFICATES_PLUGIN_URL', $accredible_certificates_plugin_url );
 }
