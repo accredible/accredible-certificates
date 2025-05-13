@@ -94,3 +94,30 @@ docker-compose up -d
 ### WordPress
 
 After the setup, WordPress should be running on port `8000`  of your Docker Host. Open it in a web browser and complete the WordPress installation.
+
+### Running Coding Standards
+
+The WordPress container comes with PHP_CodeSniffer and WordPress Coding Standards pre-installed. To check your code against WordPress coding standards:
+
+1. First, access the WordPress container:
+```bash
+docker exec -it accredible-certificates-wordpress-1 bash
+```
+
+2. Check available WordPress coding standards:
+```bash
+/root/.composer/vendor/bin/phpcs -i
+```
+
+3. Run the coding standards check on a specific file:
+```bash
+/root/.composer/vendor/bin/phpcs --standard=WordPress [filename]
+```
+```bash
+/root/.composer/vendor/bin/phpcbf --standard=WordPress [filename]
+```
+
+Note: If you get a "command not found" error, try rebuilding the container to ensure all tools are properly installed:
+```bash
+docker compose down && docker compose up -d --build
+```
