@@ -64,7 +64,7 @@ if ( ! class_exists( 'Accredible_Academy_Theme' ) ) {
 		}
 
 		/**
-		 * Syncs academy theme courses with Accreidble
+		 * Syncs academy theme courses with Accredible
 		 */
 		public static function sync_course_with_group() {
 			global $wpdb;
