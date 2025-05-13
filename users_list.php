@@ -12,7 +12,9 @@ if ( ! class_exists( 'WP_List_Table' ) ) {
 	require_once ABSPATH . 'wp-admin/includes/class-wp-list-table.php';
 }
 
-require_once plugin_dir_path( __FILE__ ) . 'accredible_certificates.php'; // require the accredible certificates class.
+if ( ! class_exists( 'Accredible_Certificate' ) ) {
+	require_once ACCREDIBLE_CERTIFICATES_PLUGIN_PATH . 'accredible_certificates.php';
+}
 
 /**
  * Class Users_List
@@ -86,14 +88,12 @@ class Users_List extends WP_List_Table {
 				FROM {$wpdb->prefix}users
 				WHERE user_email LIKE %s 
 				OR user_login LIKE %s
-				ORDER BY %s %s
+				ORDER BY {$order_by} {$order}
 				LIMIT %d
 				OFFSET %d",
 				array(
 					$like,
 					$like,
-					$order_by,
-					$order,
 					$per_page,
 					$offset,
 				)
@@ -102,12 +102,10 @@ class Users_List extends WP_List_Table {
 			$query = $wpdb->prepare(
 				"SELECT id, user_login, user_nicename, user_email 
 				FROM {$wpdb->prefix}users
-				ORDER BY %s %s
+				ORDER BY {$order_by} {$order}
 				LIMIT %d
 				OFFSET %d",
 				array(
-					$order_by,
-					$order,
 					$per_page,
 					$offset,
 				)

@@ -13,10 +13,9 @@
 
 defined( 'ABSPATH' ) || die;
 
-	require_once plugin_dir_path( __FILE__ ) . 'users_list.php';
+require_once plugin_dir_path( __FILE__ ) . 'users_list.php';
 
-	$api_key = get_option( 'api_key' );
-
+$api_key = get_option( 'api_key' );
 if ( empty( $api_key ) ) {
 	// phpcs:disable PluginCheck.CodeAnalysis.ImageFunctions.NonEnqueuedImage
 	?>
