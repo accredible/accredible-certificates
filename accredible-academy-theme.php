@@ -20,9 +20,11 @@ if ( ! class_exists( 'Accredible_Academy_Theme' ) ) {
 			self::sync_course_with_group();
 
 			// For each course, check if we have any graduates on WP.
-			$relations = get_comments(array(
-				'type' => 'user_certificate'
-			));
+			$relations = get_comments(
+				array(
+					'type' => 'user_certificate',
+				)
+			);
 
 			foreach ( $relations as $key => $completion ) {
 
@@ -50,14 +52,16 @@ if ( ! class_exists( 'Accredible_Academy_Theme' ) ) {
 		 * @return array $courses_ids
 		 */
 		public static function get_course_ids() {
-			$courses = get_posts(array(
-				'post_type' => 'course',
-				'post_status' => 'publish',
-				'orderby' => 'date',
-				'order' => 'DESC',
-				'posts_per_page' => -1,
-				'fields' => 'ids'
-			));
+			$courses = get_posts(
+				array(
+					'post_type'      => 'course',
+					'post_status'    => 'publish',
+					'orderby'        => 'date',
+					'order'          => 'DESC',
+					'posts_per_page' => -1,
+					'fields'         => 'ids',
+				)
+			);
 
 			return $courses;
 		}
@@ -86,7 +90,7 @@ if ( ! class_exists( 'Accredible_Academy_Theme' ) ) {
 				} else {
 					// Else create a new group and mapping.
 					$post_obj   = get_post( $course_ids[ $i ] );
-					$group_name = urlencode( get_the_title( $post_obj ) . wp_rand() );
+					$group_name = rawurlencode( get_the_title( $post_obj ) . wp_rand() );
 					// Then make a new group on accredible.
 					$group = @Accredible_Certificate::create_group(
 						$group_name,
@@ -134,9 +138,11 @@ if ( ! class_exists( 'Accredible_Academy_Theme' ) ) {
 				error_log( 'Issuing certificates' ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
 			}
 
-			$relations = get_comments(array(
-				'type' => 'user_certificate'
-			));
+			$relations = get_comments(
+				array(
+					'type' => 'user_certificate',
+				)
+			);
 
 			foreach ( $relations as $key => $completion ) {
 
