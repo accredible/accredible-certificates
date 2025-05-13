@@ -88,12 +88,14 @@ class Users_List extends WP_List_Table {
 				FROM {$wpdb->prefix}users
 				WHERE user_email LIKE %s 
 				OR user_login LIKE %s
-				ORDER BY {$order_by} {$order}
+				ORDER BY %i %i
 				LIMIT %d
 				OFFSET %d",
 				array(
 					$like,
 					$like,
+					$order_by,
+					$order,
 					$per_page,
 					$offset,
 				)
@@ -102,10 +104,12 @@ class Users_List extends WP_List_Table {
 			$query = $wpdb->prepare(
 				"SELECT id, user_login, user_nicename, user_email 
 				FROM {$wpdb->prefix}users
-				ORDER BY {$order_by} {$order}
+				ORDER BY %i %i
 				LIMIT %d
 				OFFSET %d",
 				array(
+					$order_by,
+					$order,
 					$per_page,
 					$offset,
 				)
