@@ -14,8 +14,6 @@ if ( ! class_exists( 'Accredible_Academy_Theme' ) ) {
 		 * Sync Data between Academy theme and Accredible
 		 */
 		public static function sync_with_accredible() {
-			global $wpdb;
-
 			// Start by making sure our groups line up with the courses.
 			self::sync_course_with_group();
 
@@ -27,7 +25,6 @@ if ( ! class_exists( 'Accredible_Academy_Theme' ) ) {
 			);
 
 			foreach ( $relations as $key => $completion ) {
-
 				// Get the course group mapping.
 				$mapping = self::get_mapping( $completion->comment_post_ID );
 
@@ -130,9 +127,6 @@ if ( ! class_exists( 'Accredible_Academy_Theme' ) ) {
 		 * On the scheduled action hook, run the function.
 		 */
 		public static function issue_certificates_automatically() {
-
-			global $wpdb;
-
 			// If WP_DEBUG is enabled, log the error.
 			if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
 				error_log( 'Issuing certificates' ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
@@ -145,7 +139,6 @@ if ( ! class_exists( 'Accredible_Academy_Theme' ) ) {
 			);
 
 			foreach ( $relations as $key => $completion ) {
-
 				$course = ThemexCourse::getCourse( $completion->comment_post_ID, true );
 
 				$user  = get_user_by( 'id', $completion->user_id );
