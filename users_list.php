@@ -55,8 +55,6 @@ class Users_List extends WP_List_Table {
 	public static function get_users( $per_page = 20, $page_number = 1 ) {
 		$accredible_certificates = new Accredible_Certificate();
 
-		global $wpdb;
-
 		// Define allowed columns for ordering.
 		$allowed_columns = array(
 			'id',
@@ -78,45 +76,37 @@ class Users_List extends WP_List_Table {
 			$order = 'DESC';
 		}
 
-		$offset = ( $page_number - 1 ) * $per_page;
-
 		$search_term = self::sanitize_request_parameter( 's' );
+
+		// Prepare query arguments.
+		$args = array(
+			'number'  => $per_page,
+			'offset'  => ( $page_number - 1 ) * $per_page,
+			'orderby' => $order_by,
+			'order'   => $order,
+			'fields'  => array( 'ID', 'user_login', 'user_nicename', 'user_email' ),
+		);
+
+		// Add search if provided.
 		if ( ! empty( $search_term ) ) {
-			$like  = '%' . $wpdb->esc_like( $search_term ) . '%';
-			$query = $wpdb->prepare(
-				"SELECT id, user_login, user_nicename, user_email 
-				FROM {$wpdb->prefix}users
-				WHERE user_email LIKE %s 
-				OR user_login LIKE %s
-				ORDER BY %i %i
-				LIMIT %d
-				OFFSET %d",
-				array(
-					$like,
-					$like,
-					$order_by,
-					$order,
-					$per_page,
-					$offset,
-				)
-			);
-		} else {
-			$query = $wpdb->prepare(
-				"SELECT id, user_login, user_nicename, user_email 
-				FROM {$wpdb->prefix}users
-				ORDER BY %i %i
-				LIMIT %d
-				OFFSET %d",
-				array(
-					$order_by,
-					$order,
-					$per_page,
-					$offset,
-				)
-			);
+			$args['search']         = '*' . $search_term . '*';
+			$args['search_columns'] = array( 'user_login', 'user_email' );
 		}
 
-		$result = $wpdb->get_results( $query, 'ARRAY_A' ); // phpcs:ignore WordPress.DB
+		// Create the query.
+		$user_query = new WP_User_Query( $args );
+		$users      = $user_query->get_results();
+
+		// Format results to match the previous structure.
+		$result = array();
+		foreach ( $users as $user ) {
+			$result[] = array(
+				'id'            => $user->ID,
+				'user_login'    => $user->user_login,
+				'user_nicename' => $user->user_nicename,
+				'user_email'    => $user->user_email,
+			);
+		}
 
 		// Don't attempt this query if there are no users.
 		$result_count = count( $result );
