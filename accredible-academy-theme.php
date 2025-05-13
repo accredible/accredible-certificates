@@ -20,7 +20,9 @@ if ( ! class_exists( 'Accredible_Academy_Theme' ) ) {
 			self::sync_course_with_group();
 
 			// For each course, check if we have any graduates on WP.
-			$relations = $wpdb->get_results( "SELECT * FROM {$wpdb->comments} WHERE comment_type = 'user_certificate'" ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+			$relations = get_comments(array(
+				'type' => 'user_certificate'
+			));
 
 			foreach ( $relations as $key => $completion ) {
 
@@ -48,21 +50,16 @@ if ( ! class_exists( 'Accredible_Academy_Theme' ) ) {
 		 * @return array $courses_ids
 		 */
 		public static function get_course_ids() {
-			global $wpdb;
-			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
-			$courses = $wpdb->get_results(
-				$wpdb->prepare(
-					"SELECT ID FROM {$wpdb->posts} 
-					WHERE post_status = %s 
-					AND post_type = %s 
-					ORDER BY post_date DESC",
-					'publish',
-					'course'
-				)
-			);
+			$courses = get_posts(array(
+				'post_type' => 'course',
+				'post_status' => 'publish',
+				'orderby' => 'date',
+				'order' => 'DESC',
+				'posts_per_page' => -1,
+				'fields' => 'ids'
+			));
 
-			$courses_ids = wp_list_pluck( $courses, 'ID' );
-			return $courses_ids;
+			return $courses;
 		}
 
 		/**
@@ -80,22 +77,22 @@ if ( ! class_exists( 'Accredible_Academy_Theme' ) ) {
 				if ( ! empty( $mapping ) ) {
 					// Then update details.
 					$post_obj = get_post( $course_ids[ $i ] );
-					$group = @Accredible_Certificate::update_group( 
-						$mapping[0]->group_id, 
-						get_the_title( $post_obj ), 
-						get_the_excerpt( $post_obj ), 
-						get_permalink( $post_obj ) 
+					$group    = @Accredible_Certificate::update_group(
+						$mapping[0]->group_id,
+						get_the_title( $post_obj ),
+						get_the_excerpt( $post_obj ),
+						get_permalink( $post_obj )
 					);
 				} else {
 					// Else create a new group and mapping.
-					$post_obj = get_post( $course_ids[ $i ] );
+					$post_obj   = get_post( $course_ids[ $i ] );
 					$group_name = urlencode( get_the_title( $post_obj ) . wp_rand() );
 					// Then make a new group on accredible.
-					$group = @Accredible_Certificate::create_group( 
-						$group_name, 
-						get_the_title( $post_obj ), 
-						get_the_excerpt( $post_obj ), 
-						get_permalink( $post_obj ) 
+					$group = @Accredible_Certificate::create_group(
+						$group_name,
+						get_the_title( $post_obj ),
+						get_the_excerpt( $post_obj ),
+						get_permalink( $post_obj )
 					);
 
 					// Save to db.
@@ -132,9 +129,14 @@ if ( ! class_exists( 'Accredible_Academy_Theme' ) ) {
 
 			global $wpdb;
 
-			error_log( 'Issuing certificates' ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
+			// If WP_DEBUG is enabled, log the error.
+			if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+				error_log( 'Issuing certificates' ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
+			}
 
-			$relations = $wpdb->get_results( "SELECT * FROM {$wpdb->comments} WHERE comment_type = 'user_certificate'" ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+			$relations = get_comments(array(
+				'type' => 'user_certificate'
+			));
 
 			foreach ( $relations as $key => $completion ) {
 
