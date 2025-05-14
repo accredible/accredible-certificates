@@ -58,34 +58,6 @@ if ( ! class_exists( 'Accredible_Certificates_Settings' ) ) {
 				)
 			);
 
-			// Check if auto sync is available.
-			try {
-				$auto_sync = Accredible_Certificate::auto_sync_available();
-			} catch ( Exception $e ) {
-				$auto_sync = false;
-			}
-
-			if ( $auto_sync ) {
-				$args = array(
-					'type'              => 'boolean',
-					'description'       => 'Automatically issue credentials upon course completion',
-					'sanitize_callback' => 'rest_sanitize_boolean',
-					'default'           => false,
-				);
-				register_setting( 'accredible_certificates-group', 'automatically_issue_certificates', $args );
-
-				add_settings_field(
-					'accredible_certificates-automatically_issue_certificates',
-					'Automatically Issue Credential upon Course Completion',
-					array( &$this, 'settings_field_checkbox' ),
-					'accredible_certificates',
-					'accredible_certificates-section',
-					array(
-						'field' => 'automatically_issue_certificates',
-					)
-				);
-			}
-
 			// Possibly do additional admin_init tasks.
 		} // END public static function activate
 

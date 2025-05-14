@@ -267,7 +267,12 @@ class Users_List extends WP_List_Table {
 	 */
 	public function get_group_select_options() {
 		$accredible_certificates = new Accredible_Certificate();
-		$groups                  = @Accredible_Certificate::get_groups();
+		try {
+			$groups = Accredible_Certificate::get_groups();
+		} catch ( Exception $e ) {
+			$groups = array();
+			$this->display_admin_notice( 'Error fetching groups. Please try again later.', 'error' );
+		}
 
 		$options      = '';
 		$groups_count = count( $groups );
@@ -405,22 +410,19 @@ class Users_List extends WP_List_Table {
 						: $userdata->display_name;
 
 					// Create a credential.
-					$credential = @Accredible_Certificate::create_credential(
-						$recipient_name,
-						$userdata->user_email,
-						$group_id
-					);
+					try {
+						$credential = Accredible_Certificate::create_credential(
+							$recipient_name,
+							$userdata->user_email,
+							$group_id
+						);
+					} catch ( Exception $e ) {
+						$this->display_admin_notice( 'Failed to create credential for ' . $userdata->user_email, 'error' );
+					}
 				}
-
-				// Let the user know that the creation was successful.
-				echo '<div class="notice notice-success is-dismissible">';
-				echo '<p>Credentials created!</p>';
-				echo '</div>';
+				$this->display_admin_notice( 'Credentials created!', 'success' );
 			} else {
-				// Let the user know that the creation failed.
-				echo '<div class="notice notice-error is-dismissible">';
-				echo '<p>Failed to create credentials. Please ensure you have selected both a group and users.</p>';
-				echo '</div>';
+				$this->display_admin_notice( 'Failed to create credentials. Please ensure you have selected both a group and users.', 'error' );
 			}
 		}
 	}
@@ -468,7 +470,7 @@ class Users_List extends WP_List_Table {
 	}
 
 	/**
-	 * Sanitize a post parameter.
+	 * Sanitize a POST parameter.
 	 *
 	 * @param string      $key The key of the parameter.
 	 * @param string|null $default_value The default value if the parameter is not set.
@@ -476,6 +478,22 @@ class Users_List extends WP_List_Table {
 	private static function sanitize_post_parameter( $key, $default_value = null ) {
 		// nonce verification is handled in the process_bulk_action method.
 		return isset( $_POST[ $key ] ) ? sanitize_text_field( wp_unslash( $_POST[ $key ] ) ) : $default_value; // phpcs:ignore WordPress.Security.NonceVerification
+	}
+
+	/**
+	 * Display an admin notice.
+	 *
+	 * @param string $message The message to display.
+	 * @param string $type    The type of notice: 'success' or 'error'.
+	 */
+	private function display_admin_notice( $message, $type = 'success' ) {
+		$allowed_types = array( 'success', 'error' );
+		if ( ! in_array( $type, $allowed_types, true ) ) {
+			$type = 'success';
+		}
+		echo '<div class="notice notice-' . esc_attr( $type ) . ' is-dismissible">';
+		echo '<p>' . esc_html( $message ) . '</p>';
+		echo '</div>';
 	}
 }
 

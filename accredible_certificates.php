@@ -41,7 +41,6 @@ require plugin_dir_path( __FILE__ ) . 'vendor/autoload.php';
 
 use ACMS\Api;
 
-require_once ACCREDIBLE_CERTIFICATES_PLUGIN_PATH . 'accredible-academy-theme.php'; // Require Academy Theme logic.
 require_once ACCREDIBLE_CERTIFICATES_PLUGIN_PATH . 'accredible_widget.php'; // Require Widget for credential display.
 require_once ACCREDIBLE_CERTIFICATES_PLUGIN_PATH . 'settings.php'; // Require Settings.
 
@@ -176,41 +175,6 @@ if ( ! class_exists( 'Accredible_Certificate' ) ) {
 
 			return $response->groups;
 		}
-
-		/**
-		 * Create a group on Accredible
-		 *
-		 * @param string $name group name.
-		 * @param string $course_name course name.
-		 * @param string $course_description course description.
-		 * @param string $course_link course link.
-		 * @return mixed $response
-		 */
-		public static function create_group( $name, $course_name, $course_description, $course_link ) {
-			$api = new Api( get_option( 'api_key' ) );
-
-			$response = $api->create_group( $name, $course_name, $course_description, $course_link );
-
-			return $response->group;
-		}
-
-		/**
-		 * Update a group on Accredible
-		 *
-		 * @param int    $id group id.
-		 * @param string $course_name course name.
-		 * @param string $course_description course description.
-		 * @param string $course_link course link.
-		 * @return mixed $response
-		 */
-		public static function update_group( $id, $course_name, $course_description, $course_link ) {
-			$api = new Api( get_option( 'api_key' ) );
-
-			$response = $api->update_group( $id, $course_name, $course_description, $course_link );
-
-			return $response->group;
-		}
-
 		/**
 		 * Register the admin menu item
 		 */
@@ -235,29 +199,6 @@ if ( ! class_exists( 'Accredible_Certificate' ) ) {
 		}
 
 		/**
-		 * Should we show the issuer an option to auto create credentials?
-		 *
-		 * @return boolean
-		 */
-		public static function auto_sync_available() {
-			$theme = wp_get_theme(); // gets the current theme.
-			if ( 'Academy' === $theme->name || 'Academy' === $theme->parent_theme ) {
-				return true;
-			} else {
-				return false;
-			}
-		}
-
-		/**
-		 * Function called hourly to sync with Accredible
-		 */
-		public static function sync_with_accredible() {
-			if ( 1 === get_option( 'automatically_issue_certificates' ) ) {
-				Accredible_Academy_Theme::sync_with_accredible();
-			}
-		}
-
-		/**
 		 * Send batch requests via the ACMS API
 		 *
 		 * @param Array $requests requests.
@@ -274,53 +215,6 @@ if ( ! class_exists( 'Accredible_Certificate' ) ) {
 			$response = $api->send_batch_requests( $requests );
 
 			return $response;
-		}
-
-		// Deprecated below here.
-
-
-		/**
-		 * Get existing certificates for a course
-		 *
-		 * @param int $course_id course id.
-		 * @return mixed $result
-		 */
-		public static function certificates( $course_id ) {
-			$client = new GuzzleHttp\Client();
-			$params = array( 'headers' => array( 'Authorization' => 'Token token="' . get_option( 'api_key' ) . '"' ) );
-			$res    = $client->get( 'https://api.accredible.com/v1/credentials?achievement_id=' . $course_id . '&full_view=true', $params );
-			return json_decode( $res->getBody() );
-		}
-
-		/**
-		 * Check if a user has a certificate for a course
-		 *
-		 * @param int $course_id course id.
-		 * @param int $user_id user id.
-		 * @return boolean $cert_exit
-		 */
-		public static function has_certificate( $course_id, $user_id ) {
-
-			$user             = get_user_by( 'id', $user_id );
-			$all_certificates = self::certificates( $course_id );
-			$all_certificates = $all_certificates->credentials;
-			$cert_exit        = false;
-			if ( is_array( $all_certificates ) ) {
-				foreach ( $all_certificates as $key => $cert ) {
-					$user_email = strtolower( $user->user_email );
-					if ( $cert->recipient->email === $user_email ) {
-						$cert_exit = true;
-						$cert_id   = $cert->id;
-						$approve   = $cert->approve;
-						if ( $approve ) {
-							return $cert_id;
-						} else {
-							return $approve;
-						}
-					}
-				}
-			}
-			return $cert_exit;
 		}
 	} // END class Accredible_Certificate.
 }
