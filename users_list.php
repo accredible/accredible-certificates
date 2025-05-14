@@ -301,7 +301,12 @@ class Users_List extends WP_List_Table {
 		<label class="screen-reader-text" for="<?php echo esc_attr( $id ); ?>"><?php esc_html_e( 'Select Group', 'accredible-certificates' ); ?></label>
 		<select name="<?php echo esc_attr( $id ); ?>" id="<?php echo esc_attr( $id ); ?>">
 			<option value=""><?php esc_html_e( 'Select Group', 'accredible-certificates' ); ?></option>
-			<?php echo wp_kses_post( $this->get_group_select_options() ); ?>
+			<?php
+			$allowed_tags = array(
+				'option' => array(),
+			);
+			echo wp_kses( $this->get_group_select_options(), $allowed_tags );
+			?>
 		</select>
 		<?php
 		submit_button( __( 'Create Credentials', 'accredible-certificates' ), '', 'create-credentials', false, 'onclick="setTimeout(disableCertificateSubmitButton, 1)"' );
