@@ -23,7 +23,7 @@ if ( empty( $api_key ) ) {
 		<p><strong>Please ensure you have entered an API key in the plugin settings page.</strong></p>
 		<p>To find your API key scroll down to the API key section on this page: <a href="https://dashboard.accredible.com/issuer/dashboard/department/api-settings" target="_blank">https://dashboard.accredible.com/issuer/dashboard/department/api-settings</a></p>
 		<p>It looks like this:</p>
-		<img src="<?php echo esc_url( ACCREDIBLE_CERTIFICATES_PLUGIN_URL . 'assets/images/example-apikey.png' ); ?>" style="width: 600px;" alt="">
+		<img src="<?php echo esc_url( ACCREDIBLE_CERTIFICATES_PLUGIN_URL . 'assets/images/example-apikey.png' ); ?>" style="width: 600px;" alt="api key example">
 	</div>
 	<?php
 	// phpcs:enable PluginCheck.CodeAnalysis.ImageFunctions.NonEnqueuedImage
