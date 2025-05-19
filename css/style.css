@@ -1,8 +1,25 @@
 #toplevel_page_accredible_certificates-certificates-admin .dashicons-before:before{
-  content: "\f471";
+	content: "\f471";
 }
 
 /* hide bulk actions on the users list */
 .accredible-credentials-wrap .bulkactions{
 	display: none;
+}
+
+.accredible-certificates-notice {
+	background: #fff;
+	border: 1px solid #c3c4c7;
+	border-left-width: 4px;
+	box-shadow: 0 1px 1px rgba(0, 0, 0, .04);
+	margin: 15px 15px 0 0;
+	padding: 10px;
+}
+
+.accredible-certificates-notice.notice-info {
+	border-left-color: #72aee6;
+}
+
+.accredible-certificates-notice > img  {
+	border: 1px solid #c0c0c0;
 }

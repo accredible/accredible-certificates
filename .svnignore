@@ -1,0 +1,22 @@
+# GitHub specific files and directories
+.github
+
+# Build and test directories
+bin
+tests
+
+# Version control and IDE files
+.gitignore
+.idea/
+.vscode/
+.cursor/
+
+# Configuration and documentation files
+.phpcs.xml.dist
+composer.lock
+composer.phar
+custom.ini
+docker-compose.yml
+Dockerfile
+phpunit.xml.dist
+README.md

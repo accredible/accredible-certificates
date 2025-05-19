@@ -1,16 +1,25 @@
+# WordPress Core Files
 .htaccess
 wp-config.php
-wp-content/uploads/
-wp-content/blogs.dir/
-wp-content/upgrade/
-wp-content/backup-db/
-wp-content/advanced-cache.php
-wp-content/wp-cache-config.php
-sitemap.xml
-*.log
-wp-content/cache/
-wp-content/backups/
+
+# WordPress Content Directory
+wp-content/
+
+# SEO and Sitemap Files
 sitemap.xml
 sitemap.xml.gz
+
+# System and Log Files
+*.log
 .DS_Store
+
+# Vendor Directory
 vendor/.git
+
+# IDE Files
+.idea/
+.vscode/
+.cursor/
+
+# Zip files
+*.zip
