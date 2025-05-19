@@ -12,8 +12,8 @@ if ( ! class_exists( 'WP_List_Table' ) ) {
 	require_once ABSPATH . 'wp-admin/includes/class-wp-list-table.php';
 }
 
-if ( ! class_exists( 'Accredible_Certificate' ) ) {
-	require_once ACCREDIBLE_CERTIFICATES_PLUGIN_PATH . 'accredible_certificates.php';
+if ( ! class_exists('Accredible_Certificates') ) {
+	require_once ACCREDIBLE_CERTIFICATES_PLUGIN_PATH . 'class-accredible-certificates.php';
 }
 
 /**
@@ -53,7 +53,7 @@ class Users_List extends WP_List_Table {
 	 * @return mixed
 	 */
 	public static function get_users( $per_page = 20, $page_number = 1 ) {
-		$accredible_certificates = new Accredible_Certificate();
+		$accredible_certificates = new Accredible_Certificates();
 
 		// Define allowed columns for ordering.
 		$allowed_columns = array(
@@ -122,7 +122,7 @@ class Users_List extends WP_List_Table {
 			}
 
 			try {
-				$response = Accredible_Certificate::batch_requests( $requests );
+				$response = Accredible_Certificates::batch_requests( $requests );
 			} catch ( Exception $e ) {
 				// Create a WP_Error object for proper error handling.
 				$error = new WP_Error(
@@ -266,9 +266,9 @@ class Users_List extends WP_List_Table {
 	 * @return string
 	 */
 	public function get_group_select_options() {
-		$accredible_certificates = new Accredible_Certificate();
+		$accredible_certificates = new Accredible_Certificates();
 		try {
-			$groups = Accredible_Certificate::get_groups();
+			$groups = Accredible_Certificates::get_groups();
 		} catch ( Exception $e ) {
 			$groups = array();
 			$this->display_admin_notice( 'Error fetching groups. Please try again later.', 'error' );
@@ -382,7 +382,7 @@ class Users_List extends WP_List_Table {
 
 		// Detect when a bulk action is being triggered...
 		if ( 'create-credentials' === $this->current_action() ) {
-			$accredible_certificates = new Accredible_Certificate();
+			$accredible_certificates = new Accredible_Certificates();
 
 			// Verify nonce.
 			$nonce = self::sanitize_post_parameter( 'accredible_certificates_nonce' );
@@ -416,7 +416,7 @@ class Users_List extends WP_List_Table {
 
 					// Create a credential.
 					try {
-						$credential = Accredible_Certificate::create_credential(
+						$credential = Accredible_Certificates::create_credential(
 							$recipient_name,
 							$userdata->user_email,
 							$group_id

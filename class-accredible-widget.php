@@ -99,7 +99,7 @@ if ( ! class_exists( 'Accredible_Widget' ) ) {
 			$current_user = wp_get_current_user();
 
 			if ( 0 !== $current_user->ID ) {
-				$accredible  = new Accredible_Certificate();
+				$accredible  = new Accredible_Certificates();
 				$credentials = $accredible->get_credentials_for_email( $current_user->user_email );
 				if ( $credentials->credentials ) {
 					echo '<ul>';
@@ -150,7 +150,7 @@ if ( ! class_exists( 'Accredible_Widget' ) ) {
 			$current_user = wp_get_current_user();
 
 			if ( 0 !== $current_user->ID ) {
-				$accredible  = new Accredible_Certificate();
+				$accredible  = new Accredible_Certificates();
 				$credentials = $accredible->get_credentials_for_email( $current_user->user_email );
 				if ( $credentials->credentials ) {
 					foreach ( $credentials->credentials as $key => $credential ) {

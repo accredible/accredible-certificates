@@ -44,11 +44,11 @@ use ACMS\Api;
 require_once ACCREDIBLE_CERTIFICATES_PLUGIN_PATH . 'class-accredible-widget.php'; // Require Widget for credential display.
 require_once ACCREDIBLE_CERTIFICATES_PLUGIN_PATH . 'class-accredible-certificates-settings.php'; // Require Settings.
 
-if ( ! class_exists( 'Accredible_Certificate' ) ) {
+if ( ! class_exists( 'Accredible_Certificates' ) ) {
 	/**
 	 * Accredible Certificate class
 	 */
-	class Accredible_Certificate {
+	class Accredible_Certificates {
 		/**
 		 * Accredible DB version
 		 *
@@ -216,14 +216,14 @@ if ( ! class_exists( 'Accredible_Certificate' ) ) {
 
 			return $response;
 		}
-	} // END class Accredible_Certificate.
+	} // END class Accredible_Certificates.
 }
 
-if ( class_exists( 'Accredible_Certificate' ) ) {
+if ( class_exists( 'Accredible_Certificates' ) ) {
 	// Installation and uninstallation hooks.
-	register_activation_hook( __FILE__, array( 'Accredible_Certificate', 'activate' ) );
-	register_deactivation_hook( __FILE__, array( 'Accredible_Certificate', 'deactivate' ) );
+	register_activation_hook( __FILE__, array( 'Accredible_Certificates', 'activate' ) );
+	register_deactivation_hook( __FILE__, array( 'Accredible_Certificates', 'deactivate' ) );
 
 	// Instantiate the plugin class.
-	$accredible_certificate = new Accredible_Certificate();
+	$accredible_certificate = new Accredible_Certificates();
 }
