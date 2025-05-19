@@ -2,8 +2,8 @@
 Contributors: accredible
 Donate link: https://www.accredible.com/
 Tags: accredible, certificate, certificates, digital certificates, online course, lms, learning management system, e-learning, elearning, badges, badge, open badge, mozilla open badge, blockchain, blockchain credential, credential, credentials
-Requires at least: 6.2
-Tested up to: 6.8
+Requires at least: 3.0.1
+Tested up to: 6.4
 Stable tag: 1.4.9
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
