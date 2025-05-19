@@ -13,7 +13,7 @@
 
 defined( 'ABSPATH' ) || die;
 
-require_once plugin_dir_path( __FILE__ ) . 'users_list.php';
+require_once plugin_dir_path( __FILE__ ) . 'class-users-list.php';
 
 $api_key = get_option( 'api_key' );
 if ( empty( $api_key ) ) {
