@@ -1,0 +1,46 @@
+services:
+  db:
+    image: mysql:8.0
+    volumes:
+      - db_data:/var/lib/mysql
+    ports:
+      - "3303:3306"
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: wordpress
+      MYSQL_DATABASE: wordpress
+      MYSQL_USER: wordpress
+      MYSQL_PASSWORD: wordpress
+      MYSQL_TCP_PORT: 3303
+
+  wordpress:
+    build: .
+    ports:
+      - "8000:80"
+    depends_on:
+      - db
+    restart: always
+    environment:
+      WORDPRESS_DB_HOST: db:3303
+      WORDPRESS_DB_USER: wordpress
+      WORDPRESS_DB_PASSWORD: wordpress
+      WORDPRESS_DB_NAME: wordpress
+      # Prevent automatic plugin installation
+      WORDPRESS_PLUGINS: ""
+    volumes:
+      - wordpress_data:/var/www/html
+      # Mount local plugin directory for development
+      - ".:/var/www/html/wp-content/plugins/accredible-certificates"
+
+  phpmyadmin:
+    image: phpmyadmin:latest
+    ports:
+      - "8082:80"
+    depends_on:
+      - db
+    environment:
+      PMA_HOST: db:3303
+
+volumes:
+  db_data: {}
+  wordpress_data: {}
