@@ -41,7 +41,7 @@ require plugin_dir_path( __FILE__ ) . 'vendor/autoload.php';
 
 use ACMS\Api;
 
-require_once ACCREDIBLE_CERTIFICATES_PLUGIN_PATH . 'accredible_widget.php'; // Require Widget for credential display.
+require_once ACCREDIBLE_CERTIFICATES_PLUGIN_PATH . 'class-accredible-widget.php'; // Require Widget for credential display.
 require_once ACCREDIBLE_CERTIFICATES_PLUGIN_PATH . 'class-accredible-certificates-settings.php'; // Require Settings.
 
 if ( ! class_exists( 'Accredible_Certificate' ) ) {
