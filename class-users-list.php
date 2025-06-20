@@ -303,7 +303,9 @@ class Users_List extends WP_List_Table {
 			<option value=""><?php esc_html_e( 'Select Group', 'accredible-certificates' ); ?></option>
 			<?php
 			$allowed_tags = array(
-				'option' => array(),
+				'option' => array(
+					'value' => array(),
+				),
 			);
 			echo wp_kses( $this->get_group_select_options(), $allowed_tags );
 			?>
@@ -445,7 +447,7 @@ class Users_List extends WP_List_Table {
 		// phpcs:enable WordPress.Security.NonceVerification, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 
 		if ( is_array( $credential_users ) ) {
-			$users = array_map( 'absint', array_keys( $credential_users ) );
+			$users = array_map( 'absint',  $credential_users );
 		}
 
 		return $users;
