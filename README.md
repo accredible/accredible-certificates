@@ -88,7 +88,37 @@ Sure, just post an issue and we'll get to work: https://github.com/accredible/ac
 Build and run docker containers with `docker-compose`.
 
 ```
-docker-compose up -d
+docker compose up -d
+```
+
+#### Step 2: Update DB user's previleges
+
+Log into the MySQL container as the root user (password: `wordpress`). 
+
+```
+docker exec -it accredible-certificates-db-1 mysql -u root -p
+```
+
+Update `wordpress` user's privileges to create a test database at Step 3.
+
+```
+mysql> grant ALL PRIVILEGES ON *.* TO 'wordpress';
+```
+
+#### Step 3: Set up PHPUnit
+
+Log into the WordPress container and go to the plugin directory.
+
+```
+docker exec -it accredible-certificates-wordpress-1 bash
+cd $PLUGIN_DIR
+```
+
+Run the following setup commands:
+
+```
+bash bin/init-wp-tests.sh
+composer install
 ```
 
 ### WordPress
