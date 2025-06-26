@@ -14,7 +14,7 @@ sitemap.xml.gz
 .DS_Store
 
 # Vendor Directory
-vendor/.git
+vendor/*
 
 # IDE Files
 .idea/
