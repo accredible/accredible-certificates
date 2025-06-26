@@ -23,3 +23,9 @@ vendor/*
 
 # Zip files
 *.zip
+
+# Testing
+/tests/coverage/
+/coverage/
+.phpunit.result.cache
+/tmp/
