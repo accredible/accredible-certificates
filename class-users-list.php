@@ -32,16 +32,30 @@ class Users_List extends WP_List_Table {
 	 */
 	public $no_groups = false;
 
-	/** Class constructor */
-	public function __construct() {
+	/**
+	 * Accredible_Certificates instance.
+	 *
+	 * @var Accredible_Certificates
+	 */
+	public $accredible_certificates;
 
+	/** Class constructor */
+	public function __construct(
+		Accredible_Certificates $accredible_certificates = null
+	) {
 		parent::__construct(
 			array(
 				'singular' => __( 'Recipient', 'accredible-certificates' ), // Singular name of the listed records.
 				'plural'   => __( 'Recipients', 'accredible-certificates' ), // Plural name of the listed records.
 				'ajax'     => false, // Does this table support ajax?
-			)
-		);
+				)
+			);
+
+		if ( null !== $accredible_certificates ) {
+			$this->accredible_certificates = $accredible_certificates;
+		} else {
+			$this->accredible_certificates = new Accredible_Certificates();
+		}
 	}
 
 	/**
@@ -52,9 +66,7 @@ class Users_List extends WP_List_Table {
 	 *
 	 * @return mixed
 	 */
-	public static function get_users( $per_page = 20, $page_number = 1 ) {
-		$accredible_certificates = new Accredible_Certificates();
-
+	public function get_users( $per_page = 20, $page_number = 1 ) {
 		// Define allowed columns for ordering.
 		$allowed_columns = array(
 			'id',
@@ -70,7 +82,7 @@ class Users_List extends WP_List_Table {
 		}
 
 		// Get and validate order parameter.
-		$order = self::sanitize_request_parameter( 'order' );
+		$order = self::sanitize_request_parameter( 'order', 'asc' );
 		$order = strtoupper( $order );
 		if ( ! in_array( $order, array( 'ASC', 'DESC' ), true ) ) {
 			$order = 'DESC';
@@ -122,7 +134,7 @@ class Users_List extends WP_List_Table {
 			}
 
 			try {
-				$response = Accredible_Certificates::batch_requests( $requests );
+				$response = $this->accredible_certificates->batch_requests( $requests );
 			} catch ( Exception $e ) {
 				// Create a WP_Error object for proper error handling.
 				$error = new WP_Error(
@@ -266,7 +278,6 @@ class Users_List extends WP_List_Table {
 	 * @return string
 	 */
 	public function get_group_select_options() {
-		$accredible_certificates = new Accredible_Certificates();
 		try {
 			$groups = Accredible_Certificates::get_groups();
 		} catch ( Exception $e ) {
@@ -340,7 +351,7 @@ class Users_List extends WP_List_Table {
 			)
 		);
 
-		$this->items = self::get_users( 20, $current_page );
+		$this->items = $this->get_users( 20, $current_page );
 	}
 
 	/**
@@ -384,8 +395,6 @@ class Users_List extends WP_List_Table {
 
 		// Detect when a bulk action is being triggered...
 		if ( 'create-credentials' === $this->current_action() ) {
-			$accredible_certificates = new Accredible_Certificates();
-
 			// Verify nonce.
 			$nonce = self::sanitize_post_parameter( 'accredible_certificates_nonce' );
 			self::verify_nonce( $nonce, 'accredible_certificates_bulk_action' );

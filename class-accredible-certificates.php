@@ -201,10 +201,10 @@ if ( ! class_exists( 'Accredible_Certificates' ) ) {
 		/**
 		 * Send batch requests via the ACMS API
 		 *
-		 * @param Array $requests requests.
+		 * @param array $requests requests.
 		 * @return mixed $response
 		 */
-		public static function batch_requests( $requests ) {
+		public function batch_requests( $requests ) {
 			$api = new Api( get_option( 'api_key' ) );
 
 			$request_count = count( $requests );
