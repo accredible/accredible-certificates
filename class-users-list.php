@@ -76,7 +76,7 @@ class Users_List extends WP_List_Table {
 			$order = 'DESC';
 		}
 
-		$search_term = self::sanitize_request_parameter( 's' );
+		$search_term = self::sanitize_search_parameter( 's' );
 
 		// Prepare query arguments.
 		$args = array(
@@ -90,7 +90,7 @@ class Users_List extends WP_List_Table {
 		// Add search if provided.
 		if ( ! empty( $search_term ) ) {
 			$args['search']         = '*' . $search_term . '*';
-			$args['search_columns'] = array( 'user_login', 'user_email' );
+			$args['search_columns'] = array( 'user_login', 'user_nicename', 'user_email' );
 		}
 
 		// Create the query.
@@ -474,6 +474,17 @@ class Users_List extends WP_List_Table {
 	private static function sanitize_request_parameter( $key, $default_value = null ) {
 		// nonce verification is handled in the current_action method.
 		return isset( $_REQUEST[ $key ] ) ? sanitize_key( wp_unslash( $_REQUEST[ $key ] ) ) : $default_value; // phpcs:ignore WordPress.Security.NonceVerification
+	}
+
+	/**
+	 * Sanitize a search parameter.
+	 *
+	 * @param string      $key The key of the parameter.
+	 * @param string|null $default_value The default value if the parameter is not set.
+	 */
+	private static function sanitize_search_parameter( $key, $default_value = null ) {
+		// nonce verification is handled in the current_action method.
+		return isset( $_REQUEST[ $key ] ) ? sanitize_text_field( wp_unslash( $_REQUEST[ $key ] ) ) : $default_value; // phpcs:ignore WordPress.Security.NonceVerification
 	}
 
 	/**
