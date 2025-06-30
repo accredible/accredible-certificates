@@ -381,16 +381,12 @@ class Users_List extends WP_List_Table {
 		$group_id  = self::sanitize_request_parameter( 'group_id' );
 		$group_id2 = self::sanitize_request_parameter( 'group_id2' );
 
-		if ( ! empty( $group_id ) || ! empty( $group_id2 ) ) {
+		if ( empty( $group_id ) && empty( $group_id2 ) ) {
+			$this->display_admin_notice( 'You need to select a Group to create Credentials.', 'error' );
+		} else {
 			return 'create-credentials';
 		}
 
-		if ( empty( $group_id ) && empty( $group_id2 ) ) {
-			// Let the user know they need to select a group.
-			echo '<div class="notice notice-error is-dismissible">';
-			echo '<p>You need to select a Group to create Credentials.</p>';
-			echo '</div>';
-		}
 
 		return parent::current_action();
 	}
@@ -441,6 +437,7 @@ class Users_List extends WP_List_Table {
 						);
 					} catch ( Exception $e ) {
 						$this->display_admin_notice( 'Failed to create credential for ' . $userdata->user_email, 'error' );
+						return;
 					}
 				}
 				$this->display_admin_notice( 'Credentials created!', 'success' );

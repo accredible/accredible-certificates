@@ -92,6 +92,9 @@ class Test_Users_List extends WP_UnitTestCase {
 		}
 	}
 
+    /**
+     * Test get_users method with search parameter
+     */
     public function test_get_users_with_search() {
         // Set search query.
         $_REQUEST['s'] = 'testuser1';
@@ -100,7 +103,7 @@ class Test_Users_List extends WP_UnitTestCase {
         $mock_response = $this->get_mock_response('all-credentials-response');
         $this->accredible_certificates->method('batch_requests')->willReturn($mock_response);
 
-        // Expect batch_requests to be called with the correct request.
+        // Expect batch_requests to be called with the correct params.
         $this->accredible_certificates->expects($this->once())
             ->method('batch_requests')
             ->with($this->callback(function($requests) {
@@ -112,7 +115,23 @@ class Test_Users_List extends WP_UnitTestCase {
         $this->users_list->get_users();
     }
 
-	/**
+    /**
+     * Test process_bulk_action method with invalid nonce
+     */
+    public function test_process_bulk_action_with_invalid_nonce() {
+        // Set action.
+        $_REQUEST['action'] = 'create-credentials';
+        $_REQUEST['accredible_certificates_nonce'] = 'invalid-nonce';
+        $_REQUEST['group_id'] = 1;
+
+        // Expect wp_die to be called with 'Invalid nonce.'
+        $this->expectException(WPDieException::class);
+        $this->expectExceptionMessage('Invalid nonce.');
+
+        $this->users_list->process_bulk_action();
+    }
+
+        /**
 	 * Create test users for testing
 	 */
 	private function create_test_users() {
