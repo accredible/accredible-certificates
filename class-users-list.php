@@ -109,6 +109,14 @@ class Users_List extends WP_List_Table {
 		$user_query = new WP_User_Query( $args );
 		$users      = $user_query->get_results();
 
+		// Get the total number of users.
+		$this->set_pagination_args(
+			array(
+				'total_items' => count( $users ),
+				'per_page'    => $per_page,
+			)
+		);
+
 		// Format results to match the previous structure.
 		$result = array();
 		foreach ( $users as $user ) {
