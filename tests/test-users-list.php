@@ -16,6 +16,11 @@ class Test_Users_List extends WP_UnitTestCase {
 	 */
 	private $users_list;
 
+    /**
+     * Accredible_Certificates instance for testing
+     *
+     * @var \PHPUnit\Framework\MockObject\MockObject&Accredible_Certificates
+     */
     private $accredible_certificates;
 
 	/**
@@ -129,6 +134,36 @@ class Test_Users_List extends WP_UnitTestCase {
         $this->expectExceptionMessage('Invalid nonce.');
 
         $this->users_list->process_bulk_action();
+    }
+
+    /**
+     * Test process_bulk_action method with valid nonce
+     */
+    public function test_process_bulk_action_with_valid_nonce() {
+        // Set action.
+        $_REQUEST['action'] = 'create-credentials';
+        $_POST['accredible_certificates_nonce'] = wp_create_nonce('accredible_certificates_bulk_action');
+        $_POST['credential_users'] = array($this->test_users[0]);
+        $_POST['group_id'] = 1;
+
+        // Stub the create_credential method.
+        $this->accredible_certificates->method('create_credential')->willReturn(array());
+
+        // Expect create_credential to be called with the correct params.
+        $this->accredible_certificates->expects($this->once())
+            ->method('create_credential')
+            ->with(
+                $this->equalTo('Test User1'),  // recipient_name
+                $this->equalTo('testuser1@example.com'),  // email
+                $this->equalTo(1)  // group_id
+            );
+
+        ob_start();
+        $this->users_list->process_bulk_action();
+        $output = ob_get_clean();
+
+        // Check if the admin notice is displayed.
+        $this->assertStringContainsString('Credentials created!', $output);
     }
 
         /**
