@@ -157,7 +157,7 @@ if ( ! class_exists( 'Accredible_Certificates' ) ) {
 		 * @param int    $group_id group id.
 		 * @return \ACMS\stdObject $response
 		 */
-		public static function create_credential( $name, $email, $group_id ) {
+		public function create_credential( $name, $email, $group_id ) {
 			$api = new Api( get_option( 'api_key' ) );
 
 			return $api->create_credential( $name, $email, $group_id );
@@ -168,7 +168,7 @@ if ( ! class_exists( 'Accredible_Certificates' ) ) {
 		 *
 		 * @return array $groups
 		 */
-		public static function get_groups() {
+		public function get_groups() {
 			$api = new Api( get_option( 'api_key' ) );
 
 			$response = $api->get_groups( 1000, 1 );

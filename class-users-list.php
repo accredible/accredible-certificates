@@ -286,7 +286,7 @@ class Users_List extends WP_List_Table {
 	 */
 	public function get_group_select_options() {
 		try {
-			$groups = Accredible_Certificates::get_groups();
+			$groups = $this->accredible_certificates->get_groups();
 		} catch ( Exception $e ) {
 			$groups = array();
 			$this->display_admin_notice( 'Error fetching groups. Please try again later.', 'error' );
@@ -430,7 +430,7 @@ class Users_List extends WP_List_Table {
 
 					// Create a credential.
 					try {
-						$credential = Accredible_Certificates::create_credential(
+						$credential = $this->accredible_certificates->create_credential(
 							$recipient_name,
 							$userdata->user_email,
 							$group_id
