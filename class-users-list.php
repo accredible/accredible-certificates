@@ -12,7 +12,7 @@ if ( ! class_exists( 'WP_List_Table' ) ) {
 	require_once ABSPATH . 'wp-admin/includes/class-wp-list-table.php';
 }
 
-if ( ! class_exists('Accredible_Certificates') ) {
+if ( ! class_exists( 'Accredible_Certificates' ) ) {
 	require_once ACCREDIBLE_CERTIFICATES_PLUGIN_PATH . 'class-accredible-certificates.php';
 }
 
@@ -39,7 +39,11 @@ class Users_List extends WP_List_Table {
 	 */
 	public $accredible_certificates;
 
-	/** Class constructor */
+	/**
+	 * Class constructor.
+	 *
+	 * @param Accredible_Certificates $accredible_certificates Accredible_Certificates instance.
+	 */
 	public function __construct(
 		Accredible_Certificates $accredible_certificates = null
 	) {
@@ -48,8 +52,8 @@ class Users_List extends WP_List_Table {
 				'singular' => __( 'Recipient', 'accredible-certificates' ), // Singular name of the listed records.
 				'plural'   => __( 'Recipients', 'accredible-certificates' ), // Plural name of the listed records.
 				'ajax'     => false, // Does this table support ajax?
-				)
-			);
+			)
+		);
 
 		if ( null !== $accredible_certificates ) {
 			$this->accredible_certificates = $accredible_certificates;
@@ -387,7 +391,6 @@ class Users_List extends WP_List_Table {
 			return 'create-credentials';
 		}
 
-
 		return parent::current_action();
 	}
 
@@ -460,7 +463,7 @@ class Users_List extends WP_List_Table {
 		// phpcs:enable WordPress.Security.NonceVerification, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 
 		if ( is_array( $credential_users ) ) {
-			$users = array_map( 'absint',  $credential_users );
+			$users = array_map( 'absint', $credential_users );
 		}
 
 		return $users;
