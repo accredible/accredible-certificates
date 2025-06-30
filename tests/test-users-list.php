@@ -124,6 +124,21 @@ class Test_Users_List extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Test get_group_select_options method.
+	 */
+	public function test_get_group_select_options() {
+		// Create mock response.
+		$mock_response = $this->get_mock_response( 'all-groups-response' );
+		$this->accredible_certificates->method( 'get_groups' )->willReturn( $mock_response->groups );
+
+		$options = $this->users_list->get_group_select_options();
+
+		// Check if the options are returned.
+		$this->assertStringContainsString( "<option value='1'>Group 1</option>", $options );
+		$this->assertStringContainsString( "<option value='2'>Group 2</option>", $options );
+	}
+
+	/**
 	 * Test process_bulk_action method with invalid nonce.
 	 */
 	public function test_process_bulk_action_with_invalid_nonce() {
