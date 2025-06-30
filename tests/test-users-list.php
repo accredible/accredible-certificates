@@ -58,6 +58,61 @@ class Test_Users_List extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Test constructor
+	 */
+	public function test_constructor() {
+		$users_list = new Users_List();
+		
+		$this->assertInstanceOf( 'Users_List', $users_list );
+		$this->assertInstanceOf( 'WP_List_Table', $users_list );
+		$this->assertFalse( $users_list->no_groups );
+	}
+
+	/**
+	 * Test get_users method with default parameters
+	 */
+	public function test_get_users_default_parameters() {
+		// Create mock response.
+		$mock_response = $this->get_mock_response('all-credentials-response');
+		$this->accredible_certificates->method('batch_requests')->willReturn($mock_response);
+
+		$users = $this->users_list->get_users();
+		
+		// Check if users are returned.
+		$this->assertIsArray( $users );
+		$this->assertLessThanOrEqual( 20, count( $users ) );
+		
+		// Check structure of returned data
+		if ( ! empty( $users ) ) {
+			$first_user = $users[0];
+			$this->assertArrayHasKey( 'id', $first_user );
+			$this->assertArrayHasKey( 'user_login', $first_user );
+			$this->assertArrayHasKey( 'user_nicename', $first_user );
+			$this->assertArrayHasKey( 'user_email', $first_user );
+		}
+	}
+
+    public function test_get_users_with_search() {
+        // Set search query.
+        $_REQUEST['s'] = 'testuser1';
+
+        // Create mock response.
+        $mock_response = $this->get_mock_response('all-credentials-response');
+        $this->accredible_certificates->method('batch_requests')->willReturn($mock_response);
+
+        // Expect batch_requests to be called with the correct request.
+        $this->accredible_certificates->expects($this->once())
+            ->method('batch_requests')
+            ->with($this->callback(function($requests) {
+                return $requests[0]['url'] === 'all_credentials' && 
+                       $requests[0]['params']['email'] === 'testuser1@example.com';
+            }));
+
+
+        $this->users_list->get_users();
+    }
+
+	/**
 	 * Create test users for testing
 	 */
 	private function create_test_users() {
@@ -81,41 +136,6 @@ class Test_Users_List extends WP_UnitTestCase {
 		$this->test_users = array();
 	}
 
-	/**
-	 * Test constructor
-	 */
-	public function test_constructor() {
-		$users_list = new Users_List();
-		
-		$this->assertInstanceOf( 'Users_List', $users_list );
-		$this->assertInstanceOf( 'WP_List_Table', $users_list );
-		$this->assertFalse( $users_list->no_groups );
-	}
-
-	/**
-	 * Test get_users method with default parameters
-	 */
-	public function test_get_users_default_parameters() {
-		// Create mock response.
-		$mock_response = $this->get_mock_response('batch-requests-response');
-		$this->accredible_certificates->method('batch_requests')->willReturn($mock_response);
-
-		$users = $this->users_list->get_users();
-		
-		// Check if users are returned.
-		$this->assertIsArray( $users );
-		$this->assertLessThanOrEqual( 20, count( $users ) );
-		
-		// Check structure of returned data
-		if ( ! empty( $users ) ) {
-			$first_user = $users[0];
-			$this->assertArrayHasKey( 'id', $first_user );
-			$this->assertArrayHasKey( 'user_login', $first_user );
-			$this->assertArrayHasKey( 'user_nicename', $first_user );
-			$this->assertArrayHasKey( 'user_email', $first_user );
-		}
-	}
-
     /**
      * Get mock response from fixture
      *
@@ -137,7 +157,7 @@ class Test_Users_List extends WP_UnitTestCase {
         return wp_insert_user( array(
 			'user_login'    => 'testuser' . $index,
 			'user_nicename' => 'testuser' . $index,
-			'user_email'    => 'test' . $index . '@example.com',
+			'user_email'    => 'testuser' . $index . '@example.com',
 			'user_pass'     => 'password123',
 			'first_name'    => 'Test',
 			'last_name'     => 'User' . $index,
