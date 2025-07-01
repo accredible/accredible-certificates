@@ -151,3 +151,46 @@ Note: If you get a "command not found" error, try rebuilding the container to en
 ```bash
 docker compose down && docker compose up -d --build
 ```
+
+### Running Tests
+
+The plugin uses PHPUnit for testing. To run the test suite:
+
+1. First, access the WordPress container:
+```bash
+docker exec -it accredible-certificates-wordpress-1 bash
+```
+
+2. Navigate to the plugin directory:
+```bash
+cd $PLUGIN_DIR
+```
+
+3. Run all tests:
+```bash
+./vendor/bin/phpunit
+```
+
+4. Run tests with verbose output:
+```bash
+./vendor/bin/phpunit --verbose
+```
+
+5. Run a specific test file:
+```bash
+./vendor/bin/phpunit tests/test-users-list.php
+```
+
+6. Run tests with coverage report (if Xdebug is available):
+```bash
+./vendor/bin/phpunit --coverage-html coverage/
+```
+
+#### Test Setup
+
+The test environment is automatically set up when you run the initialization script mentioned in the Development setup section. The tests use a separate WordPress test database and include:
+
+- WordPress test framework
+- PHPUnit 9.x
+- WordPress polyfills for PHPUnit
+- Test fixtures in `tests/fixtures/`
