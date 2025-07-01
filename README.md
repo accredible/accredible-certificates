@@ -117,7 +117,8 @@ cd $PLUGIN_DIR
 Run the following setup commands:
 
 ```
-bash bin/init-wp-tests.sh
+bash bin/install-wp-tests.sh wordpress_test $WORDPRESS_DB_USER $WORDPRESS_DB_PASSWORD $WORDPRESS_DB_HOST $WORDPRESS_VERSION
+
 composer install
 ```
 
@@ -176,14 +177,14 @@ cd $PLUGIN_DIR
 ./vendor/bin/phpunit --verbose
 ```
 
-5. Run a specific test file:
+5. Run a specific test file, reference the class:
 ```bash
-./vendor/bin/phpunit tests/test-users-list.php
+./vendor/bin/phpunit --filter Test_Users_List
 ```
 
-6. Run tests with coverage report (if Xdebug is available):
+6. Run a specific test case, reference the test method:
 ```bash
-./vendor/bin/phpunit --coverage-html coverage/
+./vendor/bin/phpunit --filter test_get_users_with_search
 ```
 
 #### Test Setup
