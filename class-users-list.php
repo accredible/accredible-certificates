@@ -12,7 +12,7 @@ if ( ! class_exists( 'WP_List_Table' ) ) {
 	require_once ABSPATH . 'wp-admin/includes/class-wp-list-table.php';
 }
 
-if ( ! class_exists('Accredible_Certificates') ) {
+if ( ! class_exists( 'Accredible_Certificates' ) ) {
 	require_once ACCREDIBLE_CERTIFICATES_PLUGIN_PATH . 'class-accredible-certificates.php';
 }
 
@@ -32,9 +32,21 @@ class Users_List extends WP_List_Table {
 	 */
 	public $no_groups = false;
 
-	/** Class constructor */
-	public function __construct() {
+	/**
+	 * Accredible_Certificates instance.
+	 *
+	 * @var Accredible_Certificates
+	 */
+	public $accredible_certificates;
 
+	/**
+	 * Class constructor.
+	 *
+	 * @param Accredible_Certificates $accredible_certificates Accredible_Certificates instance.
+	 */
+	public function __construct(
+		Accredible_Certificates $accredible_certificates = null
+	) {
 		parent::__construct(
 			array(
 				'singular' => __( 'Recipient', 'accredible-certificates' ), // Singular name of the listed records.
@@ -42,6 +54,12 @@ class Users_List extends WP_List_Table {
 				'ajax'     => false, // Does this table support ajax?
 			)
 		);
+
+		if ( null !== $accredible_certificates ) {
+			$this->accredible_certificates = $accredible_certificates;
+		} else {
+			$this->accredible_certificates = new Accredible_Certificates();
+		}
 	}
 
 	/**
@@ -52,9 +70,7 @@ class Users_List extends WP_List_Table {
 	 *
 	 * @return mixed
 	 */
-	public static function get_users( $per_page = 20, $page_number = 1 ) {
-		$accredible_certificates = new Accredible_Certificates();
-
+	public function get_users( $per_page = 20, $page_number = 1 ) {
 		// Define allowed columns for ordering.
 		$allowed_columns = array(
 			'id',
@@ -70,13 +86,13 @@ class Users_List extends WP_List_Table {
 		}
 
 		// Get and validate order parameter.
-		$order = self::sanitize_request_parameter( 'order' );
+		$order = self::sanitize_request_parameter( 'order', 'asc' );
 		$order = strtoupper( $order );
 		if ( ! in_array( $order, array( 'ASC', 'DESC' ), true ) ) {
 			$order = 'DESC';
 		}
 
-		$search_term = self::sanitize_request_parameter( 's' );
+		$search_term = self::sanitize_search_parameter( 's' );
 
 		// Prepare query arguments.
 		$args = array(
@@ -90,12 +106,19 @@ class Users_List extends WP_List_Table {
 		// Add search if provided.
 		if ( ! empty( $search_term ) ) {
 			$args['search']         = '*' . $search_term . '*';
-			$args['search_columns'] = array( 'user_login', 'user_email' );
+			$args['search_columns'] = array( 'user_login', 'user_nicename', 'user_email' );
 		}
 
 		// Create the query.
 		$user_query = new WP_User_Query( $args );
 		$users      = $user_query->get_results();
+
+		$this->set_pagination_args(
+			array(
+				'total_items' => count( $users ),
+				'per_page'    => $per_page,
+			)
+		);
 
 		// Format results to match the previous structure.
 		$result = array();
@@ -122,7 +145,7 @@ class Users_List extends WP_List_Table {
 			}
 
 			try {
-				$response = Accredible_Certificates::batch_requests( $requests );
+				$response = $this->accredible_certificates->batch_requests( $requests );
 			} catch ( Exception $e ) {
 				// Create a WP_Error object for proper error handling.
 				$error = new WP_Error(
@@ -266,9 +289,8 @@ class Users_List extends WP_List_Table {
 	 * @return string
 	 */
 	public function get_group_select_options() {
-		$accredible_certificates = new Accredible_Certificates();
 		try {
-			$groups = Accredible_Certificates::get_groups();
+			$groups = $this->accredible_certificates->get_groups();
 		} catch ( Exception $e ) {
 			$groups = array();
 			$this->display_admin_notice( 'Error fetching groups. Please try again later.', 'error' );
@@ -340,7 +362,7 @@ class Users_List extends WP_List_Table {
 			)
 		);
 
-		$this->items = self::get_users( 20, $current_page );
+		$this->items = $this->get_users( 20, $current_page );
 	}
 
 	/**
@@ -363,15 +385,10 @@ class Users_List extends WP_List_Table {
 		$group_id  = self::sanitize_request_parameter( 'group_id' );
 		$group_id2 = self::sanitize_request_parameter( 'group_id2' );
 
-		if ( ! empty( $group_id ) || ! empty( $group_id2 ) ) {
-			return 'create-credentials';
-		}
-
 		if ( empty( $group_id ) && empty( $group_id2 ) ) {
-			// Let the user know they need to select a group.
-			echo '<div class="notice notice-error is-dismissible">';
-			echo '<p>You need to select a Group to create Credentials.</p>';
-			echo '</div>';
+			$this->display_admin_notice( 'You need to select a Group to create Credentials.', 'error' );
+		} else {
+			return 'create-credentials';
 		}
 
 		return parent::current_action();
@@ -384,8 +401,6 @@ class Users_List extends WP_List_Table {
 
 		// Detect when a bulk action is being triggered...
 		if ( 'create-credentials' === $this->current_action() ) {
-			$accredible_certificates = new Accredible_Certificates();
-
 			// Verify nonce.
 			$nonce = self::sanitize_post_parameter( 'accredible_certificates_nonce' );
 			self::verify_nonce( $nonce, 'accredible_certificates_bulk_action' );
@@ -418,13 +433,14 @@ class Users_List extends WP_List_Table {
 
 					// Create a credential.
 					try {
-						$credential = Accredible_Certificates::create_credential(
+						$credential = $this->accredible_certificates->create_credential(
 							$recipient_name,
 							$userdata->user_email,
 							$group_id
 						);
 					} catch ( Exception $e ) {
 						$this->display_admin_notice( 'Failed to create credential for ' . $userdata->user_email, 'error' );
+						return;
 					}
 				}
 				$this->display_admin_notice( 'Credentials created!', 'success' );
@@ -447,7 +463,7 @@ class Users_List extends WP_List_Table {
 		// phpcs:enable WordPress.Security.NonceVerification, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 
 		if ( is_array( $credential_users ) ) {
-			$users = array_map( 'absint',  $credential_users );
+			$users = array_map( 'absint', $credential_users );
 		}
 
 		return $users;
@@ -474,6 +490,17 @@ class Users_List extends WP_List_Table {
 	private static function sanitize_request_parameter( $key, $default_value = null ) {
 		// nonce verification is handled in the current_action method.
 		return isset( $_REQUEST[ $key ] ) ? sanitize_key( wp_unslash( $_REQUEST[ $key ] ) ) : $default_value; // phpcs:ignore WordPress.Security.NonceVerification
+	}
+
+	/**
+	 * Sanitize a search parameter.
+	 *
+	 * @param string      $key The key of the parameter.
+	 * @param string|null $default_value The default value if the parameter is not set.
+	 */
+	private static function sanitize_search_parameter( $key, $default_value = null ) {
+		// nonce verification is handled in the current_action method.
+		return isset( $_REQUEST[ $key ] ) ? sanitize_text_field( wp_unslash( $_REQUEST[ $key ] ) ) : $default_value; // phpcs:ignore WordPress.Security.NonceVerification
 	}
 
 	/**

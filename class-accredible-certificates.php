@@ -7,7 +7,7 @@
  * Plugin Name: Accredible Certificates & Open Badges
  * Plugin URI: https://github.com/accredible/accredible-certificates
  * Description: Certificates, open badges and blockchain credentials. Create, update and manage them on your WordPress site.
- * Version: 1.5.1
+ * Version: 1.5.2
  * Author: Accredible
  * Author URI: https://www.accredible.com
  * License: GPLv2 or later
@@ -16,7 +16,7 @@
 
 defined( 'ABSPATH' ) || die;
 
-define( 'ACCREDIBLE_CERTIFICATES_VERSION', '1.5.1' );
+define( 'ACCREDIBLE_CERTIFICATES_VERSION', '1.5.2' );
 define( 'ACCREDIBLE_CERTIFICATES_PLUGIN_PATH', plugin_dir_path( __FILE__ ) );
 define( 'ACCREDIBLE_CERTIFICATES_SCRIPT_VERSION_TOKEN', ACCREDIBLE_CERTIFICATES_VERSION );
 
@@ -157,7 +157,7 @@ if ( ! class_exists( 'Accredible_Certificates' ) ) {
 		 * @param int    $group_id group id.
 		 * @return \ACMS\stdObject $response
 		 */
-		public static function create_credential( $name, $email, $group_id ) {
+		public function create_credential( $name, $email, $group_id ) {
 			$api = new Api( get_option( 'api_key' ) );
 
 			return $api->create_credential( $name, $email, $group_id );
@@ -168,7 +168,7 @@ if ( ! class_exists( 'Accredible_Certificates' ) ) {
 		 *
 		 * @return array $groups
 		 */
-		public static function get_groups() {
+		public function get_groups() {
 			$api = new Api( get_option( 'api_key' ) );
 
 			$response = $api->get_groups( 1000, 1 );
@@ -201,10 +201,10 @@ if ( ! class_exists( 'Accredible_Certificates' ) ) {
 		/**
 		 * Send batch requests via the ACMS API
 		 *
-		 * @param Array $requests requests.
+		 * @param array $requests requests.
 		 * @return mixed $response
 		 */
-		public static function batch_requests( $requests ) {
+		public function batch_requests( $requests ) {
 			$api = new Api( get_option( 'api_key' ) );
 
 			$request_count = count( $requests );

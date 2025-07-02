@@ -14,7 +14,7 @@ sitemap.xml.gz
 .DS_Store
 
 # Vendor Directory
-vendor/.git
+vendor/*
 
 # IDE Files
 .idea/
@@ -23,3 +23,9 @@ vendor/.git
 
 # Zip files
 *.zip
+
+# Testing
+.phpunit.result.cache
+/tests/coverage/
+/coverage/
+/tmp/
