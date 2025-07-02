@@ -7,12 +7,9 @@ $baseDir = dirname($vendorDir);
 
 return array(
     'React\\Promise\\' => array($vendorDir . '/react/promise/src'),
-    'PhpParser\\' => array($vendorDir . '/nikic/php-parser/lib/PhpParser'),
     'GuzzleHttp\\Stream\\' => array($vendorDir . '/guzzlehttp/streams/src'),
     'GuzzleHttp\\Ring\\' => array($vendorDir . '/guzzlehttp/ringphp/src'),
     'GuzzleHttp\\' => array($vendorDir . '/guzzlehttp/guzzle/src'),
-    'Doctrine\\Instantiator\\' => array($vendorDir . '/doctrine/instantiator/src/Doctrine/Instantiator'),
-    'DeepCopy\\' => array($vendorDir . '/myclabs/deep-copy/src/DeepCopy'),
     'ACMS\\Tests\\' => array($vendorDir . '/accredible/acms-api-php/tests'),
     'ACMS\\' => array($vendorDir . '/accredible/acms-api-php/src'),
 );
