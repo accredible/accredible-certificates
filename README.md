@@ -88,7 +88,38 @@ Sure, just post an issue and we'll get to work: https://github.com/accredible/ac
 Build and run docker containers with `docker-compose`.
 
 ```
-docker-compose up -d
+docker compose up -d
+```
+
+#### Step 2: Update DB user's previleges
+
+Log into the MySQL container as the root user (password: `wordpress`). 
+
+```
+docker exec -it accredible-certificates-db-1 mysql -u root -p
+```
+
+Update `wordpress` user's privileges to create a test database at Step 3.
+
+```
+mysql> grant ALL PRIVILEGES ON *.* TO 'wordpress';
+```
+
+#### Step 3: Set up PHPUnit
+
+Log into the WordPress container and go to the plugin directory.
+
+```
+docker exec -it accredible-certificates-wordpress-1 bash
+cd $PLUGIN_DIR
+```
+
+Run the following setup commands:
+
+```
+bash bin/install-wp-tests.sh wordpress_test $WORDPRESS_DB_USER $WORDPRESS_DB_PASSWORD $WORDPRESS_DB_HOST $WORDPRESS_VERSION
+
+composer install
 ```
 
 ### WordPress
@@ -121,3 +152,46 @@ Note: If you get a "command not found" error, try rebuilding the container to en
 ```bash
 docker compose down && docker compose up -d --build
 ```
+
+### Running Tests
+
+The plugin uses PHPUnit for testing. To run the test suite:
+
+1. First, access the WordPress container:
+```bash
+docker exec -it accredible-certificates-wordpress-1 bash
+```
+
+2. Navigate to the plugin directory:
+```bash
+cd $PLUGIN_DIR
+```
+
+3. Run all tests:
+```bash
+./vendor/bin/phpunit
+```
+
+4. Run tests with verbose output:
+```bash
+./vendor/bin/phpunit --verbose
+```
+
+5. Run a specific test file, reference the class:
+```bash
+./vendor/bin/phpunit --filter Test_Users_List
+```
+
+6. Run a specific test case, reference the test method:
+```bash
+./vendor/bin/phpunit --filter test_get_users_with_search
+```
+
+#### Test Setup
+
+The test environment is automatically set up when you run the initialization script mentioned in the Development setup section. The tests use a separate WordPress test database and include:
+
+- WordPress test framework
+- PHPUnit 9.x
+- WordPress polyfills for PHPUnit
+- Test fixtures in `tests/fixtures/`
