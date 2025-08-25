@@ -31,9 +31,10 @@ jobs:
           composer global config allow-plugins.dealerdirect/phpcodesniffer-composer-installer true
           composer global require --dev wp-coding-standards/wpcs
           composer global require --dev dealerdirect/phpcodesniffer-composer-installer
-          phpcs --config-set installed_paths ~/.composer/vendor/wp-coding-standards/wpcs
+          composer global require --dev phpcsstandards/phpcsutils
+          composer global require --dev phpcsstandards/phpcsextra
+          phpcs --config-set installed_paths ~/.composer/vendor/wp-coding-standards/wpcs, ~/.composer/vendor/phpcsstandards/phpcsutils, ~/.composer/vendor/phpcsstandards/phpcsextra
 
       - name: Run PHP CodeSniffer
         run: |
           phpcs --standard=WordPress --extensions=php --ignore=*/vendor/*,*/node_modules/*,*/tests/*,*/post-types/* .
-          
