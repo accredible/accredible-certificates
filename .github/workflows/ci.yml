@@ -29,12 +29,11 @@ jobs:
       - name: Install WordPress Coding Standards
         run: |
           composer global config allow-plugins.dealerdirect/phpcodesniffer-composer-installer true
-          composer global require wp-coding-standards/wpcs
-          composer global require phpcompatibility/phpcompatibility-wp
-          composer global require phpcompatibility/phpcompatibility-paragonie
-          composer global require phpcsstandards/phpcsutils
-          composer global require phpcsstandards/phpcsextra
-          phpcs --config-set installed_paths ~/.composer/vendor/wp-coding-standards/wpcs, ~/.composer/vendor/phpcompatibility/phpcompatibility-wp, ~/.composer/vendor/phpcompatibility/phpcompatibility-paragonie, ~/.composer/vendor/phpcsstandards/phpcsutils, ~/.composer/vendor/phpcsstandards/phpcsextra
+          composer global require wp-coding-standards/wpcs:^3.0
+          composer global require phpcompatibility/phpcompatibility-wp:^2.1
+          composer global require phpcsstandards/phpcsutils:^1.0
+          composer global require phpcsstandards/phpcsextra:^1.0
+          phpcs --config-set installed_paths ~/.composer/vendor/wp-coding-standards/wpcs,~/.composer/vendor/phpcompatibility/phpcompatibility-wp,~/.composer/vendor/phpcsstandards/phpcsutils,~/.composer/vendor/phpcsstandards/phpcsextra
 
       - name: Run PHP CodeSniffer
         run: |
