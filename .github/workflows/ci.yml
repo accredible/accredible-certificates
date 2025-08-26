@@ -93,8 +93,10 @@ jobs:
             command: update
 
         - name: Setup WordPress test environment
+          env:
+            DB_PORT: ${{ job.services.mysql.ports[3306] }}
           run: |
-            bash bin/install-wp-tests.sh wordpress_test wordpress wordpress 127.0.0.1 ${{ matrix.wordpress }}
+            bash bin/install-wp-tests.sh wordpress_test wordpress wordpress 127.0.0.1:${{ job.services.mysql.ports[3306] }} ${{ matrix.wordpress }}
 
         - name: Wait for MySQL to be ready
           run: |
