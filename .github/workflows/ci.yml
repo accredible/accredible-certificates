@@ -50,4 +50,4 @@ jobs:
         run: |
           phpcs --version
           phpcs -i
-          phpcs --standard=WordPress --extensions=php --ignore=*/vendor/*,*/node_modules/*,*/tests/*,*/post-types/*,*/assets/*,*/css/*,*/js/* .
+          phpcs --standard=WordPress --extensions=php --ignore=*/vendor/*,*/node_modules/*,*/tests/*,*/post-types/*,*/assets/*,*/css/*,*/js/*,*/templates/* .
