@@ -82,8 +82,6 @@ jobs:
           uses: shivammathur/setup-php@v2
           with:
             php-version: ${{ matrix.php }}
-            extensions: mbstring, xml, ctype, iconv, intl, pdo_mysql, mysqlnd, curl, zip
-            coverage: none
 
         - name: Build Composer Version ${{ matrix.composer }}
           uses: php-actions/composer@v6
@@ -92,7 +90,10 @@ jobs:
             version: ${{ matrix.composer }}
             command: update
 
-        - name: Setup WordPress test environment
+        - name: Install SVN
+          run: sudo apt-get update && sudo apt-get install -y subversion
+
+        - name: Initialise WP Test environment
           env:
             DB_PORT: ${{ job.services.mysql.ports[3306] }}
           run: |
