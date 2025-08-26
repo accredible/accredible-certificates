@@ -8,8 +8,7 @@ on:
     branches: ['develop', 'master']
 
 jobs:
-  lint:
-    name: "PHP CodeSniffer (WordPress Coding Standards)"
+  code_sniffer:
     runs-on: ubuntu-latest
     
     steps:
@@ -46,9 +45,65 @@ jobs:
           composer global config allow-plugins.dealerdirect/phpcodesniffer-composer-installer true
           composer global require phpcompatibility/phpcompatibility-paragonie phpcompatibility/phpcompatibility-wp 
           composer global require phpcsstandards/phpcsutils phpcsstandards/phpcsextra wp-coding-standards/wpcs dealerdirect/phpcodesniffer-composer-installer
+          phpcs -i
 
       - name: Run PHP CodeSniffer
         run: |
           phpcs --version
-          phpcs -i
           phpcs
+
+  unit_tests:
+      runs-on: ubuntu-latest
+      strategy:
+        fail-fast: false
+        matrix:
+          include:
+            - php: '8.2'
+              composer: 2
+              wordpress: '6.6'
+
+      services:
+        mysql:
+          image: mysql:5.7
+          env:
+            MYSQL_ROOT_PASSWORD: wordpress
+            MYSQL_DATABASE: wordpress_test
+            MYSQL_USER: wordpress
+            MYSQL_PASSWORD: wordpress
+          ports:
+            - 3306:3306
+          options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+
+      steps:
+        - name: Checkout code
+          uses: actions/checkout@v4
+
+        - name: Setup PHP ${{ matrix.php }}
+          uses: shivammathur/setup-php@v2
+          with:
+            php-version: ${{ matrix.php }}
+            extensions: mbstring, xml, ctype, iconv, intl, pdo_mysql, mysqlnd, curl, zip
+            coverage: none
+
+        - name: Build Composer Version ${{ matrix.composer }}
+          uses: php-actions/composer@v6
+          with:
+            php_version: ${{ matrix.php }}
+            version: ${{ matrix.composer }}
+            command: update
+
+        - name: Setup WordPress test environment
+          run: |
+            bash bin/install-wp-tests.sh wordpress_test wordpress wordpress 127.0.0.1 ${{ matrix.wordpress }}
+
+        - name: Wait for MySQL to be ready
+          run: |
+            while ! mysqladmin ping -h"127.0.0.1" -P"3306" -u"wordpress" -p"wordpress" --silent; do
+              sleep 1
+            done
+
+        - name: Run PHPUnit tests
+          run: ./vendor/bin/phpunit --verbose
+          env:
+            WP_TESTS_DIR: /tmp/wordpress-tests-lib
+            WP_CORE_DIR: /tmp/wordpress
