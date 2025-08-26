@@ -44,6 +44,7 @@ jobs:
       - name: Install WordPress Coding Standards
         run: |
           composer global config allow-plugins.dealerdirect/phpcodesniffer-composer-installer true
+          composer global require phpcompatibility/phpcompatibility-paragonie phpcompatibility/phpcompatibility-wp 
           composer global require phpcsstandards/phpcsutils phpcsstandards/phpcsextra wp-coding-standards/wpcs dealerdirect/phpcodesniffer-composer-installer
 
       - name: Run PHP CodeSniffer
