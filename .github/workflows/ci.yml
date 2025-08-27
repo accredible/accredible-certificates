@@ -58,6 +58,9 @@ jobs:
         fail-fast: false
         matrix:
           include:
+            - php: '5.6'
+              composer: 1
+              wordpress: '6.2'
             - php: '8.2'
               composer: 2
               wordpress: '6.6'
@@ -90,20 +93,11 @@ jobs:
             php_version: ${{ matrix.php }}
             version: ${{ matrix.composer }}
             command: update
-          # env:
-          #   ACTION_TOKEN: ${{ github.token }}
 
         - name: Install SVN
           run: |
             sudo apt-get update
             sudo apt-get install -y subversion
-
-        # - name: Grant all privileges to wordpress user
-        #   run: |
-        #     mysql -h 127.0.0.1 -P 3306 -u root -pwordpress -e "
-        #       GRANT ALL PRIVILEGES ON wordpress.* TO 'wordpress'@'%';
-        #       FLUSH PRIVILEGES;
-        #     "
 
         - name: Initialise WP Test environment
           env:
@@ -111,14 +105,10 @@ jobs:
           run: |
             bash bin/install-wp-tests.sh wordpress wordpress wordpress 127.0.0.1:3306 ${{ matrix.wordpress }} true
 
-        # - name: Wait for MySQL to be ready
-        #   run: |
-        #     while ! mysqladmin ping -h"127.0.0.1" -P"3306" -u"wordpress" -p"wordpress" --silent; do
-        #       sleep 1
-        #     done
-
         - name: Run PHPUnit tests
-          run: ./vendor/bin/phpunit --verbose
+          run: |
+            ./vendor/bin/phpunit --version
+            ./vendor/bin/phpunit
           env:
             WP_TESTS_DIR: /tmp/wordpress-tests-lib
             WP_CORE_DIR: /tmp/wordpress
