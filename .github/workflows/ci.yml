@@ -58,7 +58,7 @@ jobs:
         fail-fast: false
         matrix:
           include:
-            - php: '5.6'
+            - php: '7.4'
               composer: 1
               wordpress: '6.2'
             - php: '8.2'
@@ -78,7 +78,7 @@ jobs:
           options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
 
       name: WP version ${{ matrix.wordpress }} on PHP ${{ matrix.php }}
-      
+
       steps:
         - name: Checkout code
           uses: actions/checkout@v4
@@ -87,7 +87,6 @@ jobs:
           uses: shivammathur/setup-php@v2
           with:
             php-version: ${{ matrix.php }}
-            # token: ${{ github.token }}
 
         - name: Build Composer Version ${{ matrix.composer }}
           uses: php-actions/composer@v6
