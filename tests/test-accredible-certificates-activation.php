@@ -174,7 +174,7 @@ class Test_Accredible_Certificates_Activation extends WP_UnitTestCase {
 
 		// Test id column.
 		$this->assertArrayHasKey( 'id', $column_map );
-		$this->assertEquals( 'mediumint', $column_map['id']->Type );
+		$this->assertStringContainsString( 'mediumint', $column_map['id']->Type );
 		$this->assertEquals( 'NO', $column_map['id']->Null );
 		$this->assertEquals( 'auto_increment', $column_map['id']->Extra );
 
