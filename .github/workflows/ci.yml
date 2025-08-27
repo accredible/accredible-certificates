@@ -82,6 +82,7 @@ jobs:
           uses: shivammathur/setup-php@v2
           with:
             php-version: ${{ matrix.php }}
+            token: ${{ github.token }}
 
         - name: Build Composer Version ${{ matrix.composer }}
           uses: php-actions/composer@v6
@@ -89,21 +90,25 @@ jobs:
             php_version: ${{ matrix.php }}
             version: ${{ matrix.composer }}
             command: update
+          env:
+            ACTION_TOKEN: ${{ github.token }}
 
         - name: Install SVN
-          run: sudo apt-get update && sudo apt-get install -y subversion
+          run: |
+            sudo apt-get update
+            sudo apt-get install -y subversion
 
         - name: Initialise WP Test environment
           env:
-            DB_PORT: ${{ job.services.mysql.ports[3306] }}
+            DB_PORT: 3306
           run: |
-            bash bin/install-wp-tests.sh wordpress_test wordpress wordpress 127.0.0.1:${{ job.services.mysql.ports[3306] }} ${{ matrix.wordpress }}
+            bash bin/install-wp-tests.sh wordpress_test wordpress wordpress 127.0.0.1:3306 ${{ matrix.wordpress }}
 
-        # - name: Wait for MySQL to be ready
-        #   run: |
-        #     while ! mysqladmin ping -h"127.0.0.1" -P"3306" -u"wordpress" -p"wordpress" --silent; do
-        #       sleep 1
-        #     done
+        - name: Wait for MySQL to be ready
+          run: |
+            while ! mysqladmin ping -h"127.0.0.1" -P"3306" -u"wordpress" -p"wordpress" --silent; do
+              sleep 1
+            done
 
         - name: Run PHPUnit tests
           run: ./vendor/bin/phpunit --verbose
