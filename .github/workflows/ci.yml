@@ -23,22 +23,25 @@ jobs:
           coverage: none
           tools: composer:v2
 
-      - name: Get Composer Cache Directory
-        id: composer-cache
-        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+      # - name: Get Composer Cache Directory
+      #   id: composer-cache
+      #   run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
 
-      - name: Cache Composer dependencies
-        uses: actions/cache@v4
-        with:
-          path: ${{ steps.composer-cache.outputs.dir }}
-          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
-          restore-keys: ${{ runner.os }}-composer-
+      # - name: Cache Composer dependencies
+      #   uses: actions/cache@v4
+      #   with:
+      #     path: ${{ steps.composer-cache.outputs.dir }}
+      #     key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+      #     restore-keys: ${{ runner.os }}-composer-
+
+      # - name: Install project dependencies
+      #   run: |
+      #     if [ -f composer.json ]; then
+      #       composer install --prefer-dist --no-progress --no-suggest
+      #     fi
 
       - name: Install project dependencies
-        run: |
-          if [ -f composer.json ]; then
-            composer install --prefer-dist --no-progress --no-suggest
-          fi
+        run: composer install --prefer-dist --no-progress --no-suggest
 
       - name: Install WordPress Coding Standards
         run: |
@@ -90,16 +93,13 @@ jobs:
           uses: shivammathur/setup-php@v2
           with:
             php-version: ${{ matrix.php }}
-            extensions: mbstring, xml, ctype, iconv, intl, pdo_mysql, mysqlnd
-            coverage: none
-            tools: composer:${{ matrix.composer }}, phpunit
 
-        # - name: Build Composer Version ${{ matrix.composer }}
-        #   uses: php-actions/composer@v6
-        #   with:
-        #     php_version: ${{ matrix.php }}
-        #     version: ${{ matrix.composer }}
-        #     command: update
+        - name: Build Composer Version ${{ matrix.composer }}
+          uses: php-actions/composer@v6
+          with:
+            php_version: ${{ matrix.php }}
+            version: ${{ matrix.composer }}
+            command: update
 
         - name: Install SVN
           run: |
