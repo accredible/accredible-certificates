@@ -24,7 +24,7 @@ jobs:
           coverage: none
           tools: composer:v2
 
-      - name: Install project dependencies
+      - name: Install Project Dependencies
         run: composer install --prefer-dist --no-progress --no-suggest
 
       - name: Install WordPress Coding Standards
@@ -78,7 +78,7 @@ jobs:
           with:
             php-version: ${{ matrix.php }}
 
-        - name: Build Composer Version ${{ matrix.composer }}
+        - name: Build Composer v${{ matrix.composer }}
           uses: php-actions/composer@v6
           with:
             php_version: ${{ matrix.php }}
@@ -88,7 +88,7 @@ jobs:
         - name: Install SVN
           run: |
             sudo apt-get update
-            sudo apt-get install -y subversion
+            sudo apt-get install -y subversion # used by install-wp-tests.sh
 
         - name: Initialise WP Test environment
           env:
