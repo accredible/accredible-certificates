@@ -93,10 +93,10 @@ jobs:
           # env:
           #   ACTION_TOKEN: ${{ github.token }}
 
-        # - name: Install SVN
-        #   run: |
-        #     sudo apt-get update
-        #     sudo apt-get install -y subversion
+        - name: Install SVN
+          run: |
+            sudo apt-get update
+            sudo apt-get install -y subversion
 
         # - name: Grant all privileges to wordpress user
         #   run: |
