@@ -37,7 +37,7 @@ jobs:
       - name: Run PHP CodeSniffer
         run: |
           phpcs --version
-          phpcs
+          phpcs # relies on .phpcs.xml.dist
 
   unit_tests:
       runs-on: ubuntu-latest
