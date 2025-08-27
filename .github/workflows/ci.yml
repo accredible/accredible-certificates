@@ -92,7 +92,7 @@ jobs:
             php-version: ${{ matrix.php }}
             extensions: mbstring, xml, ctype, iconv, intl, pdo_mysql, mysqlnd
             coverage: none
-            tools: composer:${{ matrix.composer }}
+            tools: composer:${{ matrix.composer }}, phpunit
 
         # - name: Build Composer Version ${{ matrix.composer }}
         #   uses: php-actions/composer@v6
