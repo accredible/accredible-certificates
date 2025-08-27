@@ -1,4 +1,4 @@
-name: "Linting and unit tests"
+name: "Linting and Unit Tests"
 
 on:
   workflow_dispatch:
