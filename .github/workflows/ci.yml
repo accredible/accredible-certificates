@@ -98,6 +98,13 @@ jobs:
             sudo apt-get update
             sudo apt-get install -y subversion
 
+        - name: Grant all privileges to wordpress user
+          run: |
+            mysql -h 127.0.0.1 -P 3306 -u root -pwordpress -e "
+              GRANT ALL PRIVILEGES ON wordpress_test.* TO 'wordpress'@'%';
+              FLUSH PRIVILEGES;
+            "
+
         - name: Initialise WP Test environment
           env:
             DB_PORT: 3306
