@@ -99,11 +99,11 @@ jobs:
           run: |
             bash bin/install-wp-tests.sh wordpress_test wordpress wordpress 127.0.0.1:${{ job.services.mysql.ports[3306] }} ${{ matrix.wordpress }}
 
-        - name: Wait for MySQL to be ready
-          run: |
-            while ! mysqladmin ping -h"127.0.0.1" -P"3306" -u"wordpress" -p"wordpress" --silent; do
-              sleep 1
-            done
+        # - name: Wait for MySQL to be ready
+        #   run: |
+        #     while ! mysqladmin ping -h"127.0.0.1" -P"3306" -u"wordpress" -p"wordpress" --silent; do
+        #       sleep 1
+        #     done
 
         - name: Run PHPUnit tests
           run: ./vendor/bin/phpunit --verbose
