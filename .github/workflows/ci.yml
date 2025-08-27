@@ -109,7 +109,7 @@ jobs:
           env:
             DB_PORT: 3306
           run: |
-            bash bin/install-wp-tests.sh wordpress wordpress wordpress 127.0.0.1:3306 ${{ matrix.wordpress }}
+            bash bin/install-wp-tests.sh wordpress wordpress wordpress 127.0.0.1:3306 ${{ matrix.wordpress }} true
 
         - name: Wait for MySQL to be ready
           run: |
