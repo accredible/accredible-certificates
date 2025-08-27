@@ -90,6 +90,8 @@ jobs:
           uses: shivammathur/setup-php@v2
           with:
             php-version: ${{ matrix.php }}
+            extensions: mbstring, xml, ctype, iconv, intl, pdo_mysql, mysqlnd
+            coverage: none
             tools: composer:${{ matrix.composer }}
 
         # - name: Build Composer Version ${{ matrix.composer }}
