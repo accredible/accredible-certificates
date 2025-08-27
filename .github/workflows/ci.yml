@@ -80,7 +80,7 @@ jobs:
             - 3306:3306
           options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
 
-      name: WP version ${{ matrix.wordpress }} on PHP ${{ matrix.php }}
+      name: Testing WordPress ${{ matrix.wordpress }} on PHP ${{ matrix.php }}
 
       steps:
         - name: Checkout code
@@ -90,13 +90,14 @@ jobs:
           uses: shivammathur/setup-php@v2
           with:
             php-version: ${{ matrix.php }}
+            tools: composer:${{ matrix.composer }}
 
-        - name: Build Composer Version ${{ matrix.composer }}
-          uses: php-actions/composer@v6
-          with:
-            php_version: ${{ matrix.php }}
-            version: ${{ matrix.composer }}
-            command: update
+        # - name: Build Composer Version ${{ matrix.composer }}
+        #   uses: php-actions/composer@v6
+        #   with:
+        #     php_version: ${{ matrix.php }}
+        #     version: ${{ matrix.composer }}
+        #     command: update
 
         - name: Install SVN
           run: |
