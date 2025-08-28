@@ -2,9 +2,8 @@ name: "Linting and Unit Tests"
 
 on:
   workflow_dispatch:
-  push:
-    branches: ['develop', 'master']
   pull_request:
+    types: [opened, synchronize]
     branches: ['develop', 'master']
 
 jobs:
