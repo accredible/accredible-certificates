@@ -6,6 +6,12 @@
 	<file>.</file>
 	<exclude-pattern>/vendor/</exclude-pattern>
 	<exclude-pattern>/node_modules/</exclude-pattern>
+	<exclude-pattern>/tests/</exclude-pattern>
+	<exclude-pattern>/post-types/</exclude-pattern>
+	<exclude-pattern>/assets/</exclude-pattern>
+	<exclude-pattern>/css/</exclude-pattern>
+	<exclude-pattern>/js/</exclude-pattern>
+	<exclude-pattern>/templates/</exclude-pattern>
 
 	<!-- How to scan -->
 	<!-- Usage instructions: https://github.com/squizlabs/PHP_CodeSniffer/wiki/Usage -->
@@ -19,8 +25,8 @@
 	<!-- Rules: Check PHP version compatibility -->
 	<!-- https://github.com/PHPCompatibility/PHPCompatibility#sniffing-your-code-for-compatibility-with-specific-php-versions -->
 	<config name="testVersion" value="5.6-"/>
-	<!-- https://github.com/PHPCompatibility/PHPCompatibilityWP -->
-	<rule ref="PHPCompatibilityWP"/>
+	<!-- https://github.com/PHPCompatibility/PHPCompatibility -->
+	<rule ref="PHPCompatibility"/>
 
 	<!-- Rules: WordPress Coding Standards -->
 	<!-- https://github.com/WordPress-Coding-Standards/WordPress-Coding-Standards -->
@@ -29,14 +35,23 @@
 	<rule ref="WordPress"/>
 	<rule ref="WordPress.NamingConventions.PrefixAllGlobals">
 		<properties>
-			<!-- Value: replace the function, class, and variable prefixes used. Separate multiple prefixes with a comma. -->
-			<property name="prefixes" type="array" value="accredible_certificates, ACCREDIBLE_CERTIFICATES"/>
+			<!-- Value: replace the function, class, and variable prefixes used. -->
+			<property name="prefixes" type="array">
+				<element value="accredible_certificates"/>
+				<element value="ACCREDIBLE_CERTIFICATES"/>
+			</property>
 		</properties>
+	</rule>
+	<rule ref="WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedClassFound">
+		<exclude-pattern>class-users-list.php</exclude-pattern>
+		<exclude-pattern>class-accredible-widget.php</exclude-pattern>
 	</rule>
 	<rule ref="WordPress.WP.I18n">
 		<properties>
 			<!-- Value: replace the text domain used. -->
-			<property name="text_domain" type="array" value="accredible-certificates"/>
+			<property name="text_domain" type="array">
+				<element value="accredible-certificates"/>
+			</property>
 		</properties>
 	</rule>
 	<rule ref="WordPress.WhiteSpace.ControlStructureSpacing">

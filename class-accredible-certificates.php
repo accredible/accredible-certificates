@@ -225,5 +225,7 @@ if ( class_exists( 'Accredible_Certificates' ) ) {
 	register_deactivation_hook( __FILE__, array( 'Accredible_Certificates', 'deactivate' ) );
 
 	// Instantiate the plugin class.
+	// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
 	$accredible_certificate = new Accredible_Certificates();
+	// phpcs:enable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
 }

@@ -15,8 +15,8 @@ defined( 'ABSPATH' ) || die;
 
 require_once plugin_dir_path( __FILE__ ) . 'class-users-list.php';
 
-$api_key = get_option( 'api_key' );
-if ( empty( $api_key ) ) {
+$accredible_certificates_api_key = get_option( 'api_key' );
+if ( empty( $accredible_certificates_api_key ) ) {
 	// phpcs:disable PluginCheck.CodeAnalysis.ImageFunctions.NonEnqueuedImage
 	?>
 	<div class="accredible-certificates-notice notice-info">
@@ -28,10 +28,10 @@ if ( empty( $api_key ) ) {
 	<?php
 	// phpcs:enable PluginCheck.CodeAnalysis.ImageFunctions.NonEnqueuedImage
 } else {
-	$table_instance = new Users_List();
+	$accredible_certificates_users_list = new Users_List();
 
 	// Display a notice if we have no groups with which to create credentials.
-	if ( $table_instance->no_groups ) {
+	if ( $accredible_certificates_users_list->no_groups ) {
 		echo '<div class="notice notice-error is-dismissible"> ';
 		echo '<p><strong>Your Accredible account does not have any Groups. Please create a Group before trying to create Credentials: <a href="https://dashboard.accredible.com/issuer/dashboard/groups" target="_blank">https://dashboard.accredible.com/issuer/dashboard/groups</a></strong></p>';
 		echo '</div>';
@@ -60,9 +60,9 @@ if ( empty( $api_key ) ) {
 							<form method="post">
 							<?php
 							wp_nonce_field( 'accredible_certificates_bulk_action', 'accredible_certificates_nonce' );
-							$table_instance->prepare_items();
-							$table_instance->search_box( 'Search Users', 'search' );
-							$table_instance->display();
+							$accredible_certificates_users_list->prepare_items();
+							$accredible_certificates_users_list->search_box( 'Search Users', 'search' );
+							$accredible_certificates_users_list->display();
 							?>
 							</form>
 						</div>
@@ -73,7 +73,6 @@ if ( empty( $api_key ) ) {
 		</div>
 
 	<?php
-
 }
 
 ?>

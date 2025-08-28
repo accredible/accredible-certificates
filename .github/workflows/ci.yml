@@ -1,0 +1,104 @@
+name: "Linting and Unit Tests"
+
+on:
+  workflow_dispatch:
+  pull_request:
+    types: [opened, synchronize]
+    branches: ['develop', 'master']
+
+jobs:
+  code_sniffer:
+    name: "PHP CodeSniffer"
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.1'
+          extensions: mbstring, xml, ctype, iconv, intl, pdo_mysql, mysqlnd
+          coverage: none
+          tools: composer:v2
+
+      - name: Install Project Dependencies
+        run: composer install --prefer-dist --no-progress --no-suggest
+
+      - name: Install WordPress Coding Standards
+        run: |
+          composer global config allow-plugins.dealerdirect/phpcodesniffer-composer-installer true
+          composer global require phpcompatibility/phpcompatibility-paragonie phpcompatibility/phpcompatibility-wp 
+          composer global require phpcsstandards/phpcsutils phpcsstandards/phpcsextra wp-coding-standards/wpcs dealerdirect/phpcodesniffer-composer-installer
+          phpcs -i
+
+      - name: Run PHP CodeSniffer
+        run: |
+          phpcs --version
+          phpcs # relies on .phpcs.xml.dist
+
+  unit_tests:
+      runs-on: ubuntu-latest
+      strategy:
+        fail-fast: false
+        matrix:
+          include:
+            - php: '7.4'
+              composer: 2
+              wordpress: '6.2'
+            - php: '8.2'
+              composer: 2
+              wordpress: '6.6'
+            - php: '8.3'
+              composer: 2
+              wordpress: '6.8'
+
+      services:
+        mysql:
+          image: mysql:5.7
+          env:
+            MYSQL_ROOT_PASSWORD: wordpress
+            MYSQL_DATABASE: wordpress
+            MYSQL_USER: wordpress
+            MYSQL_PASSWORD: wordpress
+          ports:
+            - 3306:3306
+          options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+
+      name: Testing WordPress ${{ matrix.wordpress }} on PHP ${{ matrix.php }}
+
+      steps:
+        - name: Checkout code
+          uses: actions/checkout@v4
+
+        - name: Setup PHP ${{ matrix.php }}
+          uses: shivammathur/setup-php@v2
+          with:
+            php-version: ${{ matrix.php }}
+
+        - name: Build Composer v${{ matrix.composer }}
+          uses: php-actions/composer@v6
+          with:
+            php_version: ${{ matrix.php }}
+            version: ${{ matrix.composer }}
+            command: update
+
+        - name: Install SVN
+          run: |
+            sudo apt-get update
+            sudo apt-get install -y subversion # used by install-wp-tests.sh
+
+        - name: Initialise WP Test environment
+          env:
+            DB_PORT: 3306
+          run: |
+            bash bin/install-wp-tests.sh wordpress wordpress wordpress 127.0.0.1:3306 ${{ matrix.wordpress }} true
+
+        - name: Run PHPUnit tests
+          run: |
+            ./vendor/bin/phpunit --version
+            ./vendor/bin/phpunit
+          env:
+            WP_TESTS_DIR: /tmp/wordpress-tests-lib
+            WP_CORE_DIR: /tmp/wordpress
