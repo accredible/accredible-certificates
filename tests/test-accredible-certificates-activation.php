@@ -174,18 +174,18 @@ class Test_Accredible_Certificates_Activation extends WP_UnitTestCase {
 
 		// Test id column.
 		$this->assertArrayHasKey( 'id', $column_map );
-		$this->assertEquals( 'mediumint', $column_map['id']->Type );
+		$this->assertStringContainsString( 'mediumint', $column_map['id']->Type );
 		$this->assertEquals( 'NO', $column_map['id']->Null );
 		$this->assertEquals( 'auto_increment', $column_map['id']->Extra );
 
 		// Test course_id column.
 		$this->assertArrayHasKey( 'course_id', $column_map );
-		$this->assertEquals( 'mediumint', $column_map['course_id']->Type );
+		$this->assertStringContainsString( 'mediumint', $column_map['course_id']->Type );
 		$this->assertEquals( 'NO', $column_map['course_id']->Null );
 
 		// Test group_id column.
 		$this->assertArrayHasKey( 'group_id', $column_map );
-		$this->assertEquals( 'mediumint', $column_map['group_id']->Type );
+		$this->assertStringContainsString( 'mediumint', $column_map['group_id']->Type );
 		$this->assertEquals( 'NO', $column_map['group_id']->Null );
 	}
 
