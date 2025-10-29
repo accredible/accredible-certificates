@@ -18,10 +18,18 @@ use PHPUnit\Framework\TestCase;
 
 class ApiTestEvidence extends TestCase {
 
+    // backward compatibility
+    public function expectException($exception) {
+        if (!method_exists('TestCase','expectException')) {
+            $this->setExpectedException($exception);
+        } else {
+            $this->expectException($exception);
+        }
+    }
 
     public $group;
 
-	protected function setUp(): void {
+	protected function setUp(){
         $this->api = new Api("7b47e413b0216b489f0034960db4e84f", true);
 
         // Create a group
@@ -32,7 +40,7 @@ class ApiTestEvidence extends TestCase {
         $this->credential = $this->api->create_credential("John Doe", "john@example.com", $this->group->group->id);
     }
 
-    protected function tearDown(): void {
+    protected function tearDown(){
         // Remove credential
         $response = $this->api->delete_credential($this->credential->credential->id);
 
@@ -71,7 +79,7 @@ class ApiTestEvidence extends TestCase {
         $this->assertEquals("some description", $evidence_item1->evidence_item->description);
 
         //Check we can't make an invalid grade item
-        $this->expectException(\Exception::class);
+        $this->expectException("\Exception");
         $evidence_item2 = $this->api->create_evidence_item_grade("B", "some description", $this->credential->credential->id);
     }
 
@@ -81,7 +89,7 @@ class ApiTestEvidence extends TestCase {
         $this->assertEquals("Completed in 9 days", $evidence_item1->evidence_item->description);
 
         //Check we can't make an invalid duration item
-        $this->expectException(\Exception::class);
+        $this->expectException("\Exception");
         $evidence_item2 = $this->api->create_evidence_item_duration(date("Y-m-d", strtotime("2017-10-01")), date("Y-m-d", strtotime("2017-10-01")), $this->credential->credential->id);
     }
 
