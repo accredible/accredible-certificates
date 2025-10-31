@@ -81,7 +81,7 @@ jobs:
         - name: Build Composer v${{ matrix.composer }}
           run: |
             composer --version
-            composer update --prefer-dist --no-progress --no-suggest
+            composer install --prefer-dist --no-progress --no-suggest
 
         - name: Install SVN
           run: |
