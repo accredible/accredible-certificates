@@ -26,6 +26,7 @@ vendor/*
 
 # Testing
 .phpunit.result.cache
+.actignore
 /tests/coverage/
 /coverage/
 /tmp/

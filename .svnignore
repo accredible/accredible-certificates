@@ -7,6 +7,7 @@ tests
 
 # Version control and IDE files
 .gitignore
+.actignore
 .idea/
 .vscode/
 .cursor/
