@@ -76,13 +76,12 @@ jobs:
           uses: shivammathur/setup-php@v2
           with:
             php-version: ${{ matrix.php }}
+            tools: composer:v${{ matrix.composer }}
 
         - name: Build Composer v${{ matrix.composer }}
-          uses: php-actions/composer@v6
-          with:
-            php_version: ${{ matrix.php }}
-            version: ${{ matrix.composer }}
-            command: update
+          run: |
+            composer --version
+            composer install --prefer-dist --no-progress --no-suggest
 
         - name: Install SVN
           run: |
