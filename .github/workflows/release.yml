@@ -25,7 +25,7 @@ jobs:
 
       - name: Create Release Zip
         run: |
-          ZIP_NAME="accredible-certificates.${GITHUB_REF#refs/tags/v}.zip"
+          ZIP_NAME="accredible-certificates-${GITHUB_REF#refs/tags/v}.zip"
           zip -r "$ZIP_NAME" . -x "*.git*" -x "*.github*" -x "*.svnignore" -x ".actignore" -x "*.log" -x ".DS_Store" -x "tests/*" -x ".phpunit.result.cache" -x "phpunit.xml.dist" -x "coverage/*" -x "tmp/*" -x "Dockerfile" -x "docker-compose.yml"
           echo "ZIP_FILE=$ZIP_NAME" >> $GITHUB_ENV
 
