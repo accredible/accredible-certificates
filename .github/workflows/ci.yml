@@ -2,6 +2,32 @@ name: "Linting and Unit Tests"
 
 on:
   workflow_dispatch:
+    inputs:
+      php_version:
+        description: 'PHP version to use for linting and tests'
+        required: false
+        default: '8.1'
+        type: choice
+        options:
+          - '7.4'
+          - '8.0'
+          - '8.1'
+          - '8.2'
+          - '8.3'
+      wordpress_version:
+        description: 'WordPress version to use for tests'
+        required: false
+        default: '6.6'
+        type: choice
+        options:
+          - '6.2'
+          - '6.3'
+          - '6.4'
+          - '6.5'
+          - '6.6'
+          - '6.7'
+          - '6.8'
+          - 'latest'
   pull_request:
     types: [opened, synchronize]
     branches: ['develop', 'master']
@@ -18,7 +44,7 @@ jobs:
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: '8.1'
+          php-version: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.php_version || '8.1' }}
           extensions: mbstring, xml, ctype, iconv, intl, pdo_mysql, mysqlnd
           coverage: none
           tools: composer:v2
@@ -43,16 +69,14 @@ jobs:
       strategy:
         fail-fast: false
         matrix:
-          include:
-            - php: '7.4'
-              composer: 2
-              wordpress: '6.2'
-            - php: '8.2'
-              composer: 2
-              wordpress: '6.6'
-            - php: '8.3'
-              composer: 2
-              wordpress: '6.8'
+          php: ${{ github.event_name == 'workflow_dispatch' && fromJson(format('["{0}"]', github.event.inputs.php_version)) || fromJson('[]') }}
+          wordpress: ${{ github.event_name == 'workflow_dispatch' && fromJson(format('["{0}"]', github.event.inputs.wordpress_version)) || fromJson('[]') }}
+          include: >-
+            ${{ github.event_name == 'workflow_dispatch' && fromJson(format('[{{"php":"{0}","wordpress":"{1}","composer":2}}]', github.event.inputs.php_version, github.event.inputs.wordpress_version)) || fromJson('[
+              {"php":"7.4","wordpress":"6.2","composer":2},
+              {"php":"8.2","wordpress":"6.6","composer":2},
+              {"php":"8.3","wordpress":"6.8","composer":2}
+            ]') }}
 
       services:
         mysql:
