@@ -35,7 +35,13 @@ jobs:
           tools: composer:v2
 
       - name: Install Project Dependencies
-        run: composer install --prefer-dist --no-progress --no-suggest
+        run: |
+          PHP_VERSION="${{ github.event_name == 'workflow_dispatch' && github.event.inputs.php_version || '8.1' }}"
+          if [ "$PHP_VERSION" = "7.4" ]; then
+            composer update --prefer-dist --no-progress --no-suggest --with-dependencies
+          else
+            composer install --prefer-dist --no-progress --no-suggest
+          fi
 
       - name: Install WordPress Coding Standards
         run: |
@@ -88,7 +94,11 @@ jobs:
         - name: Build Composer v${{ matrix.composer }}
           run: |
             composer --version
-            composer install --prefer-dist --no-progress --no-suggest
+            if [ "${{ matrix.php }}" = "7.4" ]; then
+              composer update --prefer-dist --no-progress --no-suggest --with-dependencies
+            else
+              composer install --prefer-dist --no-progress --no-suggest
+            fi
 
         - name: Install SVN
           run: |
