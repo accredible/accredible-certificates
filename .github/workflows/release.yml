@@ -1,6 +1,7 @@
 name: "Create Release Package"
 
 on:
+  workflow_dispatch:
   push:
     tags:
       - '*'  # Triggers on any tag push
