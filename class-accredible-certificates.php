@@ -39,18 +39,6 @@ if ( ! defined( 'ACCREDIBLE_CERTIFICATES_PLUGIN_URL' ) ) {
 // For composer dependencies.
 require plugin_dir_path( __FILE__ ) . 'vendor/autoload.php';
 
-/**
- * Get the ACMS\Api class name, handling both scoped (production) and unscoped (development) namespaces.
- *
- * @return string The fully qualified class name for ACMS\Api
- */
-function accredible_get_api_class() {
-	if ( class_exists( 'Accredible\Vendor\ACMS\Api' ) ) {
-		return 'Accredible\Vendor\ACMS\Api';
-	}
-	return 'ACMS\Api';
-}
-
 require_once ACCREDIBLE_CERTIFICATES_PLUGIN_PATH . 'class-accredible-widget.php'; // Require Widget for credential display.
 require_once ACCREDIBLE_CERTIFICATES_PLUGIN_PATH . 'class-accredible-certificates-settings.php'; // Require Settings.
 
@@ -65,6 +53,18 @@ if ( ! class_exists( 'Accredible_Certificates' ) ) {
 		 * @var string
 		 */
 		public static $accredible_db_version = '1.0.0';
+
+		/**
+		 * Get the ACMS\Api class name, handling both scoped (production) and unscoped (development) namespaces.
+		 *
+		 * @return string The fully qualified class name for ACMS\Api
+		 */
+		private static function get_api_class() {
+			if ( class_exists( 'Accredible\Vendor\ACMS\Api' ) ) {
+				return 'Accredible\Vendor\ACMS\Api';
+			}
+			return 'ACMS\Api';
+		}
 
 		/**
 		 * Construct the plugin object
@@ -152,8 +152,8 @@ if ( ! class_exists( 'Accredible_Certificates' ) ) {
 		 * @return object $credentials
 		 */
 		public static function get_credentials_for_email( $email ) {
-			$api_class = accredible_get_api_class();
-			$api = new $api_class( get_option( 'api_key' ) );
+			$api_class = self::get_api_class();
+			$api       = new $api_class( get_option( 'api_key' ) );
 
 			$credentials = $api->get_credentials( null, $email );
 
@@ -169,8 +169,8 @@ if ( ! class_exists( 'Accredible_Certificates' ) ) {
 		 * @return object $response
 		 */
 		public function create_credential( $name, $email, $group_id ) {
-			$api_class = accredible_get_api_class();
-			$api = new $api_class( get_option( 'api_key' ) );
+			$api_class = self::get_api_class();
+			$api       = new $api_class( get_option( 'api_key' ) );
 
 			return $api->create_credential( $name, $email, $group_id );
 		}
@@ -181,8 +181,8 @@ if ( ! class_exists( 'Accredible_Certificates' ) ) {
 		 * @return array $groups
 		 */
 		public function get_groups() {
-			$api_class = accredible_get_api_class();
-			$api = new $api_class( get_option( 'api_key' ) );
+			$api_class = self::get_api_class();
+			$api       = new $api_class( get_option( 'api_key' ) );
 
 			$response = $api->get_groups( 1000, 1 );
 
@@ -218,8 +218,8 @@ if ( ! class_exists( 'Accredible_Certificates' ) ) {
 		 * @return mixed $response
 		 */
 		public function batch_requests( $requests ) {
-			$api_class = accredible_get_api_class();
-			$api = new $api_class( get_option( 'api_key' ) );
+			$api_class = self::get_api_class();
+			$api       = new $api_class( get_option( 'api_key' ) );
 
 			$request_count = count( $requests );
 			for ( $i = 0; $i < $request_count; $i++ ) {
