@@ -23,10 +23,27 @@ jobs:
       - name: Install Dependencies
         run: composer install --prefer-dist --no-progress --no-suggest --no-dev
 
+      - name: Install PHP-Scoper
+        run: |
+          composer global require humbug/php-scoper
+          echo "$HOME/.composer/vendor/bin" >> $GITHUB_PATH
+
+      - name: Scope dependencies
+        run: |
+          php-scoper add-prefix \
+            --output-dir=build \
+            --config=php-scoper-config.php
+
+      - name: Copy plugin files to build
+        run: |
+          # Copy all plugin files to build directory, excluding vendor and build itself
+          rsync -av --exclude='vendor' --exclude='build' --exclude='.git' --exclude='.github' --exclude='node_modules' --exclude='.DS_Store' . build/
+
       - name: Create Release Zip
         run: |
           ZIP_NAME="accredible-certificates.${GITHUB_REF#refs/tags/v}.zip"
-          zip -r "$ZIP_NAME" . -x "*.git*" -x "*.github*" -x "*.svnignore" -x ".actignore" -x "*.log" -x ".DS_Store" -x "tests/*" -x ".phpunit.result.cache" -x "phpunit.xml.dist" -x "coverage/*" -x "tmp/*" -x "Dockerfile" -x "docker-compose.yml"
+          cd build
+          zip -r "../$ZIP_NAME" . -x "*.git*" -x "*.github*" -x "*.svnignore" -x ".actignore" -x "*.log" -x ".DS_Store" -x "tests/*" -x ".phpunit.result.cache" -x "phpunit.xml.dist" -x "coverage/*" -x "tmp/*" -x "Dockerfile" -x "docker-compose.yml"
           echo "ZIP_FILE=$ZIP_NAME" >> $GITHUB_ENV
 
       - name: Upload Release Asset
