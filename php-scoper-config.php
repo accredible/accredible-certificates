@@ -27,6 +27,11 @@ return array(
 			)),
 	),
 
+	// Exclude namespaces from being scoped (Composer autoloader should not be scoped).
+	'exclude-namespaces'         => array(
+		'Composer',
+	),
+
 	// Exclude files from being scoped (plugin files should not be scoped).
 	'exclude-files'              => array(),
 );
