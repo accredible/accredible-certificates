@@ -32,7 +32,7 @@ jobs:
       - name: Scope dependencies
         run: |
           php-scoper add-prefix \
-            --output-dir=build \
+            --output-dir=build/vendor \
             --config=php-scoper-config.php
 
       - name: Copy plugin files to build
