@@ -30,3 +30,6 @@ vendor/*
 /tests/coverage/
 /coverage/
 /tmp/
+
+# Build directory
+build/
