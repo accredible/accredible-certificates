@@ -37,7 +37,13 @@ if ( ! defined( 'ACCREDIBLE_CERTIFICATES_PLUGIN_URL' ) ) {
 }
 
 // For composer dependencies.
-require plugin_dir_path( __FILE__ ) . 'vendor/autoload.php';
+// Use scoper-autoload.php if available (scoped builds), otherwise use autoload.php.
+$vendor_autoload = plugin_dir_path( __FILE__ ) . 'vendor/';
+if ( file_exists( $vendor_autoload . 'scoper-autoload.php' ) ) {
+	require $vendor_autoload . 'scoper-autoload.php';
+} else {
+	require $vendor_autoload . 'autoload.php';
+}
 
 require_once ACCREDIBLE_CERTIFICATES_PLUGIN_PATH . 'class-accredible-widget.php'; // Require Widget for credential display.
 require_once ACCREDIBLE_CERTIFICATES_PLUGIN_PATH . 'class-accredible-certificates-settings.php'; // Require Settings.
@@ -60,7 +66,9 @@ if ( ! class_exists( 'Accredible_Certificates' ) ) {
 		 * @return string The fully qualified class name for ACMS\Api
 		 */
 		private static function get_api_class() {
-			if ( class_exists( 'Accredible\Vendor\ACMS\Api' ) ) {
+			// Check if we're in a scoped environment by looking for scoper-autoload.php.
+			$vendor_dir = ACCREDIBLE_CERTIFICATES_PLUGIN_PATH . 'vendor/';
+			if ( file_exists( $vendor_dir . 'scoper-autoload.php' ) ) {
 				return 'Accredible\Vendor\ACMS\Api';
 			}
 			return 'ACMS\Api';
