@@ -35,14 +35,14 @@ jobs:
             --output-dir=build/vendor \
             --config=php-scoper-config.php
 
-      - name: Regenerate autoloader
-        run: |
-          composer dump-autoload --working-dir build/vendor --classmap-authoritative
-
       - name: Copy plugin files to build
         run: |
           # Copy all plugin files to build directory, excluding vendor and build itself
           rsync -av --exclude='vendor' --exclude='build' --exclude='.git' --exclude='.github' --exclude='node_modules' --exclude='.DS_Store' . build/
+
+      - name: Regenerate autoloader
+        run: |
+          composer dump-autoload --working-dir build --classmap-authoritative
 
       - name: Create Release Zip
         run: |
