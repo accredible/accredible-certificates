@@ -35,6 +35,10 @@ jobs:
             --output-dir=build/vendor \
             --config=php-scoper-config.php
 
+      - name: Regenerate autoloader
+        run: |
+          composer dump-autoload --working-dir build/vendor --classmap-authoritative
+
       - name: Copy plugin files to build
         run: |
           # Copy all plugin files to build directory, excluding vendor and build itself
