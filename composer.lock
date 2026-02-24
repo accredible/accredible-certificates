@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "ec3d0fdb3e3525a6949b7d44a527a10f",
+    "content-hash": "9d594845d3ecaddf6280c7c731914124",
     "packages": [
         {
             "name": "accredible/acms-api-php",
