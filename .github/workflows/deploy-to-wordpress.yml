@@ -1,9 +1,8 @@
 name: "Deploy to WordPress.org"
 
 on:
-  push:
-    tags:
-      - 'v*'
+  release:
+    types: [released]
 
 jobs:
   deploy:
@@ -25,7 +24,7 @@ jobs:
 
       - name: Deploy to WordPress.org
         id: deploy
-        uses: 10up/action-wordpress-plugin-deploy@stable
+        uses: 10up/action-wordpress-plugin-deploy@2.3.0
         with:
           generate-zip: true
         env:
@@ -33,9 +32,17 @@ jobs:
           SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
           SLUG: accredible-certificates
 
+      - name: Rename zip with version
+        id: rename
+        run: |
+          VERSION="${{ github.event.release.tag_name }}"
+          VERSION="${VERSION#v}"
+          cp "${{ steps.deploy.outputs.zip-path }}" "${GITHUB_WORKSPACE}/accredible-certificates.${VERSION}.zip"
+          echo "zip_path=${GITHUB_WORKSPACE}/accredible-certificates.${VERSION}.zip" >> "$GITHUB_OUTPUT"
+
       - name: Upload release asset to GitHub
         uses: softprops/action-gh-release@v2
         with:
-          files: ${{ steps.deploy.outputs.zip-path }}
+          files: ${{ steps.rename.outputs.zip_path }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
