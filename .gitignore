@@ -16,6 +16,9 @@ sitemap.xml.gz
 # Vendor Directory
 vendor/*
 
+# Composer
+composer.phar
+
 # IDE Files
 .idea/
 .vscode/
