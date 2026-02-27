@@ -1,0 +1,41 @@
+name: "Deploy to WordPress.org"
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  deploy:
+    name: "Deploy to WordPress.org SVN"
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.1'
+          tools: composer:v2
+
+      - name: Install production dependencies
+        run: composer install --prefer-dist --no-progress --no-suggest --no-dev
+
+      - name: Deploy to WordPress.org
+        id: deploy
+        uses: 10up/action-wordpress-plugin-deploy@stable
+        with:
+          generate-zip: true
+        env:
+          SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
+          SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
+          SLUG: accredible-certificates
+
+      - name: Upload release asset to GitHub
+        uses: softprops/action-gh-release@v2
+        with:
+          files: ${{ steps.deploy.outputs.zip-path }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
