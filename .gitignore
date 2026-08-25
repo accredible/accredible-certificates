@@ -23,6 +23,10 @@ composer.phar
 .idea/
 .vscode/
 .cursor/
+.claude/
+
+# claude
+CLAUDE.md
 
 # Zip files
 *.zip
