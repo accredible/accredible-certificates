@@ -7,6 +7,7 @@
 /.idea/
 /.vscode/
 /.cursor/
+/.claude/
 /.phpcs.xml.dist
 
 /bin
@@ -23,6 +24,7 @@ docker-compose.yml
 Dockerfile
 phpunit.xml.dist
 README.md
+CLAUDE.md
 
 *.log
 .DS_Store
