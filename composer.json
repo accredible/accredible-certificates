@@ -1,6 +1,6 @@
 {
 	"require": {
-		"accredible/acms-api-php": "^0.2.6",
+		"accredible/acms-api-php": "^0.2.7",
 		"symfony/deprecation-contracts": "^2.2"
 	},
 	"require-dev": {
