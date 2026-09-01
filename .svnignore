@@ -11,6 +11,10 @@ tests
 .idea/
 .vscode/
 .cursor/
+.claude/
+
+# claude
+CLAUDE.md
 
 # Configuration and documentation files
 .phpcs.xml.dist
